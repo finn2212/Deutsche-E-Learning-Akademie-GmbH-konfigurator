@@ -27,7 +27,10 @@
           </div>
   
           <div>
-            <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
+            <button type="submit" class="flex w-full justify-center items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              <span v-if="!loading">Sign in</span>
+              <Spinner v-if="loading" />
+            </button>
           </div>
         </form>
       </div>
@@ -37,19 +40,23 @@
   <script setup>
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
+  import Spinner from '@/components/Spinner.vue'
   
   const email = ref('')
   const password = ref('')
+  const loading = ref(false)
   const router = useRouter()
   
   const login = async () => {
-  const { $supabase } = useNuxtApp()
-  const { error } = await $supabase.auth.signInWithPassword({ email: email.value, password: password.value })
-  if (error) {
-    alert(error.message)
-  } else {
-    router.push('/dashboard')
+    loading.value = true
+    const { $supabase } = useNuxtApp()
+    const { error } = await $supabase.auth.signInWithPassword({ email: email.value, password: password.value })
+    loading.value = false
+    if (error) {
+      alert(error.message)
+    } else {
+      router.push('/dashboard')
+    }
   }
-}
   </script>
   

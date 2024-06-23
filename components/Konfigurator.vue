@@ -3,7 +3,7 @@
       <h1 class="text-2xl font-bold mb-4">Konfigurator</h1>
       <!-- Your configurator content goes here -->
     </div>
-  </template>
+</template>
   
   <script setup>
   </script>

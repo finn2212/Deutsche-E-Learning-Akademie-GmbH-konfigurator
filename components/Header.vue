@@ -17,7 +17,9 @@
             <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
               <MenuItems class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                 <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
-                  <a :href="item.href" :class="[active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-gray-900']" @click.prevent="logout">{{ item.name }}</a>
+                  <a :href="item.href" :class="[active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-gray-900']" @click.prevent="handleLogout">{{ item.name }}
+                    <Spinner v-if="loading" />
+                  </a>
                 </MenuItem>
               </MenuItems>
             </transition>
@@ -28,25 +30,38 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
+  import { useNuxtApp } from '#app'
   import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-  import {
-    Bars3Icon,
-    ChevronDownIcon,
-  } from '@heroicons/vue/24/outline'
+  import { Bars3Icon, ChevronDownIcon } from '@heroicons/vue/24/outline'
+  import Spinner from '@/components/Spinner.vue'
   
-  const userEmail = ref('user@example.com')
+  const userEmail = ref('')
   
   const userNavigation = [
     { name: 'Sign out', href: '#' },
   ]
   
   const router = useRouter()
+  const loading = ref(false)
   
-  const logout = async () => {
+  onMounted(async () => {
+    const { $supabase } = useNuxtApp()
+    const { data: { session } } = await $supabase.auth.getSession()
+  
+    if (session) {
+      userEmail.value = session.user.email
+    } else {
+      router.push('/login')
+    }
+  })
+  
+  const handleLogout = async () => {
+    loading.value = true
     const { $supabase } = useNuxtApp()
     const { error } = await $supabase.auth.signOut()
+    loading.value = false
     if (error) {
       alert(error.message)
     } else {
