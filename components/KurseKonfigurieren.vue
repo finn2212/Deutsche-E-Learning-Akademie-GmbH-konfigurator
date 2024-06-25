@@ -10,27 +10,12 @@
           Kurse Exportieren
         </button>
       </div>
-      <div v-if="loading" class="text-center">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-        </svg>
-        <h3 class="mt-2 text-sm font-semibold text-gray-900">Loading courses...</h3>
-        <div class="mt-6">
-          <div class="spinner"></div>
-        </div>
-      </div>
-      <div v-else-if="courses.length === 0" class="text-center">
+      <div v-if="courses.length === 0" class="text-center">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
         </svg>
         <h3 class="mt-2 text-sm font-semibold text-gray-900">No courses</h3>
         <p class="mt-1 text-sm text-gray-500">Get started by creating a new course.</p>
-        <div class="mt-6">
-          <button @click="openCourseForm" type="button" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            <PlusIcon class="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
-            New Course
-          </button>
-        </div>
       </div>
       <div v-else>
         <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -52,7 +37,7 @@
               <input
                 type="checkbox"
                 :value="course.id"
-                v-model="selectedCourses"
+                v-model="localSelectedCourses"
                 class="absolute top-2 right-2"
                 @change="selectCourse"
               />
@@ -79,24 +64,51 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, defineEmits } from 'vue'
+  import { ref, defineEmits, defineProps, watch, onMounted } from 'vue'
   import CourseForm from '@/components/CourseForm.vue'
-  import { useNuxtApp } from '#app'
   import { PlusIcon } from '@heroicons/vue/20/solid'
+  import { useNuxtApp } from '#app'
+  
+  const props = defineProps({
+    courses: {
+      type: Array,
+      required: true
+    },
+    selectedCourses: {
+      type: Array,
+      required: true
+    }
+  })
   
   const emit = defineEmits(['selection-changed', 'next-step'])
   
+  const localSelectedCourses = ref([...props.selectedCourses])
+  const selectedCourse = ref(null)
+  const showCourseForm = ref(false)
+  const disableNext = ref(localSelectedCourses.value.length === 0)
+  
   const { $supabase } = useNuxtApp()
-  const courses = ref([])
   const locations = ref([])
   const startTimes = ref([])
-  const loading = ref(true)
-  const selectedCourses = ref([])
   
-  const showCourseForm = ref(false)
-  const selectedCourse = ref(null)
+  const loadLocations = async () => {
+    const { data } = await $supabase
+      .from('places')
+      .select('*')
+    locations.value = data
+  }
   
-  const disableNext = ref(true)
+  const loadStartTimes = async () => {
+    const { data } = await $supabase
+      .from('start_times')
+      .select('*')
+    startTimes.value = data
+  }
+  
+  onMounted(() => {
+    loadLocations()
+    loadStartTimes()
+  })
   
   const openCourseForm = () => {
     selectedCourse.value = null
@@ -117,65 +129,40 @@
       .from('courses')
       .delete()
       .eq('id', courseId)
-  
-    courses.value = courses.value.filter(course => course.id !== courseId)
+    emit('selection-changed', localSelectedCourses.value)
   }
   
   const addCourse = (course) => {
-    const existingCourseIndex = courses.value.findIndex(c => c.id === course.id)
-    if (existingCourseIndex !== -1) {
-      courses.value[existingCourseIndex] = course
-    } else {
-      courses.value.push(course)
-    }
-  }
-  
-  const getCourses = async () => {
-    const { data } = await $supabase
-      .from('courses')
-      .select('*')
-  
-    courses.value = data
-    loading.value = false
-  }
-  
-  const getLocations = async () => {
-    const { data } = await $supabase
-      .from('places')
-      .select('*')
-  
-    locations.value = data
-  }
-  
-  const fetchStartTimes = async () => {
-    const { data } = await $supabase
-      .from('start_times')
-      .select('*')
-  
-    startTimes.value = data
-  }
-  
-  const getLocationNames = (locationIds) => {
-    return locations.value.filter(loc => locationIds.includes(loc.id)).map(loc => loc.name)
-  }
-  
-  const getStartTimesForCourse = (startTimeIds) => {
-    return startTimes.value.filter(time => startTimeIds.includes(time.id)).map(time => time.time)
+    emit('selection-changed', localSelectedCourses.value)
   }
   
   const selectCourse = () => {
-    disableNext.value = selectedCourses.value.length === 0
-    emit('selection-changed', selectedCourses.value)
+    disableNext.value = localSelectedCourses.value.length === 0
+    emit('selection-changed', localSelectedCourses.value)
   }
   
   const goToNextStep = () => {
     emit('next-step')
   }
   
-  onMounted(() => {
-    getCourses()
-    getLocations()
-    fetchStartTimes()
+  const getLocationNames = (locationIds) => {
+    return locations.value
+      .filter(loc => locationIds.includes(loc.id))
+      .map(loc => loc.name)
+  }
+  
+  const getStartTimesForCourse = (startTimeIds) => {
+    return startTimes.value
+      .filter(time => startTimeIds.includes(time.id))
+      .map(time => time.time)
+  }
+  
+  watch(localSelectedCourses, (newVal) => {
+    emit('update:selectedCourses', newVal)
+  })
+  
+  watch(() => props.selectedCourses, (newVal) => {
+    localSelectedCourses.value = [...newVal]
   })
   </script>
   
