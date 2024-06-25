@@ -6,7 +6,7 @@
         <p class="mt-2 text-sm text-gray-700">A list of all the Orte in your account including their name.</p>
       </div>
       <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-        <button @click="openAddOrtForm" type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Ort</button>
+        <button @click="openAddOrtForm" type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Ort hinzufügen</button>
       </div>
     </div>
     <div v-if="loading" class="text-center">
@@ -39,7 +39,7 @@
               <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                  <span class="sr-only">Delete</span>
+                  <span class="sr-only">Entfernen</span>
                 </th>
               </tr>
             </thead>
@@ -47,7 +47,7 @@
               <tr v-for="ort in orte" :key="ort.id" class="even:bg-gray-50">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">{{ ort.name }}</td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                  <button @click="deleteOrt(ort.id)" class="text-indigo-600 hover:text-indigo-900">Delete<span class="sr-only">, {{ ort.name }}</span></button>
+                  <button @click="deleteOrt(ort.id)" class="text-indigo-600 hover:text-indigo-900">Entfernen<span class="sr-only">, {{ ort.name }}</span></button>
                 </td>
               </tr>
             </tbody>
@@ -56,16 +56,16 @@
       </div>
     </div>
 
-    <!-- Add Ort Form Modal -->
+    <!-- Ort hinzufügen Form Modal -->
     <div v-if="showAddOrtForm" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
       <div class="bg-white p-6 rounded-md shadow-md">
-        <h2 class="text-xl font-semibold mb-4">Add Ort</h2>
+        <h2 class="text-xl font-semibold mb-4">Ort hinzufügen</h2>
         <div class="mb-4">
           <input v-model="newOrt" type="text" placeholder="Enter Ort" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
         </div>
         <div class="flex justify-end">
-          <button @click="closeAddOrtForm" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
-          <button @click="addOrt" class="px-4 py-2 bg-green-600 text-white rounded">Save</button>
+          <button @click="closeAddOrtForm" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Abbrechen</button>
+          <button @click="addOrt" class="px-4 py-2 bg-green-600 text-white rounded">Speichern</button>
         </div>
       </div>
     </div>

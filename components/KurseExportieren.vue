@@ -8,7 +8,7 @@
         <ul>
           <li v-for="courseId in selectedCourses" :key="courseId">
             <div>
-              <h3 class="text-sm font-medium text-gray-900">{{ getCourseTitle(courseId) }}</h3>
+              <h3 class="text-sm font-medium text-gray-900">{{ getCourseName(courseId) }}</h3>
             </div>
           </li>
         </ul>
@@ -45,9 +45,9 @@
     }
   })
   
-  const getCourseTitle = (courseId) => {
+  const getCourseName = (courseId) => {
     const course = props.courses.find(course => course.id === courseId)
-    return course ? course.titles.join(', ') : 'Unknown Course'
+    return course ? course.name : 'Unknown Course'
   }
   
   const calculateCombinations = () => {

@@ -21,16 +21,17 @@
         <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           <li v-for="course in courses" :key="course.id" class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow relative">
             <div class="flex flex-1 flex-col p-8 text-left">
-              <h3 class="text-sm font-medium text-gray-900">Titles: {{ course.titles.join(', ') }}</h3>
+              <h3 class="text-sm font-medium text-gray-900">Name: {{ course.name }}</h3>
+              <h3 class="text-sm font-medium text-gray-900 mt-2">Titles: {{ course.titles.join(', ') }}</h3>
               <dl class="mt-1 flex flex-grow flex-col justify-between">
                 <dt class="sr-only">Types</dt>
                 <dd class="text-sm text-gray-500">Types: {{ course.types.join(', ') }}</dd>
                 <dt class="sr-only">Locations</dt>
-                <dd class="mt-3 text-sm text-gray-500">
+                <dd class="mt-1 text-sm text-gray-500">
                   Locations: {{ getLocationNames(course.location_ids).join(', ') }}
                 </dd>
                 <dt class="sr-only">Times</dt>
-                <dd class="mt-3 text-sm text-gray-500">
+                <dd class="mt-1 text-sm text-gray-500">
                   Times: {{ getStartTimesForCourse(course.start_time_ids).join(', ') }}
                 </dd>
               </dl>
@@ -51,7 +52,7 @@
                 </div>
                 <div class="-ml-px flex w-0 flex-1">
                   <button @click="deleteCourse(course.id)" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
-                    <span>Delete</span>
+                    <span>Entfernen</span>
                   </button>
                 </div>
               </div>
@@ -59,7 +60,7 @@
           </li>
         </ul>
       </div>
-      <CourseForm :course="selectedCourse" @close="closeCourseForm" @add-course="addCourse" v-if="showCourseForm" />
+      <CourseForm :course="selectedCourse" @close="closeCourseForm" @add-course="addCourse" @course-saved="courseSaved" v-if="showCourseForm" />
     </div>
   </template>
   
@@ -80,7 +81,7 @@
     }
   })
   
-  const emit = defineEmits(['selection-changed', 'next-step'])
+  const emit = defineEmits(['selection-changed', 'next-step', 'update:selectedCourses', 'course-saved'])
   
   const localSelectedCourses = ref([...props.selectedCourses])
   const selectedCourse = ref(null)
@@ -129,6 +130,7 @@
       .from('courses')
       .delete()
       .eq('id', courseId)
+    await loadCourses()
     emit('selection-changed', localSelectedCourses.value)
   }
   
@@ -157,12 +159,28 @@
       .map(time => time.time)
   }
   
+  const courseSaved = async () => {
+    await loadCourses()
+    emit('course-saved')
+  }
+  
   watch(localSelectedCourses, (newVal) => {
     emit('update:selectedCourses', newVal)
   })
   
   watch(() => props.selectedCourses, (newVal) => {
     localSelectedCourses.value = [...newVal]
+  })
+  
+  const loadCourses = async () => {
+    const { data } = await $supabase
+      .from('courses')
+      .select('*')
+    emit('course-saved', data)
+  }
+  
+  onMounted(() => {
+    loadCourses()
   })
   </script>
   

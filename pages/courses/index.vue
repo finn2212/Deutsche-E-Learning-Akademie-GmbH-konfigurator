@@ -8,6 +8,7 @@
             :selected-courses="selectedCourses"
             @selection-changed="handleSelectionChange"
             @next-step="handleNextStep"
+            @course-saved="loadCourses"
           />
         </div>
         <div v-if="currentStep === 1">

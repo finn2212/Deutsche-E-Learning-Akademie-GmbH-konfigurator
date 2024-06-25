@@ -2,11 +2,14 @@
   <div class="px-4 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <h1 class="text-base font-semibold leading-6 text-gray-900">Manage Startzeiten</h1>
+        <h1 class="text-base font-semibold leading-6 text-gray-900">Startzeiten Verwalten</h1>
         <p class="mt-2 text-sm text-gray-700">A list of all the start times in your account.</p>
       </div>
       <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-        <button @click="openAddStartzeitForm" type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Startzeit</button>
+        <button @click="openAddStartzeitForm" type="button" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          <PlusIcon class="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
+          Startzeit hinzufügen
+        </button>
       </div>
     </div>
     <div v-if="loading" class="text-center">
@@ -27,7 +30,7 @@
       <div class="mt-6">
         <button @click="openAddStartzeitForm" type="button" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
           <PlusIcon class="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
-          New Startzeit
+          Startzeit hinzufügen
         </button>
       </div>
     </div>
@@ -64,8 +67,8 @@
           <input v-model="newStartzeit" type="time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
         </div>
         <div class="flex justify-end">
-          <button @click="closeAddStartzeitForm" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
-          <button @click="addStartzeit" class="px-4 py-2 bg-green-600 text-white rounded">Save</button>
+          <button @click="closeAddStartzeitForm" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Abbrechen</button>
+          <button @click="addStartzeit" class="px-4 py-2 bg-green-600 text-white rounded">Speichern</button>
         </div>
       </div>
     </div>

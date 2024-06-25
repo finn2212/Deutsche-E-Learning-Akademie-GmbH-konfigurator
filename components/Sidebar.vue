@@ -37,12 +37,12 @@ import { HomeIcon, FolderIcon } from '@heroicons/vue/24/outline'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: false },
-  { name: 'Courses', href: '/courses', icon: FolderIcon, current: false },
+  { name: 'Kurse erstellen', href: '/courses', icon: FolderIcon, current: false },
 ]
 
 const variables = [
   { name: 'Startzeiten', href: '/variables/startzeit', current: false },
-  { name: 'Vollzeit/Teilzeit', href: '/variables/vollzeit-teilzeit', current: false },
-  { name: 'Ort', href: '/variables/ort', current: false },
+  { name: 'Art des Kurses', href: '/variables/vollzeit-teilzeit', current: false },
+  { name: 'Ort des Kurses', href: '/variables/ort', current: false },
 ]
 </script>
