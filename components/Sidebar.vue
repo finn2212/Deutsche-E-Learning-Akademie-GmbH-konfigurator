@@ -56,7 +56,7 @@ const variables = [
   { name: 'Startzeiten', href: '/variables/startzeit', icon: ClockIcon, current: false },
   { name: 'Art des Kurses', href: '/variables/vollzeit-teilzeit', icon: IdentificationIcon, current: false },
   { name: 'Ort des Kurses', href: '/variables/ort', icon: FlagIcon, current: false },
-  { name: 'Fixe Kurse Variablen', href: '/variables/fixe-kurse-variablen', icon: LinkIcon, current: false },
+  { name: 'Kurs Typen', href: '/variables/fixe-kurse-variablen', icon: LinkIcon, current: false },
   { name: 'Organisations Einstellungen', href: '/variables/organisations-einstellungen', icon: UserGroupIcon, current: false },
 ]
 
