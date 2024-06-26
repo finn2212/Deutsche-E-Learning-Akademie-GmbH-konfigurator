@@ -10,6 +10,7 @@
       </div>
     </div>
     <div v-if="loading" class="text-center">
+      <!-- Loading state -->
       <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
       </svg>
@@ -19,6 +20,7 @@
       </div>
     </div>
     <div v-else-if="orte.length === 0" class="text-center">
+      <!-- No Orte state -->
       <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
       </svg>
@@ -32,42 +34,39 @@
       </div>
     </div>
     <div v-else class="mt-8 flow-root">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table class="min-w-full divide-y divide-gray-300">
-            <thead>
-              <tr>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
-                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                  <span class="sr-only">Entfernen</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white">
-              <tr v-for="ort in orte" :key="ort.id" class="even:bg-gray-50">
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">{{ ort.name }}</td>
-                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                  <button @click="deleteOrt(ort.id)" class="text-indigo-600 hover:text-indigo-900">Entfernen<span class="sr-only">, {{ ort.name }}</span></button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <!-- Grid of Orte -->
+      <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <li v-for="ort in orte" :key="ort.id" class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow relative">
+          <div class="flex flex-1 flex-col p-8 text-left">
+            <h3 class="text-sm font-medium text-gray-900">Alias: {{ ort.name }}</h3>
+            <p class="text-sm text-gray-500 mt-2">Straße: {{ ort.strasse }}</p>
+            <p class="text-sm text-gray-500 mt-2">Hausnummer: {{ ort.hausnummer }}</p>
+            <p class="text-sm text-gray-500 mt-2">PLZ: {{ ort.plz }}</p>
+            <p class="text-sm text-gray-500 mt-2">Ort: {{ ort.ort }}</p>
+            <p class="text-sm text-gray-500 mt-2">Bundesland: {{ ort.bundesland }}</p>
+            <p class="text-sm text-gray-500 mt-2">Land: {{ ort.land }}</p>
+          </div>
+          <div>
+            <div class="-mt-px flex divide-x divide-gray-200">
+              <div class="flex w-0 flex-1">
+                <button @click="editOrt(ort)" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                  <span>Edit</span>
+                </button>
+              </div>
+              <div class="-ml-px flex w-0 flex-1">
+                <button @click="deleteOrt(ort.id)" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                  <span>Entfernen</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
 
     <!-- Ort hinzufügen Form Modal -->
     <div v-if="showAddOrtForm" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
-      <div class="bg-white p-6 rounded-md shadow-md">
-        <h2 class="text-xl font-semibold mb-4">Ort hinzufügen</h2>
-        <div class="mb-4">
-          <input v-model="newOrt" type="text" placeholder="Enter Ort" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-        </div>
-        <div class="flex justify-end">
-          <button @click="closeAddOrtForm" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Abbrechen</button>
-          <button @click="addOrt" class="px-4 py-2 bg-green-600 text-white rounded">Speichern</button>
-        </div>
-      </div>
+      <AddOrtForm :newOrt="newOrt" :closeForm="closeAddOrtForm" :saveOrt="saveOrt" :isEditMode="isEditMode" />
     </div>
   </div>
 </template>
@@ -75,40 +74,66 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useNuxtApp } from '#app'
-import { PlusIcon } from '@heroicons/vue/20/solid'
+import AddOrtForm from '~/components/AddOrtForm.vue'
 
 const { $supabase } = useNuxtApp()
 const orte = ref([])
-const newOrt = ref('')
+const newOrt = ref({ name: '', strasse: '', hausnummer: '', plz: '', ort: '', bundesland: '', land: '' })
 const loading = ref(true)
 const showAddOrtForm = ref(false)
+const isEditMode = ref(false)
 
 const openAddOrtForm = () => {
   showAddOrtForm.value = true
+  isEditMode.value = false
 }
 
 const closeAddOrtForm = () => {
   showAddOrtForm.value = false
-  newOrt.value = ''
+  newOrt.value = { name: '', strasse: '', hausnummer: '', plz: '', ort: '', bundesland: '', land: '' }
+  isEditMode.value = false
 }
 
 const addOrt = async () => {
-  if (newOrt.value && !orte.value.some(ort => ort.name === newOrt.value)) {
-    loading.value = true
-    const { data, error } = await $supabase
-      .from('places')
-      .insert([{ name: newOrt.value }])
-      .select()
+  const { data, error } = await $supabase
+    .from('places')
+    .insert([{ ...newOrt.value }])
+    .select()
 
-    loading.value = false
-    if (!error && data) {
-      orte.value.push(data[0])
-      newOrt.value = ''
-      showAddOrtForm.value = false
-    } else {
-      console.error(error)
-    }
+  if (!error && data) {
+    getOrte() // Reload Orte after adding
+  } else {
+    console.error(error)
   }
+}
+
+const updateOrt = async () => {
+  const { data, error } = await $supabase
+    .from('places')
+    .update(newOrt.value)
+    .eq('id', newOrt.value.id)
+    .select()
+
+  if (!error && data) {
+    getOrte() // Reload Orte after updating
+  } else {
+    console.error(error)
+  }
+}
+
+const saveOrt = () => {
+  if (isEditMode.value) {
+    updateOrt()
+  } else {
+    addOrt()
+  }
+  closeAddOrtForm()
+}
+
+const editOrt = (ort) => {
+  newOrt.value = { ...ort }
+  showAddOrtForm.value = true
+  isEditMode.value = true
 }
 
 const deleteOrt = async (ortId) => {
@@ -117,7 +142,7 @@ const deleteOrt = async (ortId) => {
     .delete()
     .eq('id', ortId)
 
-  orte.value = orte.value.filter(ort => ort.id !== ortId)
+  getOrte() // Reload Orte after deleting
 }
 
 const getOrte = async () => {
@@ -139,6 +164,7 @@ onMounted(() => {
 </script>
 
 <style>
+/* Loading spinner styles */
 .spinner {
   border: 4px solid rgba(255, 255, 255, 0.3);
   border-left-color: #fff;

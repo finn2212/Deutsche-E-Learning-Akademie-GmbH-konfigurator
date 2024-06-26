@@ -13,6 +13,7 @@
     "@headlessui/vue": "^1.7.22",
     "@heroicons/vue": "^2.1.4",
     "@supabase/supabase-js": "^2.43.5",
+    "@vue-hero-icons/outline": "^1.7.2",
     "add": "^2.0.6",
     "nuxt": "^3.12.2",
     "pnpm": "^9.4.0",

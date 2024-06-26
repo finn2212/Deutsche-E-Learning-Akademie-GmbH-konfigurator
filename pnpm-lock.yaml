@@ -14,6 +14,9 @@ dependencies:
   '@supabase/supabase-js':
     specifier: ^2.43.5
     version: 2.43.5
+  '@vue-hero-icons/outline':
+    specifier: ^1.7.2
+    version: 1.7.2
   add:
     specifier: ^2.0.6
     version: 2.0.6
@@ -2332,6 +2335,12 @@ packages:
       vue: 3.4.30
     dev: false
 
+  /@vue-hero-icons/outline@1.7.2:
+    resolution: {integrity: sha512-mgMpncarjZHXY1K2tyjbYHf53yQG9amroDR9t2iH/umpsN8+f8RNcTy1m131EZ8WBCm8MpF97XpXPV129rvtVg==}
+    dependencies:
+      babel-helper-vue-jsx-merge-props: 2.0.3
+    dev: false
+
   /@vue-macros/common@1.10.4(vue@3.4.30):
     resolution: {integrity: sha512-akO6Bd6U4jP0+ZKbHq6mbYkw1coOrJpLeVmkuMlUsT5wZRi11BjauGcZHusBSzUjgCBsa1kZTyipxrxrWB54Hw==}
     engines: {node: '>=16.14.0'}
@@ -2728,6 +2737,10 @@ packages:
 
   /b4a@1.6.6:
     resolution: {integrity: sha512-5Tk1HLk6b6ctmjIkAcU/Ujv/1WqiDl0F0JdRCR80VsOcUlHcu7pWeWRlOqQLHfDEsVx9YH/aif5AG4ehoCtTmg==}
+    dev: false
+
+  /babel-helper-vue-jsx-merge-props@2.0.3:
+    resolution: {integrity: sha512-gsLiKK7Qrb7zYJNgiXKpXblxbV5ffSwR0f5whkPAaBAR4fhi6bwRZxX9wBlIc5M/v8CCkXUbXZL4N/nSE97cqg==}
     dev: false
 
   /balanced-match@1.0.2:
