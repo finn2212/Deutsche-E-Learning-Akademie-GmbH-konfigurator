@@ -27,7 +27,7 @@
           </ul>
         </li>
         <li>
-          <div class="text-xs font-semibold leading-6 text-gray-400">Allgemeine Einstellungen</div>
+          <div class="text-xs font-semibold leading-6 text-gray-400">Fixe Einstellungen</div>
           <ul role="list" class="-mx-2 mt-2 space-y-1">
             <li v-for="setting in settings" :key="setting.name">
               <NuxtLink :to="setting.href" :class="[setting.current ? 'bg-gray-50 text-indigo-600' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600', 'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6']">
@@ -57,11 +57,12 @@ const variables = [
   { name: 'Daten', href: '/variables/dates', icon: ClockIcon, current: false },
   { name: 'Art des Kurses', href: '/variables/vollzeit-teilzeit', icon: IdentificationIcon, current: false },
   { name: 'Ort des Kurses', href: '/variables/ort', icon: FlagIcon, current: false },
-  { name: 'Kurs Typen', href: '/variables/fixe-kurse-variablen', icon: LinkIcon, current: false },
-  { name: 'Organisations Einstellungen', href: '/variables/organisations-einstellungen', icon: UserGroupIcon, current: false },
+
+  
 ]
 
 const settings = [
-  { name: 'Allgemeine Einstellungen', href: '/settings/allgemeine-einstellungen', icon: CogIcon, current: false }
+{ name: 'Organisations Einstellungen', href: '/variables/organisations-einstellungen', icon: UserGroupIcon, current: false },
+{ name: 'Kurs Typen', href: '/variables/fixe-kurse-variablen', icon: LinkIcon, current: false },
 ]
 </script>
