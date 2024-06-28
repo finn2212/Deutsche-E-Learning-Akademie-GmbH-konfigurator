@@ -54,6 +54,7 @@ const navigation = [
 
 const variables = [
   { name: 'Startzeiten', href: '/variables/startzeit', icon: ClockIcon, current: false },
+  { name: 'Daten', href: '/variables/dates', icon: ClockIcon, current: false },
   { name: 'Art des Kurses', href: '/variables/vollzeit-teilzeit', icon: IdentificationIcon, current: false },
   { name: 'Ort des Kurses', href: '/variables/ort', icon: FlagIcon, current: false },
   { name: 'Kurs Typen', href: '/variables/fixe-kurse-variablen', icon: LinkIcon, current: false },

@@ -52,6 +52,17 @@
           <button type="button" @click="addStartTime" class="mt-2 font-semibold text-indigo-600 hover:text-indigo-500">Add Start Time</button>
         </div>
       </div>
+      <!-- Dates input fields -->
+      <div class="mb-4">
+        <label for="dates" class="block text-sm font-medium text-gray-700">Dates</label>
+        <div class="mt-1">
+          <div v-for="(dateId, index) in form.dates_ids" :key="index" class="flex items-center mb-2">
+            <Dropdown v-model="form.dates_ids[index]" :options="dateDropdownOptions" />
+            <button type="button" @click="removeDate(index)" class="ml-2 font-semibold text-indigo-600 hover:text-indigo-500">Remove</button>
+          </div>
+          <button type="button" @click="addDate" class="mt-2 font-semibold text-indigo-600 hover:text-indigo-500">Add Date</button>
+        </div>
+      </div>
       <!-- Form action buttons -->
       <div class="flex justify-end sticky bottom-0 bg-white py-4">
         <button type="button" @click="prevStep" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Back</button>
@@ -65,6 +76,7 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import { useNuxtApp } from '#app'
 import Dropdown from '@/components/Dropdown.vue'
+import { format } from 'date-fns'
 
 const props = defineProps({
   course: Object,
@@ -80,12 +92,14 @@ const form = ref({
   types: [],
   location_ids: [],
   start_time_ids: [],
+  dates_ids: [],
   course_type: props.selectedCourseType // Initialize with selected course type
 })
 
 const typeOptions = ref([])
 const locationOptions = ref([])
 const startTimeOptions = ref([])
+const dateOptions = ref([])
 
 const fetchTypes = async () => {
   const { data, error } = await $supabase
@@ -132,6 +146,21 @@ const fetchStartTimes = async () => {
   }
 }
 
+const fetchDates = async () => {
+  const { data, error } = await $supabase
+    .from('dates')
+    .select('*')
+
+  if (!error && data) {
+    dateOptions.value = data
+    if (!form.value.dates_ids.length && dateOptions.value.length) {
+      form.value.dates_ids.push(dateOptions.value[0].id)
+    }
+  } else {
+    console.error(error)
+  }
+}
+
 const addTitle = () => {
   form.value.titles.push('')
 }
@@ -164,6 +193,14 @@ const removeStartTime = (index) => {
   form.value.start_time_ids.splice(index, 1)
 }
 
+const addDate = () => {
+  form.value.dates_ids.push(dateOptions.value[0]?.id || '')
+}
+
+const removeDate = (index) => {
+  form.value.dates_ids.splice(index, 1)
+}
+
 const typeDropdownOptions = computed(() =>
   typeOptions.value.map(option => ({ value: option.name, label: option.name }))
 )
@@ -176,6 +213,10 @@ const startTimeDropdownOptions = computed(() =>
   startTimeOptions.value.map(option => ({ value: option.id, label: option.time }))
 )
 
+const dateDropdownOptions = computed(() =>
+  dateOptions.value.map(option => ({ value: option.id, label: `${format(new Date(option.start_date), 'dd.MM.yyyy')} - ${format(new Date(option.end_date), 'dd.MM.yyyy')}` }))
+)
+
 watch(() => props.course, (newCourse) => {
   if (newCourse) {
     form.value = {
@@ -184,10 +225,11 @@ watch(() => props.course, (newCourse) => {
       types: newCourse.types || [],
       location_ids: newCourse.location_ids || [],
       start_time_ids: newCourse.start_time_ids || [],
+      dates_ids: newCourse.dates_ids || [],
       course_type: props.selectedCourseType // Ensure this value is included
     }
   } else {
-    form.value = { name: '', titles: [''], types: [], location_ids: [], start_time_ids: [], course_type: props.selectedCourseType }
+    form.value = { name: '', titles: [''], types: [], location_ids: [], start_time_ids: [], dates_ids: [], course_type: props.selectedCourseType }
   }
 }, { immediate: true })
 
@@ -233,5 +275,6 @@ onMounted(() => {
   fetchTypes()
   fetchLocations()
   fetchStartTimes()
+  fetchDates()
 })
 </script>

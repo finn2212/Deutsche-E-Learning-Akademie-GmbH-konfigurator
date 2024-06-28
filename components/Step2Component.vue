@@ -89,6 +89,7 @@ const prevStep = () => {
 watch(selectedCourseType, (newCourseTypeId) => {
   if (newCourseTypeId) {
     selectedCourseTypeDetails.value = courseTypes.value.find(type => type.id === newCourseTypeId)
+    emit('nextStep', selectedCourseType.value)
   } else {
     selectedCourseTypeDetails.value = null
   }

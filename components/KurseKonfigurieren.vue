@@ -2,29 +2,24 @@
   <div>
     <h2 class="text-xl font-semibold mb-4">Kurse Konfigurieren</h2>
     <div class="flex items-center mb-4">
-      <button @click="openCourseForm" type="button"
-        class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mr-4">
+      <button @click="openCourseForm" type="button" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mr-4">
         <PlusIcon class="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
         Add Course
       </button>
-      <button @click="goToNextStep" :disabled="disableNext"
-        :class="['inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2', disableNext ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-500 focus-visible:outline-indigo-600']">
+      <button @click="goToNextStep" :disabled="disableNext" :class="['inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2', disableNext ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-500 focus-visible:outline-indigo-600']">
         Kurse Exportieren
       </button>
     </div>
     <div v-if="courses.length === 0" class="text-center">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-        aria-hidden="true">
-        <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
       </svg>
       <h3 class="mt-2 text-sm font-semibold text-gray-900">No courses</h3>
       <p class="mt-1 text-sm text-gray-500">Get started by creating a new course.</p>
     </div>
     <div v-else>
       <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <li v-for="course in courses" :key="course.id"
-          class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow relative">
+        <li v-for="course in courses" :key="course.id" class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow relative">
           <div class="flex flex-1 flex-col p-8 text-left">
             <h3 class="text-sm font-medium text-gray-900">Name: {{ course.name }}</h3>
             <h3 class="text-sm font-medium text-gray-900 mt-2">Titles: {{ course.titles.join(', ') }}</h3>
@@ -35,25 +30,26 @@
               <dd class="mt-1 text-sm text-gray-500">
                 Locations: {{ getLocationNames(course.location_ids).join(', ') }}
               </dd>
+              <dt class="sr-only">Dates</dt>
+              <dd class="mt-1 text-sm text-gray-500">
+                Dates: {{ getCourseDates(course.dates_ids).join(', ') }}
+              </dd>
               <dt class="sr-only">Times</dt>
               <dd class="mt-1 text-sm text-gray-500">
                 Times: {{ getStartTimesForCourse(course.start_time_ids).join(', ') }}
               </dd>
             </dl>
-            <input type="checkbox" :value="course.id" v-model="localSelectedCourses" class="absolute top-2 right-2"
-              @change="selectCourse" />
+            <input type="checkbox" :value="course.id" v-model="localSelectedCourses" class="absolute top-2 right-2" @change="selectCourse" />
           </div>
           <div>
             <div class="-mt-px flex divide-x divide-gray-200">
               <div class="flex w-0 flex-1">
-                <button @click="editCourse(course)"
-                  class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                <button @click="editCourse(course)" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
                   <span>Edit</span>
                 </button>
               </div>
               <div class="-ml-px flex w-0 flex-1">
-                <button @click="deleteCourse(course.id)"
-                  class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                <button @click="deleteCourse(course.id)" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
                   <span>Entfernen</span>
                 </button>
               </div>
@@ -62,8 +58,7 @@
         </li>
       </ul>
     </div>
-    <CourseStepperForm :course="selectedCourse" @close="closeCourseForm" @add-course="addCourse"
-      @course-saved="courseSaved" v-if="showCourseForm" />
+    <CourseStepperForm :course="selectedCourse" @close="closeCourseForm" @add-course="addCourse" @course-saved="courseSaved" v-if="showCourseForm" />
   </div>
 </template>
 
@@ -72,6 +67,7 @@ import { ref, defineEmits, defineProps, watch, onMounted } from 'vue'
 import CourseStepperForm from '@/components/CourseStepperForm.vue'
 import { PlusIcon } from '@heroicons/vue/20/solid'
 import { useNuxtApp } from '#app'
+import { format } from 'date-fns'
 
 const props = defineProps({
   courses: {
@@ -94,6 +90,7 @@ const disableNext = ref(localSelectedCourses.value.length === 0)
 const { $supabase } = useNuxtApp()
 const locations = ref([])
 const startTimes = ref([])
+const courseDates = ref({})
 
 const loadLocations = async () => {
   const { data } = await $supabase
@@ -109,9 +106,24 @@ const loadStartTimes = async () => {
   startTimes.value = data
 }
 
+const loadCourseDates = async () => {
+  const { data, error } = await $supabase
+    .from('dates')
+    .select('*')
+  if (error) {
+    console.error(error)
+    return
+  }
+  courseDates.value = data.reduce((acc, date) => {
+    acc[date.id] = `${format(new Date(date.start_date), 'dd.MM.yyyy')} - ${format(new Date(date.end_date), 'dd.MM.yyyy')}`
+    return acc
+  }, {})
+}
+
 onMounted(() => {
   loadLocations()
   loadStartTimes()
+  loadCourseDates()
 })
 
 const openCourseForm = () => {
@@ -150,16 +162,23 @@ const goToNextStep = () => {
   emit('next-step')
 }
 
-const getLocationNames = (locationIds) => {
+const getLocationNames = (locationIds) => { 
+  if (!locationIds) return []
   return locations.value
     .filter(loc => locationIds.includes(loc.id))
-    .map(loc => loc.alias)
+    .map(loc => loc.name)
 }
 
 const getStartTimesForCourse = (startTimeIds) => {
+  if (!startTimeIds) return []
   return startTimes.value
     .filter(time => startTimeIds.includes(time.id))
     .map(time => time.time)
+}
+
+const getCourseDates = (dateIds = []) => {
+  if (!dateIds) return []
+  return dateIds.map(dateId => courseDates.value[dateId]).filter(Boolean)
 }
 
 const courseSaved = async () => {

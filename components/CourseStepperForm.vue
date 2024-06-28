@@ -3,7 +3,7 @@
     <div class="bg-white p-6 rounded-md shadow-md max-h-screen overflow-y-auto w-full max-w-4xl">
       <h2 class="text-xl font-semibold mb-4">{{ course && course.id ? 'Kurs bearbeiten' : 'Kurs hinzufügen' }}</h2>
       <div class="overflow-y-auto max-h-[70vh]">
-        <Stepper :steps="steps" :modelValue="currentStep" @update:modelValue="updateStep">
+        <Stepper :steps="steps" :modelValue="currentStep">
           <template #default="{ currentStep }">
             <Step1Component v-if="currentStep === 0" :course="course" @nextStep="nextStep" @close="closeForm" />
             <Step2Component v-if="currentStep === 1" :course="course" @prevStep="prevStep" @nextStep="nextStepWithCourseType" @close="closeForm" />
