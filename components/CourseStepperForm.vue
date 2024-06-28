@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
+  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50"> <!-- Added z-50 -->
     <div class="bg-white p-6 rounded-md shadow-md max-h-screen overflow-y-auto w-full max-w-4xl">
       <h2 class="text-xl font-semibold mb-4">{{ course && course.id ? 'Kurs bearbeiten' : 'Kurs hinzufügen' }}</h2>
       <div class="overflow-y-auto max-h-[70vh]">
