@@ -1,5 +1,6 @@
 <template>
-    <div class="bg-white p-6 rounded-md shadow-md max-h-screen overflow-y-auto" :style="{ maxHeight: `calc(100vh - 80px)`, paddingTop: '20px', marginTop: '150px' }">
+  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-md shadow-md max-h-screen overflow-y-auto" :style="{ maxHeight: `calc(100vh - 80px)`, paddingTop: '20px', marginTop: '50px' }">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold">{{ isEditMode ? 'Kurstyp bearbeiten' : 'Kurstyp hinzufügen' }}</h2>
         <button @click="closeForm" class="text-gray-500 hover:text-gray-700 focus:outline-none">
@@ -133,90 +134,94 @@
         </div>
       </form>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, watch } from 'vue'
-  
-  const props = defineProps({
-    courseType: Object,
-    closeForm: Function,
-    saveCourseType: Function,
-    isEditMode: Boolean
-  })
-  
-  const form = ref({
-    course_type: '',
-    title: '',
-    description_long: '',
-    requirements: '',
-    keywords_group: '',
-    target_group_text: '',
-    degree_type1: '',
-    degree_title: '',
-    degree_type2: '',
-    examiner: '',
-    degree_add_qualification: '',
-    degree_entitled: '',
-    subsidy_description: '',
-    instruction_form: '',
-    instruction_type1: '',
-    instruction_form_name: '',
-    instruction_type2: '',
-    inhouse_seminar: false,
-    extra_occupational: false,
-    practical_part: false,
-    education_type1: '',
-    education_type2: '',
-    duration_type: '',
-    flexible_start: false,
-    segment_type2: '',
-    reference_classification_system_name: '',
-    fname: '',
-    fvalue: '',
-    price_amount: 0
-  })
-  
-  watch(() => props.courseType, (newCourseType) => {
-    if (newCourseType) {
-      form.value = { ...newCourseType }
-    } else {
-      form.value = {
-        course_type: '',
-        title: '',
-        description_long: '',
-        requirements: '',
-        keywords_group: '',
-        target_group_text: '',
-        degree_type1: '',
-        degree_title: '',
-        degree_type2: '',
-        examiner: '',
-        degree_add_qualification: '',
-        degree_entitled: '',
-        subsidy_description: '',
-        instruction_form: '',
-        instruction_type1: '',
-        instruction_form_name: '',
-        instruction_type2: '',
-        inhouse_seminar: false,
-        extra_occupational: false,
-        practical_part: false,
-        education_type1: '',
-        education_type2: '',
-        duration_type: '',
-        flexible_start: false,
-        segment_type2: '',
-        reference_classification_system_name: '',
-        fname: '',
-        fvalue: '',
-        price_amount: 0
-      }
+  </div>
+</template>
+
+<script setup>
+import { ref, watch } from 'vue'
+
+const props = defineProps({
+  courseType: Object,
+  closeForm: Function,
+  saveCourseType: Function,
+  isEditMode: Boolean
+})
+
+const form = ref({
+  course_type: '',
+  title: '',
+  description_long: '',
+  requirements: '',
+  keywords_group: '',
+  target_group_text: '',
+  degree_type1: '',
+  degree_title: '',
+  degree_type2: '',
+  examiner: '',
+  degree_add_qualification: '',
+  degree_entitled: '',
+  subsidy_description: '',
+  instruction_form: '',
+  instruction_type1: '',
+  instruction_form_name: '',
+  instruction_type2: '',
+  inhouse_seminar: false,
+  extra_occupational: false,
+  practical_part: false,
+  education_type1: '',
+  education_type2: '',
+  duration_type: '',
+  flexible_start: false,
+  segment_type2: '',
+  reference_classification_system_name: '',
+  fname: '',
+  fvalue: '',
+  price_amount: 0
+})
+
+watch(() => props.courseType, (newCourseType) => {
+  if (newCourseType) {
+    form.value = { ...newCourseType }
+  } else {
+    form.value = {
+      course_type: '',
+      title: '',
+      description_long: '',
+      requirements: '',
+      keywords_group: '',
+      target_group_text: '',
+      degree_type1: '',
+      degree_title: '',
+      degree_type2: '',
+      examiner: '',
+      degree_add_qualification: '',
+      degree_entitled: '',
+      subsidy_description: '',
+      instruction_form: '',
+      instruction_type1: '',
+      instruction_form_name: '',
+      instruction_type2: '',
+      inhouse_seminar: false,
+      extra_occupational: false,
+      practical_part: false,
+      education_type1: '',
+      education_type2: '',
+      duration_type: '',
+      flexible_start: false,
+      segment_type2: '',
+      reference_classification_system_name: '',
+      fname: '',
+      fvalue: '',
+      price_amount: 0
     }
-  }, { immediate: true })
-  
-  const submitForm = () => {
-    props.saveCourseType(form.value)
   }
-  </script>
-  
+}, { immediate: true })
+
+const submitForm = () => {
+  props.saveCourseType(form.value)
+}
+</script>
+
+<style scoped>
+/* Add any additional styles here if necessary */
+</style>

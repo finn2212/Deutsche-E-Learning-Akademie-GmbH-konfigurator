@@ -7,12 +7,6 @@
         <label class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
         <p class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">{{ form[field.name] }}</p>
       </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700">Emails</label>
-        <div v-for="(email, index) in form.emails" :key="index" class="flex items-center">
-          <p class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">{{ email }}</p>
-        </div>
-      </div>
     </div>
     <div v-else>
       <p>Loading settings...</p>
@@ -33,74 +27,49 @@ const { $supabase } = useNuxtApp()
 
 const form = ref({
   supplier_id_ref: '',
-  contact: '',
+  supplier_alt_pid: '',
+  contact_type: '',
   contact_role: '',
   salutation: '',
   first_name: '',
   last_name: '',
   phone: '',
-  mobile: '',
-  fax: '',
-  emails: [''],
   email: '',
   url: '',
-  id_db: '',
   contact_remarks: '',
-  address_name: '',
-  street: '',
-  zip: '',
-  city: '',
-  state: '',
-  country: '',
-  address_remarks: '',
-  extended_info: '',
+  certificate_status: '',
+  certifier_number: '',
   institution: '',
   institution_type: '',
-  reference_classification_system_name: '',
-  fname: '',
-  fvalue: '',
-  service_price_details: '',
-  service_price: '',
-  price_amount: '',
-  price_currency: '',
-  remarks: ''
+  name: '',
+  name2: '',
+  mime_source: ''
 })
 
 const settingsLoaded = ref(false)
 
 const fields = [
   { name: 'supplier_id_ref', label: 'Supplier ID Ref' },
-  { name: 'contact', label: 'Contact' },
+  { name: 'supplier_alt_pid', label: 'Supplier Alt PID' },
+  { name: 'contact_type', label: 'Contact Type' },
   { name: 'contact_role', label: 'Contact Role' },
   { name: 'salutation', label: 'Salutation' },
   { name: 'first_name', label: 'First Name' },
   { name: 'last_name', label: 'Last Name' },
   { name: 'phone', label: 'Phone' },
-  { name: 'mobile', label: 'Mobile' },
-  { name: 'fax', label: 'Fax' },
   { name: 'email', label: 'Email' },
   { name: 'url', label: 'URL' },
-  { name: 'id_db', label: 'ID DB' },
   { name: 'contact_remarks', label: 'Contact Remarks' },
-  { name: 'address_name', label: 'Address Name' },
-  { name: 'street', label: 'Street' },
-  { name: 'zip', label: 'ZIP' },
-  { name: 'city', label: 'City' },
-  { name: 'state', label: 'State' },
-  { name: 'country', label: 'Country' },
-  { name: 'address_remarks', label: 'Address Remarks' },
-  { name: 'extended_info', label: 'Extended Info' },
+  { name: 'certificate_status', label: 'Certificate Status' },
+  { name: 'certifier_number', label: 'Certifier Number' },
   { name: 'institution', label: 'Institution' },
   { name: 'institution_type', label: 'Institution Type' },
-  { name: 'reference_classification_system_name', label: 'Reference Classification System Name' },
-  { name: 'fname', label: 'FNAME' },
-  { name: 'fvalue', label: 'FVALUE' },
-  { name: 'service_price_details', label: 'Service Price Details' },
-  { name: 'service_price', label: 'Service Price' },
-  { name: 'price_amount', label: 'Price Amount' },
-  { name: 'price_currency', label: 'Price Currency' },
-  { name: 'remarks', label: 'Remarks' }
+  { name: 'name', label: 'Name' },
+  { name: 'name2', label: 'Name2' },
+  { name: 'mime_source', label: 'MIME Source' }
 ]
+
+const emit = defineEmits(['nextStep'])
 
 const nextStep = () => {
   emit('nextStep')
@@ -115,9 +84,6 @@ const loadSettings = async () => {
   if (error) {
     console.error(error)
   } else if (data) {
-    if (typeof data.emails === 'string') {
-      data.emails = data.emails.replace(/{|}/g, '').split(',')
-    }
     form.value = data
     settingsLoaded.value = true
   } else {

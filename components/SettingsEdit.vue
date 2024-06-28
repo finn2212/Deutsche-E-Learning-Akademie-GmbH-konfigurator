@@ -14,19 +14,6 @@
           />
         </div>
       </div>
-      <div class="mb-4">
-        <label for="emails" class="block text-sm font-medium text-gray-700">Emails</label>
-        <div v-for="(email, index) in form.emails" :key="index" class="flex items-center">
-          <input
-            v-model="form.emails[index]"
-            type="email"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="Enter Email"
-          />
-          <button type="button" @click="removeEmail(index)" class="ml-2 font-semibold text-red-600 hover:text-red-500">Remove</button>
-        </div>
-        <button type="button" @click="addEmail" class="mt-2 font-semibold text-green-600 hover:text-green-500">Add Email</button>
-      </div>
       <div class="flex justify-end">
         <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded">{{ isEditMode ? 'Update' : 'Save' }}</button>
       </div>
@@ -46,19 +33,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['saved'])
 
-const addEmail = () => {
-  props.form.emails.push('')
-}
-
-const removeEmail = (index) => {
-  props.form.emails.splice(index, 1)
-}
-
 const saveSettings = async () => {
   const formCopy = JSON.parse(JSON.stringify(props.form))
-  formCopy.emails = `{${formCopy.emails.join(',')}}` // Convert emails array to PostgreSQL array format
-
-  if (!formCopy.id_db) formCopy.id_db = null;
 
   const { data, error } = await $supabase
     .from('organization_settings')
@@ -67,7 +43,6 @@ const saveSettings = async () => {
   if (error) {
     console.error(error)
   } else {
-    formCopy.emails = formCopy.emails.replace(/{|}/g, '').split(',') // Revert emails to array for frontend
     emit('saved', formCopy)
   }
 }
