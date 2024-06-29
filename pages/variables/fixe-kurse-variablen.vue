@@ -31,6 +31,7 @@
       <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
         <li v-for="courseType in courseTypes" :key="courseType.id" class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow relative">
           <div class="flex flex-1 flex-col p-8 text-left">
+            <h3 class="text-sm font-medium text-gray-900">Type: {{ courseType.type }}</h3>
             <h3 class="text-sm font-medium text-gray-900">Title: {{ courseType.title }}</h3>
             <p class="text-sm text-gray-500 mt-2">Description: {{ courseType.description_long }}</p>
             <p class="text-sm text-gray-500 mt-2">Requirements: {{ courseType.requirements }}</p>
@@ -59,6 +60,7 @@
             <p class="text-sm text-gray-500 mt-2">FNAME: {{ courseType.fname }}</p>
             <p class="text-sm text-gray-500 mt-2">FVALUE: {{ courseType.fvalue }}</p>
             <p class="text-sm text-gray-500 mt-2">Price Amount: {{ courseType.price_amount }}</p>
+            <p class="text-sm text-gray-500 mt-2">Price Currency: {{ courseType.price_currency }}</p>
           </div>
           <div>
             <div class="-mt-px flex divide-x divide-gray-200">
@@ -110,6 +112,7 @@ const closeAddCourseTypeForm = () => {
 }
 
 const addCourseType = async (courseType) => {
+  courseType.price_currency = 'EUR' // Set default value
   const { data, error } = await $supabase
     .from('course_types')
     .insert([courseType])

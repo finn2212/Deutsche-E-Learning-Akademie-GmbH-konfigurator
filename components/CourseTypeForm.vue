@@ -12,6 +12,10 @@
       <form @submit.prevent="submitForm">
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div class="mb-4">
+            <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
+            <input v-model="form.type" type="text" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Type" />
+          </div>
+          <div class="mb-4">
             <label for="course_type" class="block text-sm font-medium text-gray-700">Kurs Type</label>
             <input v-model="form.course_type" type="text" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Course Type" />
           </div>
@@ -125,7 +129,11 @@
           </div>
           <div class="mb-4">
             <label for="price_amount" class="block text-sm font-medium text-gray-700">Price Amount</label>
-            <input v-model="form.price_amount" type="number" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Price Amount" />
+            <input v-model="form.price_amount" type="number" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Price Amount" />
+          </div>
+          <div class="mb-4">
+            <label for="price_currency" class="block text-sm font-medium text-gray-700">Price Currency</label>
+            <input v-model="form.price_currency" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Price Currency" />
           </div>
         </div>
         <div class="flex justify-end sticky bottom-0 bg-white py-4">
@@ -148,6 +156,7 @@ const props = defineProps({
 })
 
 const form = ref({
+  type: '',
   course_type: '',
   title: '',
   description_long: '',
@@ -176,7 +185,8 @@ const form = ref({
   reference_classification_system_name: '',
   fname: '',
   fvalue: '',
-  price_amount: 0
+  price_amount: 0,
+  price_currency: 'EUR'
 })
 
 watch(() => props.courseType, (newCourseType) => {
@@ -184,6 +194,7 @@ watch(() => props.courseType, (newCourseType) => {
     form.value = { ...newCourseType }
   } else {
     form.value = {
+      type: '',
       course_type: '',
       title: '',
       description_long: '',
@@ -212,7 +223,8 @@ watch(() => props.courseType, (newCourseType) => {
       reference_classification_system_name: '',
       fname: '',
       fvalue: '',
-      price_amount: 0
+      price_amount: 0,
+      price_currency: 'EUR'
     }
   }
 }, { immediate: true })

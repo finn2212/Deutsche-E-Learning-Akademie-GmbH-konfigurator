@@ -11,6 +11,7 @@
       <!-- Preview section -->
       <div v-if="selectedCourseTypeDetails" class="mb-4 p-4 border rounded-md shadow-sm bg-gray-50">
         <h4 class="text-lg font-semibold mb-2">Course Type Details</h4>
+        <p><strong>Type:</strong> {{ selectedCourseTypeDetails.type }}</p>
         <p><strong>Title:</strong> {{ selectedCourseTypeDetails.title }}</p>
         <p><strong>Description:</strong> {{ selectedCourseTypeDetails.description_long }}</p>
         <p><strong>Requirements:</strong> {{ selectedCourseTypeDetails.requirements }}</p>
@@ -39,6 +40,7 @@
         <p><strong>FNAME:</strong> {{ selectedCourseTypeDetails.fname }}</p>
         <p><strong>FVALUE:</strong> {{ selectedCourseTypeDetails.fvalue }}</p>
         <p><strong>Price Amount:</strong> {{ selectedCourseTypeDetails.price_amount }}</p>
+        <p><strong>Price Currency:</strong> {{ selectedCourseTypeDetails.price_currency }}</p>
       </div>
       <div class="flex justify-end sticky bottom-0 bg-white py-4">
         <button type="button" @click="prevStep" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Back</button>
@@ -89,7 +91,6 @@ const prevStep = () => {
 watch(selectedCourseType, (newCourseTypeId) => {
   if (newCourseTypeId) {
     selectedCourseTypeDetails.value = courseTypes.value.find(type => type.id === newCourseTypeId)
-    emit('nextStep', selectedCourseType.value)
   } else {
     selectedCourseTypeDetails.value = null
   }
