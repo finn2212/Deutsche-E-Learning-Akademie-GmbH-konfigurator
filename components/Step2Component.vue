@@ -57,7 +57,7 @@ import { useNuxtApp } from '#app'
 const props = defineProps({
   course: Object
 })
-const emit = defineEmits(['prevStep', 'nextStep'])
+const emit = defineEmits(['prevStep', 'nextStep', 'courseTypeLoaded'])
 const selectedCourseType = ref(null)
 const selectedCourseTypeDetails = ref(null)
 const courseTypes = ref([])
@@ -91,6 +91,7 @@ const prevStep = () => {
 watch(selectedCourseType, (newCourseTypeId) => {
   if (newCourseTypeId) {
     selectedCourseTypeDetails.value = courseTypes.value.find(type => type.id === newCourseTypeId)
+    emit('courseTypeLoaded', selectedCourseTypeDetails.value) // Emit the selected course type details
   } else {
     selectedCourseTypeDetails.value = null
   }

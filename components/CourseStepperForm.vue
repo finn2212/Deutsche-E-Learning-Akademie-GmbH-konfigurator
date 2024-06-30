@@ -6,8 +6,8 @@
         <Stepper :steps="steps" :modelValue="currentStep">
           <template #default="{ currentStep }">
             <Step1Component v-if="currentStep === 0" :course="course" @nextStep="nextStep" @close="closeForm" />
-            <Step2Component v-if="currentStep === 1" :course="course" @prevStep="prevStep" @nextStep="nextStepWithCourseType" @close="closeForm" />
-            <Step3Component v-if="currentStep === 2" :course="course" :selectedCourseType="selectedCourseType" @prevStep="prevStep" @close="closeForm" @add-course="addCourse" @course-saved="courseSaved" />
+            <Step2Component v-if="currentStep === 1" :course="course" @prevStep="prevStep" @nextStep="nextStepWithCourseType" @courseTypeLoaded="updateSelectedCourseType" @close="closeForm" />
+            <Step3Component v-if="currentStep === 2" :course="course" :selectedCourseType="selectedCourseType.id" @prevStep="prevStep" @close="closeForm" @add-course="addCourse" @course-saved="courseSaved" />
           </template>
         </Stepper>
       </div>
@@ -49,9 +49,8 @@ const prevStep = () => {
   }
 }
 
-const updateStep = (newStep) => {
-  // Prevent step labels from being clickable
-  // Do not update the currentStep value
+const updateSelectedCourseType = (courseTypeDetails) => {
+  selectedCourseType.value = courseTypeDetails
 }
 
 const closeForm = () => {
