@@ -14,7 +14,7 @@ import SettingsView from '../../components/SettingsView.vue'
 import SettingsEdit from '../../components/SettingsEdit.vue'
 import { useNuxtApp } from '#app'
 
-const { $supabase } = useNuxtApp()
+  const { $supabase } = useNuxtApp()
 const form = ref({
   supplier_id_ref: '',
   supplier_alt_pid: '',

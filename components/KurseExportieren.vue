@@ -18,10 +18,12 @@
             <h3 class="text-sm font-medium text-gray-900">Number of selected courses: {{ selectedCourses.length }}</h3>
           </div>
           <div>
-            <h3 class="text-sm font-medium text-gray-900">Possible combinations: {{ calculateCombinations() }}</h3>
+            <h3 class="text-sm font-medium text-gray-900">Possible combinations: {{ combinations }}</h3>
           </div>
           <div>
-            <button @click="exportCourses" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <button @click="exportCourses" :disabled="isLoading"
+              class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              <span v-if="isLoading" class="spinner-border spinner-border-sm mr-2"></span>
               Export Courses
             </button>
           </div>
@@ -32,8 +34,11 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
-import { create } from 'xmlbuilder2'
+import { defineProps, onMounted, ref } from 'vue'
+import { useNuxtApp } from '#app'
+import XmlHelper from '../helper/xmlHelper' // Adjust the path accordingly
+
+const { $supabase } = useNuxtApp()
 
 const props = defineProps({
   courses: {
@@ -46,71 +51,58 @@ const props = defineProps({
   }
 })
 
+const combinations = ref(0)
+const isLoading = ref(false)
+
 const getCourseName = (courseId) => {
   const course = props.courses.find(course => course.id === courseId)
   return course ? course.name : 'Unknown Course'
 }
 
-const calculateCombinations = () => {
-  let combinations = 0
-  props.selectedCourses.forEach(courseId => {
-    const course = props.courses.find(course => course.id === courseId)
-    if (course) {
-      const titles = course.titles.length
-      const times = course.start_time_ids.length
-      const locations = course.location_ids.length
-      combinations += titles * times * locations
-    }
-  })
-  return combinations
+const fetchOrganizationSettings = async () => {
+  const { data, error } = await $supabase
+    .from('organization_settings')
+    .select('*')
+    .single()
+
+  if (error) {
+    console.error('Error fetching organization settings:', error)
+    return null
+  }
+
+  return data
 }
 
-const exportCourses = () => {
-  let exportData = []
-  props.selectedCourses.forEach(courseId => {
-    const course = props.courses.find(course => course.id === courseId)
-    if (course) {
-      const titles = course.titles
-      const times = getStartTimesForCourse(course.start_time_ids)
-      const locations = getLocationNames(course.location_ids)
+const fetchCourseType = async (courseTypeId) => {
+  const { data, error } = await $supabase
+    .from('course_types')
+    .select('*')
+    .eq('id', courseTypeId)
+    .single()
 
-      titles.forEach(title => {
-        times.forEach(time => {
-          locations.forEach(location => {
-            exportData.push({ title, time, location })
-          })
-        })
-      })
-    }
-  })
+  if (error) {
+    console.error('Error fetching course type:', error)
+    return null
+  }
 
-  const xml = create({ version: '1.0', encoding: 'UTF-8' })
-    .ele('Courses')
+  return data
+}
 
-  exportData.forEach(data => {
-    xml.ele('Course')
-      .ele('Title').txt(data.title).up()
-      .ele('Time').txt(data.time).up()
-      .ele('Location').txt(data.location).up()
-      .up()
-  })
+const exportCourses = async () => {
+  isLoading.value = true
+  const organizationSettings = await fetchOrganizationSettings()
+  const courseType = await fetchCourseType(props.courses[0].course_type)
 
-  const xmlString = xml.end({ prettyPrint: true })
+  if (!organizationSettings || !courseType) {
+    console.error('Failed to fetch organization settings')
+    isLoading.value = false
+    return
+  }
+
+  const xmlHelper = new XmlHelper(organizationSettings, courseType, props.courses[0])
+  const xmlString = await xmlHelper.generateXml()
   downloadXML(xmlString)
-}
-
-const getLocationNames = (locationIds) => {
-  const locations = props.courses.flatMap(course => course.locations || [])
-  return locations
-    .filter(loc => locationIds.includes(loc.id))
-    .map(loc => loc.name)
-}
-
-const getStartTimesForCourse = (startTimeIds) => {
-  const startTimes = props.courses.flatMap(course => course.start_times || [])
-  return startTimes
-    .filter(time => startTimeIds.includes(time.id))
-    .map(time => time.time)
+  isLoading.value = false
 }
 
 const downloadXML = (xmlString) => {
@@ -123,4 +115,37 @@ const downloadXML = (xmlString) => {
   link.click()
   document.body.removeChild(link)
 }
+
+onMounted(async () => {
+  isLoading.value = true
+  const organizationSettings = await fetchOrganizationSettings()
+  const courseType = await fetchCourseType(props.courses[0].course_type)
+
+  if (!organizationSettings || !courseType) {
+    console.error('Failed to fetch organization settings')
+    isLoading.value = false
+    return
+  }
+
+  const xmlHelper = new XmlHelper(organizationSettings, courseType, props.courses[0])
+  combinations.value = (await xmlHelper.calculateCombinations()).length
+  isLoading.value = false
+})
 </script>
+
+<style>
+.spinner-border {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: text-bottom;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+</style>
