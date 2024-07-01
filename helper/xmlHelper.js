@@ -47,36 +47,40 @@ class XmlHelper {
   }
 
   async calculateCombinations() {
-    const locations = await this.fetchLocations(this.course.location_ids)
-    const startTimes = await this.fetchStartTimes(this.course.start_time_ids)
-    const dates = await this.fetchDates(this.course.dates_ids)
-    const titles = this.course.titles
-    const types = this.course.types
+    const locations = await this.fetchLocations(this.course.location_ids);
+    const startTimes = await this.fetchStartTimes(this.course.start_time_ids);
+    const dates = await this.fetchDates(this.course.dates_ids);
+    const titles = this.course.titles;
+    const types = this.course.types;
 
-    const combinations = []
+    const combinations = [];
     for (const location of locations) {
       for (const startTime of startTimes) {
         for (const date of dates) {
           for (const title of titles) {
             for (const type of types) {
-              const combination = { location, startTime, date, title, type }
-              combinations.push(combination)
-              console.log('einzelne kombination', combination)
+              const combination = { location, startTime, date, title, type };
+              combinations.push(combination);
+              console.log("einzelne kombination", combination);
             }
           }
         }
       }
     }
 
-    console.log(`Total combinations: ${combinations.length}`)
-    return combinations
+    console.log(`Total combinations: ${combinations.length}`);
+    return combinations;
   }
 
   async generateXml() {
-    const combinations = await this.calculateCombinations()
+    const combinations = await this.calculateCombinations();
 
     // Create the XML document
-    const root = create({ version: "1.0", encoding: "iso-8859-15", standalone: "yes" })
+    const root = create({
+      version: "1.0",
+      encoding: "iso-8859-15",
+      standalone: "yes",
+    })
       .ele("OPENQCAT", {
         version: "1.1",
         "xsi:noNamespaceSchemaLocation": "openQ-cat.V1.1.xsd",
@@ -1008,8 +1012,8 @@ class XmlHelper {
         .txt(this.courseType.instruction_form_name)
         .up();
       extendedInfo
-        .ele("EDUCATION_TYPE", { type: this.courseType.eucation_type2 })
-        .txt(this.courseType.education_type2)
+        .ele("EDUCATION_TYPE", { type: this.courseType.education_type2 })
+        .txt(this.courseType.education_type2_name)
         .up()
         .up();
       const moduleCourse = education.ele("MODULE_COURSE");
@@ -1033,7 +1037,11 @@ class XmlHelper {
         .up();
       location.ele("URL").txt(this.organizationSettings.url).up();
       location.ele("ID_DB").txt("1086152").up();
-      location.ele("ADDRESS_REMARKS").txt(this.organizationSettings.contact_remarks).up().up();
+      location
+        .ele("ADDRESS_REMARKS")
+        .txt(this.organizationSettings.contact_remarks)
+        .up()
+        .up();
       moduleCourse
         .ele("DURATION", { type: this.courseType.duration_type })
         .up();
@@ -1048,6 +1056,51 @@ class XmlHelper {
       moduleCourse
         .ele("EXTENDED_INFO")
         .ele("SEGMENT_TYPE", { type: this.courseType.segment_type2 })
+        .up()
+        .up()
+        .up();
+
+      serviceDetails
+        .ele("ANNOUNCEMENT")
+        .ele("START_DATE")
+        .txt(combination.date.start_date)
+        .up()
+        .ele("END_DATE")
+        .txt(combination.date.end_date)
+        .up()
+        .up();
+      service
+        .ele("SERVICE_CLASSIFICATION")
+        .ele("REFERENCE_CLASSIFICATION_SYSTEM_NAME")
+        .txt("Kurssystematik")
+        .up()
+        .ele("FEATURE")
+        .ele("FNAME")
+        .txt(this.courseType.fname)
+        .up()
+        .ele("FVALUE")
+        .txt(this.courseType.fvalue)
+        .up()
+        .up()
+        .up();
+      service
+        .ele("SERVICE_PRICE_DETAILS")
+        .ele("SERVICE_PRICE")
+        .ele("PRICE_AMOUNT")
+        .txt(this.courseType.price_amount)
+        .up()
+        .ele("PRICE_CURRENCY")
+        .txt(this.courseType.price_currency)
+        .up()
+        .up()
+        .up();
+      service
+        .ele("MIME_INFO")
+        .ele("MIME_ELEMENT")
+        .ele("MIME_SOURCE")
+        .txt(
+            this.organizationSettings.mime_source
+        )
         .up()
         .up()
         .up();
