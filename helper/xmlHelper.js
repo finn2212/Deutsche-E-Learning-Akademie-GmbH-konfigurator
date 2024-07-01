@@ -76,7 +76,7 @@ class XmlHelper {
     const combinations = await this.calculateCombinations()
 
     // Create the XML document
-    const root = create({ version: "1.0", encoding: "iso-8859-15" })
+    const root = create({ version: "1.0", encoding: "iso-8859-15", standalone: "yes" })
       .ele("OPENQCAT", {
         version: "1.1",
         "xsi:noNamespaceSchemaLocation": "openQ-cat.V1.1.xsd",
@@ -913,6 +913,7 @@ class XmlHelper {
       contact.ele("FIRST_NAME").txt(this.organizationSettings.first_name).up();
       contact.ele("LAST_NAME").txt(this.organizationSettings.last_name).up();
       contact.ele("PHONE").txt(this.organizationSettings.phone).up();
+      contact.ele("MOBILE").txt("").up();
       contact
         .ele("EMAILS")
         .ele("EMAIL")
@@ -951,7 +952,7 @@ class XmlHelper {
         .up();
       const serviceModule = serviceDetails.ele("SERVICE_MODULE");
       const education = serviceModule.ele("EDUCATION", {
-        type: this.courseType.education_type1,
+        type: this.courseType.type,
       });
       education.ele("COURSE_ID").txt(this.course.course_id).up();
       const degree = education.ele("DEGREE", {
@@ -1007,8 +1008,8 @@ class XmlHelper {
         .txt(this.courseType.instruction_form_name)
         .up();
       extendedInfo
-        .ele("EDUCATION_TYPE", { type: this.courseType.education_type2 })
-        .txt(this.courseType.education_type2_name)
+        .ele("EDUCATION_TYPE", { type: this.courseType.eucation_type2 })
+        .txt(this.courseType.education_type2)
         .up()
         .up();
       const moduleCourse = education.ele("MODULE_COURSE");
@@ -1031,7 +1032,8 @@ class XmlHelper {
         .up()
         .up();
       location.ele("URL").txt(this.organizationSettings.url).up();
-      location.ele("ADDRESS_REMARKS").txt("Düsseldorf Hauptbahnhof").up().up();
+      location.ele("ID_DB").txt("1086152").up();
+      location.ele("ADDRESS_REMARKS").txt(this.organizationSettings.contact_remarks).up().up();
       moduleCourse
         .ele("DURATION", { type: this.courseType.duration_type })
         .up();
