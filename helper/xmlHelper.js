@@ -933,11 +933,11 @@ class XmlHelper {
       const serviceDate = serviceDetails.ele("SERVICE_DATE");
       serviceDate.ele("START_DATE").txt(combination.date.start_date).up();
       serviceDate.ele("END_DATE").txt(combination.date.end_date).up();
-      serviceDate
-        .ele("DATE_REMARKS")
-        .txt(this.courseType.date_remarks || "Einzelne Präsenztage vor Ort")
-        .up()
-        .up();
+    //   serviceDate
+    //     .ele("DATE_REMARKS")
+    //     .txt(this.courseType.date_remarks || "Einzelne Präsenztage vor Ort")
+    //     .up()
+    //     .up();
       const keywords = this.courseType.keywords_group
         .split(",")
         .map((keyword) => keyword.trim());
@@ -1020,11 +1020,11 @@ class XmlHelper {
       const location = moduleCourse.ele("LOCATION");
       location.ele("NAME").txt(this.organizationSettings.name).up();
       location.ele("NAME2").txt(this.organizationSettings.name2).up();
-      location.ele("STREET").txt("Graf-Adolf-Str. 108").up();
+    //   location.ele("STREET").txt("Graf-Adolf-Str. 108").up();
       location.ele("ZIP").txt(combination.location.plz).up();
       location.ele("ZIPBOX").txt(combination.location.plz).up();
       location.ele("CITY").txt(combination.location.ort).up();
-      location.ele("DISTRICT").txt("Innenstadt / Hauptbahnhof").up();
+    //   location.ele("DISTRICT").txt("Innenstadt / Hauptbahnhof").up();
       location.ele("STATE").txt(combination.location.bundesland).up();
       location.ele("COUNTRY").txt(combination.location.land).up();
       location.ele("PHONE").txt(this.organizationSettings.phone).up();
@@ -1036,12 +1036,12 @@ class XmlHelper {
         .up()
         .up();
       location.ele("URL").txt(this.organizationSettings.url).up();
-      location.ele("ID_DB").txt("1086152").up();
-      location
-        .ele("ADDRESS_REMARKS")
-        .txt(this.organizationSettings.contact_remarks)
-        .up()
-        .up();
+    //   location.ele("ID_DB").txt("1086152").up();
+    //   location
+    //     .ele("ADDRESS_REMARKS")
+    //     .txt(this.organizationSettings.contact_remarks)
+    //     .up()
+    //     .up();
       moduleCourse
         .ele("DURATION", { type: this.courseType.duration_type })
         .up();
