@@ -10,6 +10,16 @@ class XmlHelper {
     this.supabase = $supabase;
   }
 
+  addHoursToTime(time, hoursToAdd) {
+    const [hours, minutes, seconds] = time.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours + hoursToAdd, minutes, seconds);
+    const newHours = String(date.getHours()).padStart(2, '0');
+    const newMinutes = String(date.getMinutes()).padStart(2, '0');
+    const newSeconds = String(date.getSeconds()).padStart(2, '0');
+    return `${newHours}:${newMinutes}:${newSeconds}`;
+  }
+
   async fetchLocations(locationIds) {
     const { data, error } = await this.supabase
       .from("places")
@@ -287,11 +297,11 @@ class XmlHelper {
 
     const newCatalog = root.ele("NEW_CATALOG", { FULLCATALOG: "true" });
 
-    combinations.forEach((combination) => {
+    combinations.forEach((combination, i) => {
       const service = newCatalog.ele("SERVICE", { mode: "new" });
       service
         .ele("PRODUCT_ID")
-        .txt(this.courseType.product_id || "")
+        .txt("B110" + i)
         .up();
       service.ele("COURSE_TYPE").txt(this.courseType.course_type).up();
       service
@@ -331,8 +341,8 @@ class XmlHelper {
         .up()
         .up();
       const serviceDate = serviceDetails.ele("SERVICE_DATE");
-      serviceDate.ele("START_DATE").txt(combination.date.start_date).up();
-      serviceDate.ele("END_DATE").txt(combination.date.end_date).up();
+      serviceDate.ele("START_DATE").txt(combination.date.start_date + "T00:00:00.000+02:00").up();
+      serviceDate.ele("END_DATE").txt(combination.date.end_date + "T00:00:00.000+02:00").up();
     //   serviceDate
     //     .ele("DATE_REMARKS")
     //     .txt(this.courseType.date_remarks || "Einzelne Präsenztage vor Ort")
@@ -356,9 +366,11 @@ class XmlHelper {
         .up();
       const serviceModule = serviceDetails.ele("SERVICE_MODULE");
       const education = serviceModule.ele("EDUCATION", {
-        type: this.courseType.type,
+        type: "true",
       });
-      education.ele("COURSE_ID").txt(this.courseType.product_id || "").up();
+      education.ele("COURSE_ID")
+      .txt("B110" + i)
+      .up();
       const degree = education.ele("DEGREE", {
         type: this.courseType.degree_type1,
       });
@@ -378,7 +390,7 @@ class XmlHelper {
         .txt(this.courseType.degree_entitled)
         .up()
         .up();
-      education.ele("SUBSIDY").txt(this.courseType.subsidy_description).up();
+      // education.ele("SUBSIDY").txt(this.courseType.subsidy_description).up();
       // education
       //   .ele("REGISTRATION_DATE")
       //   .txt(this.course.registration_date || "2024-06-24T00:00:00.000+02:00")
@@ -459,15 +471,15 @@ class XmlHelper {
         .up()
         .up()
         .up();
-
+        const endDateWithAddedTime = this.addHoursToTime(combination.startTime.time, 8);
       serviceDetails
         .ele("ANNOUNCEMENT")
         .ele("START_DATE")
-        .txt(combination.date.start_date + "+" + combination.startTime.time)
+        .txt(combination.date.start_date + "+02:00")
         .up()
         .ele("END_DATE")
         //plus 8 urhzeit TODO
-        .txt(combination.date.end_date + "+" + combination.startTime.time)
+        .txt(combination.date.end_date + "+02:00" )
         .up()
         .up();
       service
