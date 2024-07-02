@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2 class="text-2xl font-bold mb-4">View Organisation Settings</h2>
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div class="mb-4" v-for="field in fields" :key="field.name">
         <label class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
