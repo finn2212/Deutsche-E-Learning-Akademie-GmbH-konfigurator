@@ -106,15 +106,37 @@ const exportCourses = async () => {
 }
 
 const downloadXML = (xmlString) => {
-  const blob = new Blob([xmlString], { type: 'application/xml' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = 'exported_courses.xml'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-}
+  // Get current date and time
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const year = now.getFullYear();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+
+  // Format the date and time as DD.MM.YYYY-HH:MM
+  const formattedDateTime = `${day}.${month}.${year}-${hours}:${minutes}`;
+
+  // Create the filename
+  const filename = `DELA-Kursexport-${formattedDateTime}.xml`;
+
+  // Create a Blob from the XML string
+  const blob = new Blob([xmlString], { type: 'application/xml' });
+
+  // Create a URL for the Blob
+  const url = URL.createObjectURL(blob);
+
+  // Create a link element
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+
+  // Append the link to the document, click it to start the download, then remove it
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 
 onMounted(async () => {
   isLoading.value = true

@@ -301,7 +301,7 @@ class XmlHelper {
       const service = newCatalog.ele("SERVICE", { mode: "new" });
       service
         .ele("PRODUCT_ID")
-        .txt("B110" + i)
+        .txt("dela-00" + i)
         .up();
       service.ele("COURSE_TYPE").txt(this.courseType.course_type).up();
       service
@@ -369,7 +369,7 @@ class XmlHelper {
         type: "true",
       });
       education.ele("COURSE_ID")
-      .txt("B110" + i)
+      .txt("dela-00" + i)
       .up();
       const degree = education.ele("DEGREE", {
         type: this.courseType.degree_type1,
