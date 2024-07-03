@@ -301,7 +301,7 @@ class XmlHelper {
       const service = newCatalog.ele("SERVICE", { mode: "new" });
       service
         .ele("PRODUCT_ID")
-        .txt("dela-00" + i)
+        .txt("000000" + i)
         .up();
       service.ele("COURSE_TYPE").txt(this.courseType.course_type).up();
       service
@@ -369,7 +369,7 @@ class XmlHelper {
         type: "true",
       });
       education.ele("COURSE_ID")
-      .txt("dela-00" + i)
+      .txt("000000" + i)
       .up();
       const degree = education.ele("DEGREE", {
         type: this.courseType.degree_type1,
@@ -423,10 +423,14 @@ class XmlHelper {
         .ele("INSTRUCTION_FORM", { type: this.courseType.instruction_type1 })
         .txt(this.courseType.instruction_form_name)
         .up();
+        extendedInfo
+        .ele("INSTRUCTION_TIME", { type: combination.type === 'Teilzeit' ? 2 : 1 })
+        .txt(combination.type)
+        .up();
       extendedInfo
-        .ele("EDUCATION_TYPE", { type: this.courseType.education_type2 })
+        .ele("EDUCATION_TYPE", { type: "102" })
         .txt(this.courseType.education_type2_name)
-        .up()
+        .up()     
         .up();
       const moduleCourse = education.ele("MODULE_COURSE");
       const location = moduleCourse.ele("LOCATION");
@@ -496,7 +500,7 @@ class XmlHelper {
         .up()
         .up()
         .up();
-      service
+        service
         .ele("SERVICE_PRICE_DETAILS")
         .ele("SERVICE_PRICE")
         .ele("PRICE_AMOUNT")
@@ -505,6 +509,9 @@ class XmlHelper {
         .ele("PRICE_CURRENCY")
         .txt(this.courseType.price_currency)
         .up()
+        .up()
+        .ele("REMARKS")
+        .txt(this.courseType.subsidy_description)
         .up()
         .up();
       service

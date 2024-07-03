@@ -114,11 +114,11 @@ const downloadXML = (xmlString) => {
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
 
-  // Format the date and time as DD.MM.YYYY-HH:MM
-  const formattedDateTime = `${day}.${month}.${year}-${hours}:${minutes}`;
+  // Format the date and time as DDMMYYHHMM
+  const formattedDateTime = `${day}${month}${String(year).slice(2)}${hours}${minutes}`;
 
   // Create the filename
-  const filename = `DELA-Kursexport-${formattedDateTime}.xml`;
+  const filename = `DELAKursexport${formattedDateTime}.xml`;
 
   // Create a Blob from the XML string
   const blob = new Blob([xmlString], { type: 'application/xml' });
@@ -136,6 +136,7 @@ const downloadXML = (xmlString) => {
   link.click();
   document.body.removeChild(link);
 };
+
 
 
 onMounted(async () => {
