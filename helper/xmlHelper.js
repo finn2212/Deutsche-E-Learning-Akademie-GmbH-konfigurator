@@ -436,9 +436,9 @@ class XmlHelper {
       const location = moduleCourse.ele("LOCATION");
       location.ele("NAME").txt(this.organizationSettings.name).up();
       location.ele("NAME2").txt(this.organizationSettings.name2).up();
+      location.ele("STREET").txt(combination.location.strasse).up();
     //   location.ele("STREET").txt("Graf-Adolf-Str. 108").up();
       location.ele("ZIP").txt(combination.location.plz).up();
-      location.ele("ZIPBOX").txt(combination.location.plz).up();
       location.ele("CITY").txt(combination.location.ort).up();
     //   location.ele("DISTRICT").txt("Innenstadt / Hauptbahnhof").up();
       location.ele("STATE").txt(combination.location.bundesland).up();
