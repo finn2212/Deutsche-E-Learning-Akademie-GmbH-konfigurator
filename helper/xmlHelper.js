@@ -341,8 +341,10 @@ class XmlHelper {
         .up()
         .up();
       const serviceDate = serviceDetails.ele("SERVICE_DATE");
-      serviceDate.ele("START_DATE").txt(combination.date.start_date + "T00:00:00.000+02:00").up();
-      serviceDate.ele("END_DATE").txt(combination.date.end_date + "T00:00:00.000+02:00").up();
+      serviceDate.ele("START_DATE").txt(combination.date.start_date).up();
+      serviceDate.ele("END_DATE").txt(combination.date.end_date).up();
+      // serviceDate.ele("START_DATE").txt(combination.date.start_date + "T00:00:00.000+02:00").up();
+      // serviceDate.ele("END_DATE").txt(combination.date.end_date + "T00:00:00.000+02:00").up();
     //   serviceDate
     //     .ele("DATE_REMARKS")
     //     .txt(this.courseType.date_remarks || "Einzelne Präsenztage vor Ort")
@@ -479,11 +481,13 @@ class XmlHelper {
       serviceDetails
         .ele("ANNOUNCEMENT")
         .ele("START_DATE")
-        .txt(combination.date.start_date + "+02:00")
+        .txt(combination.date.start_date)
+        // .txt(combination.date.start_date + "+02:00")
         .up()
         .ele("END_DATE")
         //plus 8 urhzeit TODO
-        .txt(combination.date.end_date + "+02:00" )
+        .txt(combination.date.end_date)
+        // .txt(combination.date.end_date + "+02:00" )
         .up()
         .up();
       service
