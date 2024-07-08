@@ -430,16 +430,16 @@ class XmlHelper {
         .txt(combination.type)
         .up();
         extendedInfo
-        .ele("INHOUSE_SEMINAR", false)
-        .txt(combination.type)
+        .ele("INHOUSE_SEMINAR")
+        .txt(false)
         .up();
         extendedInfo
-        .ele("EXTRA_OCCUPATIONAL", false )
-        .txt(combination.type)
+        .ele("EXTRA_OCCUPATIONAL")
+        .txt(false)
         .up();
         extendedInfo
-        .ele("PRACTICAL_PART", false)
-        .txt(combination.type)
+        .ele("PRACTICAL_PART")
+        .txt(false)
         .up();
       extendedInfo
         .ele("EDUCATION_TYPE", { type: this.courseType.education_type2 })
