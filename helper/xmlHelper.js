@@ -429,6 +429,18 @@ class XmlHelper {
         .ele("INSTRUCTION_TIME", { type: combination.type === 'Teilzeit' ? 2 : 1 })
         .txt(combination.type)
         .up();
+        extendedInfo
+        .ele("INHOUSE_SEMINAR", false)
+        .txt(combination.type)
+        .up();
+        extendedInfo
+        .ele("EXTRA_OCCUPATIONAL", false )
+        .txt(combination.type)
+        .up();
+        extendedInfo
+        .ele("PRACTICAL_PART", false)
+        .txt(combination.type)
+        .up();
       extendedInfo
         .ele("EDUCATION_TYPE", { type: this.courseType.education_type2 })
         .txt(this.courseType.education_type2_name)
