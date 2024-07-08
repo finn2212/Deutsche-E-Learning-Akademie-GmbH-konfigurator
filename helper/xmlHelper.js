@@ -430,7 +430,7 @@ class XmlHelper {
         .txt(combination.type)
         .up();
       extendedInfo
-        .ele("EDUCATION_TYPE", { type: "102" })
+        .ele("EDUCATION_TYPE", { type: this.courseType.education_type2 })
         .txt(this.courseType.education_type2_name)
         .up()     
         .up();
