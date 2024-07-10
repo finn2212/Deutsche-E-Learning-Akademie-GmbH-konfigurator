@@ -462,7 +462,7 @@ class XmlHelper {
       location
         .ele("EMAILS")
         .ele("EMAIL")
-        .txt(this.organizationSettings.email)
+        .txt('')
         .up()
         .up();
       location.ele("URL").txt(this.organizationSettings.url).up();
