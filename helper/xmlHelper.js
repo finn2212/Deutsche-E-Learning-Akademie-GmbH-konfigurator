@@ -88,7 +88,7 @@ class XmlHelper {
     // Create the XML document
     const root = create({
       version: "1.0",
-      encoding: "UTF-8",
+      encoding: "iso-8859-15",
       standalone: "yes",
     })
       .ele("OPENQCAT", {
@@ -114,7 +114,7 @@ class XmlHelper {
       .txt("KURSNET-Export")
       .up()
       .ele("GENERATION_DATE")
-      .txt("2024-06-24T10:05:29.353+02:00")
+      .txt("2024-07-09T09:56:09.912+02:00")
       .up()
       .up()
       .ele("DOCUMENT_CREATOR")
@@ -316,7 +316,7 @@ class XmlHelper {
         .up();
       serviceDetails
         .ele("SUPPLIER_ALT_PID")
-        .txt(this.courseType.product_id || "")
+        .txt("266026029")
         .up();
       const contact = serviceDetails.ele("CONTACT");
       contact
