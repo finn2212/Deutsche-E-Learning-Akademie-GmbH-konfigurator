@@ -328,7 +328,7 @@ class XmlHelper {
       contact.ele("LAST_NAME").txt(this.organizationSettings.last_name).up();
       contact.ele("PHONE").txt(this.organizationSettings.phone).up();
       contact.ele("MOBILE").txt("").up();
-      contact
+      contact 
         .ele("EMAILS")
         .ele("EMAIL")
         .txt(this.organizationSettings.email)
@@ -448,17 +448,17 @@ class XmlHelper {
         .up();
       const moduleCourse = education.ele("MODULE_COURSE");
       const location = moduleCourse.ele("LOCATION");
-      location.ele("NAME").txt(this.organizationSettings.name).up();
-      location.ele("NAME2").txt(this.organizationSettings.name2).up();
-      location.ele("STREET").txt(combination.location.strasse).up();
+      location.ele("NAME").txt('').up();
+      location.ele("NAME2").txt('').up();
+      location.ele("STREET").txt('').up();
     //   location.ele("STREET").txt("Graf-Adolf-Str. 108").up();
-      location.ele("ZIP").txt(combination.location.plz).up();
-      location.ele("CITY").txt(combination.location.ort).up();
+      location.ele("ZIP").txt('').up();
+      location.ele("CITY").txt('').up();
     //   location.ele("DISTRICT").txt("Innenstadt / Hauptbahnhof").up();
-      location.ele("STATE").txt(combination.location.bundesland).up();
-      location.ele("COUNTRY").txt(combination.location.land).up();
-      location.ele("PHONE").txt(this.organizationSettings.phone).up();
-      location.ele("FAX").txt(this.organizationSettings.fax).up();
+      location.ele("STATE").txt('').up();
+      location.ele("COUNTRY").txt('').up();
+      location.ele("PHONE").txt('').up();
+      location.ele("FAX").txt('').up();
       location
         .ele("EMAILS")
         .ele("EMAIL")
