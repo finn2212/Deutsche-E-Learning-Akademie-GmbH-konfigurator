@@ -449,29 +449,30 @@ class XmlHelper {
       const moduleCourse = education.ele("MODULE_COURSE");
       const location = moduleCourse.ele("LOCATION");
       location.ele("NAME").txt('').up();
-      location.ele("NAME2").txt('').up();
-      location.ele("STREET").txt('').up();
+      // location.ele("NAME2").txt('').up();
+      // location.ele("STREET").txt('').up();
     //   location.ele("STREET").txt("Graf-Adolf-Str. 108").up();
       location.ele("ZIP").txt('').up();
       location.ele("CITY").txt('').up();
+      location.ele("ID_DB").txt('').up();
     //   location.ele("DISTRICT").txt("Innenstadt / Hauptbahnhof").up();
-      location.ele("STATE").txt('').up();
-      location.ele("COUNTRY").txt('').up();
-      location.ele("PHONE").txt('').up();
-      location.ele("FAX").txt('').up();
-      location
-        .ele("EMAILS")
-        .ele("EMAIL")
-        .txt('')
-        .up()
-        .up();
-      location.ele("URL").txt(this.organizationSettings.url).up();
-    //   location.ele("ID_DB").txt("1086152").up();
-    //   location
-    //     .ele("ADDRESS_REMARKS")
-    //     .txt(this.organizationSettings.contact_remarks)
-    //     .up()
-    //     .up();
+      // location.ele("STATE").txt('').up();
+      // location.ele("COUNTRY").txt('').up();
+      // location.ele("PHONE").txt('').up();
+      // location.ele("FAX").txt('').up();
+      // location
+      //   .ele("EMAILS")
+      //   .ele("EMAIL")
+      //   .txt('')
+      //   .up()
+      //   .up();
+    //   location.ele("URL").txt('').up();
+    // //   location.ele("ID_DB").txt("1086152").up();
+    // //   location
+    // //     .ele("ADDRESS_REMARKS")
+    // //     .txt(this.organizationSettings.contact_remarks)
+    // //     .up()
+    // //     .up();
       moduleCourse
         .ele("DURATION", { type: this.courseType.duration_type })
         .up();
