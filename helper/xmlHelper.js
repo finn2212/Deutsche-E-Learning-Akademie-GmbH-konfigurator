@@ -11,12 +11,12 @@ class XmlHelper {
   }
 
   addHoursToTime(time, hoursToAdd) {
-    const [hours, minutes, seconds] = time.split(':').map(Number);
+    const [hours, minutes, seconds] = time.split(":").map(Number);
     const date = new Date();
     date.setHours(hours + hoursToAdd, minutes, seconds);
-    const newHours = String(date.getHours()).padStart(2, '0');
-    const newMinutes = String(date.getMinutes()).padStart(2, '0');
-    const newSeconds = String(date.getSeconds()).padStart(2, '0');
+    const newHours = String(date.getHours()).padStart(2, "0");
+    const newMinutes = String(date.getMinutes()).padStart(2, "0");
+    const newSeconds = String(date.getSeconds()).padStart(2, "0");
     return `${newHours}:${newMinutes}:${newSeconds}`;
   }
 
@@ -57,6 +57,7 @@ class XmlHelper {
   }
 
   async calculateCombinations() {
+    console.log(this.courseType.instruction_type1)
     const locations = await this.fetchLocations(this.course.location_ids);
     const startTimes = await this.fetchStartTimes(this.course.start_time_ids);
     const dates = await this.fetchDates(this.course.dates_ids);
@@ -64,19 +65,36 @@ class XmlHelper {
     const types = this.course.types;
 
     const combinations = [];
-    for (const location of locations) {
+    if (this.courseType.instruction_type1 === "201") {
+      console.log("whichout locations")
       for (const startTime of startTimes) {
         for (const date of dates) {
           for (const title of titles) {
             for (const type of types) {
-              const combination = { location, startTime, date, title, type };
+              const combination = { startTime, date, title, type };
               combinations.push(combination);
-              console.log("einzelne kombination", combination);
+            
+            }
+          }
+        }
+      }
+    } else {
+      for (const location of locations) {
+        console.log("including locations")
+        for (const startTime of startTimes) {
+          for (const date of dates) {
+            for (const title of titles) {
+              for (const type of types) {
+                const combination = { location, startTime, date, title, type };
+                combinations.push(combination);
+               
+              }
             }
           }
         }
       }
     }
+    
 
     console.log(`Total combinations: ${combinations.length}`);
     return combinations;
@@ -314,10 +332,7 @@ class XmlHelper {
         .ele("DESCRIPTION_LONG")
         .txt(this.courseType.description_long)
         .up();
-      serviceDetails
-        .ele("SUPPLIER_ALT_PID")
-        .txt("266026029")
-        .up();
+      serviceDetails.ele("SUPPLIER_ALT_PID").txt("266026029").up();
       const contact = serviceDetails.ele("CONTACT");
       contact
         .ele("CONTACT_ROLE", { type: this.organizationSettings.contact_type })
@@ -328,7 +343,7 @@ class XmlHelper {
       contact.ele("LAST_NAME").txt(this.organizationSettings.last_name).up();
       contact.ele("PHONE").txt(this.organizationSettings.phone).up();
       contact.ele("MOBILE").txt("").up();
-      contact 
+      contact
         .ele("EMAILS")
         .ele("EMAIL")
         .txt(this.organizationSettings.email)
@@ -343,13 +358,19 @@ class XmlHelper {
       const serviceDate = serviceDetails.ele("SERVICE_DATE");
       // serviceDate.ele("START_DATE").txt(combination.date.start_date).up();
       // serviceDate.ele("END_DATE").txt(combination.date.end_date).up();
-      serviceDate.ele("START_DATE").txt(combination.date.start_date + "T00:00:00.000+02:00").up();
-      serviceDate.ele("END_DATE").txt(combination.date.end_date + "T00:00:00.000+02:00").up();
-    //   serviceDate
-    //     .ele("DATE_REMARKS")
-    //     .txt(this.courseType.date_remarks || "Einzelne Präsenztage vor Ort")
-    //     .up()
-    //     .up();
+      serviceDate
+        .ele("START_DATE")
+        .txt(combination.date.start_date + "T00:00:00.000+02:00")
+        .up();
+      serviceDate
+        .ele("END_DATE")
+        .txt(combination.date.end_date + "T00:00:00.000+02:00")
+        .up();
+      //   serviceDate
+      //     .ele("DATE_REMARKS")
+      //     .txt(this.courseType.date_remarks || "Einzelne Präsenztage vor Ort")
+      //     .up()
+      //     .up();
       const keywords = this.courseType.keywords_group
         .split(",")
         .map((keyword) => keyword.trim());
@@ -370,9 +391,10 @@ class XmlHelper {
       const education = serviceModule.ele("EDUCATION", {
         type: "true",
       });
-      education.ele("COURSE_ID")
-      .txt("000000" + i)
-      .up();
+      education
+        .ele("COURSE_ID")
+        .txt("000000" + i)
+        .up();
       const degree = education.ele("DEGREE", {
         type: this.courseType.degree_type1,
       });
@@ -425,54 +447,49 @@ class XmlHelper {
         .ele("INSTRUCTION_FORM", { type: this.courseType.instruction_type1 })
         .txt(this.courseType.instruction_form_name)
         .up();
-        extendedInfo
-        .ele("INSTRUCTION_TIME", { type: combination.type === 'Teilzeit' ? 2 : 1 })
+      extendedInfo
+        .ele("INSTRUCTION_TIME", {
+          type: combination.type === "Teilzeit" ? 2 : 1,
+        })
         .txt(combination.type)
         .up();
-        extendedInfo
-        .ele("INHOUSE_SEMINAR")
-        .txt(false)
-        .up();
-        extendedInfo
-        .ele("EXTRA_OCCUPATIONAL")
-        .txt(false)
-        .up();
-        extendedInfo
-        .ele("PRACTICAL_PART")
-        .txt(false)
-        .up();
+      extendedInfo.ele("INHOUSE_SEMINAR").txt(false).up();
+      extendedInfo.ele("EXTRA_OCCUPATIONAL").txt(false).up();
+      extendedInfo.ele("PRACTICAL_PART").txt(false).up();
       extendedInfo
         .ele("EDUCATION_TYPE", { type: this.courseType.education_type2 })
         .txt(this.courseType.education_type2_name)
-        .up()     
+        .up()
         .up();
       const moduleCourse = education.ele("MODULE_COURSE");
       const location = moduleCourse.ele("LOCATION");
-      location.ele("NAME").txt('').up();
-      // location.ele("NAME2").txt('').up();
-      // location.ele("STREET").txt('').up();
-    //   location.ele("STREET").txt("Graf-Adolf-Str. 108").up();
-      location.ele("ZIP").txt('').up();
-      location.ele("CITY").txt('').up();
-      location.ele("ID_DB").txt('').up();
-    //   location.ele("DISTRICT").txt("Innenstadt / Hauptbahnhof").up();
-      // location.ele("STATE").txt('').up();
-      // location.ele("COUNTRY").txt('').up();
-      // location.ele("PHONE").txt('').up();
-      // location.ele("FAX").txt('').up();
-      // location
-      //   .ele("EMAILS")
-      //   .ele("EMAIL")
-      //   .txt('')
-      //   .up()
-      //   .up();
-    //   location.ele("URL").txt('').up();
-    // //   location.ele("ID_DB").txt("1086152").up();
-    // //   location
-    // //     .ele("ADDRESS_REMARKS")
-    // //     .txt(this.organizationSettings.contact_remarks)
-    // //     .up()
-    // //     .up();
+      if (this.courseType.instruction_type1 != "201") {
+        location.ele("NAME").txt(this.organizationSettings.name).up();
+        location.ele("NAME2").txt(this.organizationSettings.name2).up();
+        location.ele("STREET").txt(combination.location.strasse).up();
+        location.ele("STREET").txt("Graf-Adolf-Str. 108").up();
+        location.ele("ZIP").txt(combination.location.plz).up();
+        location.ele("CITY").txt(combination.location.ort).up();
+        location.ele("DISTRICT").txt("Innenstadt / Hauptbahnhof").up();
+        location.ele("STATE").txt(combination.location.bundesland).up();
+        location.ele("COUNTRY").txt(combination.location.land).up();
+        location.ele("PHONE").txt(this.organizationSettings.phone).up();
+        location.ele("FAX").txt(this.organizationSettings.fax).up();
+        location.ele("EMAILS").ele("EMAIL").txt("").up().up();
+        location.ele("URL").txt("").up();
+      } else {
+        location.ele("NAME").txt("").up();
+        location.ele("ZIP").txt("").up();
+        location.ele("CITY").txt("").up();
+        location.ele("ID_DB").txt("").up();
+      }
+
+      //   location.ele("ID_DB").txt("1086152").up();
+      //   location
+      //     .ele("ADDRESS_REMARKS")
+      //     .txt(this.organizationSettings.contact_remarks)
+      //     .up()
+      //     .up();
       moduleCourse
         .ele("DURATION", { type: this.courseType.duration_type })
         .up();
@@ -490,7 +507,10 @@ class XmlHelper {
         .up()
         .up()
         .up();
-        const endDateWithAddedTime = this.addHoursToTime(combination.startTime.time, 8);
+      const endDateWithAddedTime = this.addHoursToTime(
+        combination.startTime.time,
+        8
+      );
       serviceDetails
         .ele("ANNOUNCEMENT")
         .ele("START_DATE")
@@ -500,7 +520,7 @@ class XmlHelper {
         .ele("END_DATE")
         //plus 8 urhzeit TODO
         // .txt(combination.date.end_date)
-        .txt(combination.date.end_date + "+02:00" )
+        .txt(combination.date.end_date + "+02:00")
         .up()
         .up();
       service
@@ -517,7 +537,7 @@ class XmlHelper {
         .up()
         .up()
         .up();
-        service
+      service
         .ele("SERVICE_PRICE_DETAILS")
         .ele("SERVICE_PRICE")
         .ele("PRICE_AMOUNT")
@@ -535,9 +555,7 @@ class XmlHelper {
         .ele("MIME_INFO")
         .ele("MIME_ELEMENT")
         .ele("MIME_SOURCE")
-        .txt(
-            this.organizationSettings.mime_source
-        )
+        .txt(this.organizationSettings.mime_source)
         .up()
         .up()
         .up();
