@@ -106,7 +106,7 @@ class XmlHelper {
     // Create the XML document
     const root = create({
       version: "1.0",
-      encoding: "iso-8859-15",
+      encoding: "utf-8",
       standalone: "yes",
     })
       .ele("OPENQCAT", {
