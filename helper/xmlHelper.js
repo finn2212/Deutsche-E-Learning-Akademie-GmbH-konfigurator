@@ -1,5 +1,6 @@
 import { create } from "xmlbuilder2";
 import { useNuxtApp } from "#app";
+import { format, addYears } from 'date-fns';
 
 class XmlHelper {
   constructor(organizationSettings, courseType, course) {
@@ -57,7 +58,7 @@ class XmlHelper {
   }
 
   async calculateCombinations() {
-    console.log(this.courseType.instruction_type1)
+    console.log(this.courseType.instruction_type1);
     const locations = await this.fetchLocations(this.course.location_ids);
     const startTimes = await this.fetchStartTimes(this.course.start_time_ids);
     const dates = await this.fetchDates(this.course.dates_ids);
@@ -66,35 +67,32 @@ class XmlHelper {
 
     const combinations = [];
     if (this.courseType.instruction_type1 === "201") {
-      console.log("whichout locations")
+      console.log("whichout locations");
       for (const startTime of startTimes) {
         for (const date of dates) {
           for (const title of titles) {
             for (const type of types) {
               const combination = { startTime, date, title, type };
               combinations.push(combination);
-            
             }
           }
         }
       }
     } else {
       for (const location of locations) {
-        console.log("including locations")
+        console.log("including locations");
         for (const startTime of startTimes) {
           for (const date of dates) {
             for (const title of titles) {
               for (const type of types) {
                 const combination = { location, startTime, date, title, type };
                 combinations.push(combination);
-               
               }
             }
           }
         }
       }
     }
-    
 
     console.log(`Total combinations: ${combinations.length}`);
     return combinations;
@@ -509,16 +507,21 @@ class XmlHelper {
         combination.startTime.time,
         8
       );
+      // Format the dates as required
+      const today = new Date();
+      const nextYear = addYears(today, 1);
+      const formattedStartDate = format(today, "yyyy-MM-dd'+02:00'");
+      const formattedEndDate = format(nextYear, "yyyy-MM-dd'+02:00'");
       serviceDetails
         .ele("ANNOUNCEMENT")
         .ele("START_DATE")
         // .txt(combination.date.start_date)
-        .txt(combination.date.start_date + "+02:00")
+        .txt(formattedStartDate)
         .up()
         .ele("END_DATE")
         //plus 8 urhzeit TODO
         // .txt(combination.date.end_date)
-        .txt(combination.date.end_date + "+02:00")
+        .txt(formattedEndDate)
         .up()
         .up();
       service
