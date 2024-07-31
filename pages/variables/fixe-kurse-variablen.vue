@@ -61,6 +61,7 @@
             <p class="text-sm text-gray-500 mt-2">FVALUE: {{ courseType.fvalue }}</p>
             <p class="text-sm text-gray-500 mt-2">Price Amount: {{ courseType.price_amount }}</p>
             <p class="text-sm text-gray-500 mt-2">Price Currency: {{ courseType.price_currency }}</p>
+            <p class="text-sm text-gray-500 mt-2">Measure Number: {{ courseType.measure_number }}</p> 
           </div>
           <div>
             <div class="-mt-px flex divide-x divide-gray-200">

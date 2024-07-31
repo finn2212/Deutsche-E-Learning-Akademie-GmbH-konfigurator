@@ -41,6 +41,7 @@
         <p><strong>FVALUE:</strong> {{ selectedCourseTypeDetails.fvalue }}</p>
         <p><strong>Price Amount:</strong> {{ selectedCourseTypeDetails.price_amount }}</p>
         <p><strong>Price Currency:</strong> {{ selectedCourseTypeDetails.price_currency }}</p>
+        <p><strong>Measure Number:</strong> {{ selectedCourseTypeDetails.measure_number }}</p>
       </div>
       <div class="flex justify-end sticky bottom-0 bg-white py-4">
         <button type="button" @click="prevStep" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Back</button>

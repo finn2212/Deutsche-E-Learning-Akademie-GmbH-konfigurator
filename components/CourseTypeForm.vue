@@ -135,6 +135,10 @@
             <label for="price_currency" class="block text-sm font-medium text-gray-700">Price Currency</label>
             <input v-model="form.price_currency" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Price Currency" />
           </div>
+          <div class="mb-4">
+            <label for="measure_numbery" class="block text-sm font-medium text-gray-700">Measure Number</label>
+            <input v-model="form.measure_number" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Measure Number" />
+          </div>
         </div>
         <div class="flex justify-end sticky bottom-0 bg-white py-4">
           <button type="button" @click="closeForm" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
@@ -186,7 +190,8 @@ const form = ref({
   fname: '',
   fvalue: '',
   price_amount: 0,
-  price_currency: 'EUR'
+  price_currency: 'EUR',
+  measure_number: ''
 })
 
 watch(() => props.courseType, (newCourseType) => {
@@ -224,7 +229,8 @@ watch(() => props.courseType, (newCourseType) => {
       fname: '',
       fvalue: '',
       price_amount: 0,
-      price_currency: 'EUR'
+      price_currency: 'EUR',
+      measure_number: ''
     }
   }
 }, { immediate: true })

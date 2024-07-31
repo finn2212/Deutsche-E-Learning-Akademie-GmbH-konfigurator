@@ -458,6 +458,10 @@ class XmlHelper {
         .ele("EDUCATION_TYPE", { type: this.courseType.education_type2 })
         .txt(this.courseType.education_type2_name)
         .up()
+        extendedInfo
+        .ele("MEASURE_NUMBER")
+        .txt(this.courseType.measure_number)
+        .up()
         .up();
       const moduleCourse = education.ele("MODULE_COURSE");
       const location = moduleCourse.ele("LOCATION");
@@ -512,18 +516,18 @@ class XmlHelper {
       const nextYear = addYears(today, 1);
       const formattedStartDate = format(today, "yyyy-MM-dd'+02:00'");
       const formattedEndDate = format(nextYear, "yyyy-MM-dd'+02:00'");
-      serviceDetails
-        .ele("ANNOUNCEMENT")
-        .ele("START_DATE")
-        // .txt(combination.date.start_date)
-        .txt(formattedStartDate)
-        .up()
-        .ele("END_DATE")
-        //plus 8 urhzeit TODO
-        // .txt(combination.date.end_date)
-        .txt(formattedEndDate)
-        .up()
-        .up();
+      // serviceDetails
+      //   .ele("ANNOUNCEMENT")
+      //   .ele("START_DATE")
+      //   // .txt(combination.date.start_date)
+      //   .txt(formattedStartDate)
+      //   .up()
+      //   .ele("END_DATE")
+      //   //plus 8 urhzeit TODO
+      //   // .txt(combination.date.end_date)
+      //   .txt(formattedEndDate)
+      //   .up()
+      //   .up();
       service
         .ele("SERVICE_CLASSIFICATION")
         .ele("REFERENCE_CLASSIFICATION_SYSTEM_NAME")
