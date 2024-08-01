@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+    <h1 class="text-2xl font-bold mb-4">Start</h1>
     <div class="mt-6">
       <h2 class="text-xl font-semibold">Schritte zur Konfiguration</h2>
       <ul class="list-decimal list-inside mt-2">
