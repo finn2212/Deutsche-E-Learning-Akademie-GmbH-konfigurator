@@ -83,12 +83,10 @@ class XmlHelper {
         console.log("including locations");
         for (const startTime of startTimes) {
           for (const date of dates) {
-            for (const title of titles) {
               for (const type of types) {
-                const combination = { location, startTime, date, title, type };
+                const combination = { location, startTime, date, type };
                 combinations.push(combination);
               }
-            }
           }
         }
       }
@@ -312,9 +310,16 @@ class XmlHelper {
       .up();
 
     const newCatalog = root.ele("NEW_CATALOG", { FULLCATALOG: "true" });
+    const titels = this.course.titles;
 
-    combinations.forEach((combination, i) => {
-      const service = newCatalog.ele("SERVICE", { mode: "new" });
+    titels.forEach((titel, i) => {
+      combinations.forEach((combination, combination_index) => {
+      let service;
+      if (combination_index === 0) {
+        service = newCatalog.ele("SERVICE", { mode: "new" });
+      } else {
+        service = newCatalog.ele("SERVICE");
+      }
       service
         .ele("PRODUCT_ID")
         .txt("000000" + i)
@@ -325,7 +330,7 @@ class XmlHelper {
         .txt(this.organizationSettings.supplier_id_ref)
         .up();
       const serviceDetails = service.ele("SERVICE_DETAILS");
-      serviceDetails.ele("TITLE").txt(combination.title).up();
+      serviceDetails.ele("TITLE").txt(titel).up();
       serviceDetails
         .ele("DESCRIPTION_LONG")
         .txt(this.courseType.description_long)
@@ -565,7 +570,7 @@ class XmlHelper {
         .up()
         .up();
     });
-
+  });
     return root.end({ prettyPrint: true });
   }
 }
