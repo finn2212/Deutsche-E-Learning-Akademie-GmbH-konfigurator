@@ -48,21 +48,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted, useNuxtApp } from '#imports'
+import { ref, onMounted, useAsyncData, useNuxtApp } from '#imports'
 import { useRouter } from 'vue-router'
 import Spinner from '@/components/Spinner.vue'
 
-const nuxtApp = useNuxtApp();
-const subdomain = ref('');
+// Fetch the subdomain using useAsyncData to ensure it's available on the client side
+const { data: ssrSubdomain } = useAsyncData('subdomain', async () => {
+  const nuxtApp = useNuxtApp();
+  return nuxtApp.ssrContext?.subdomain || 'default';
+});
+
+const subdomain = ref('default');
 
 onMounted(() => {
-  debugger
-  if (nuxtApp.ssrContext) {
-    console.log('SSR Context:', nuxtApp.ssrContext); // Log the entire SSR context
-    if (nuxtApp.ssrContext.subdomain) {
-      subdomain.value = nuxtApp.ssrContext.subdomain;
-    }
-  }
+  subdomain.value = ssrSubdomain.value; // Set the subdomain value from SSR
   console.log('Initial client-side subdomain:', subdomain.value);
 });
 
