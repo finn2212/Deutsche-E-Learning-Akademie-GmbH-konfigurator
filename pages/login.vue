@@ -56,6 +56,7 @@ const nuxtApp = useNuxtApp();
 const subdomain = ref('');
 
 onMounted(() => {
+  debugger
   if (nuxtApp.ssrContext) {
     console.log('SSR Context:', nuxtApp.ssrContext); // Log the entire SSR context
     if (nuxtApp.ssrContext.subdomain) {
