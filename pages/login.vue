@@ -58,7 +58,7 @@ const { data: ssrSubdomain } = useAsyncData('subdomain', async () => {
   return nuxtApp.ssrContext?.subdomain || 'default';
 });
 
-const subdomain = ref('default');
+const subdomain = ref('');
 
 onMounted(() => {
   subdomain.value = ssrSubdomain.value; // Set the subdomain value from SSR
