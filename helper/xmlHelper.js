@@ -392,7 +392,7 @@ class XmlHelper {
         .up();
       const serviceModule = serviceDetails.ele("SERVICE_MODULE");
       const education = serviceModule.ele("EDUCATION", {
-        type: "true",
+        type: combination_index === 0 ? "true" : "false",
       });
       education
         .ele("COURSE_ID")
