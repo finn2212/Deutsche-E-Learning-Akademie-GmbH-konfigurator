@@ -44,6 +44,7 @@
       </div>
     </div>
   </div>
+  <h1>Welcome to {{ subdomain }}!</h1>
 </template>
 
 <script setup>
@@ -51,6 +52,9 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Spinner from '@/components/Spinner.vue'
 import { definePageMeta, useNuxtApp } from '#imports'
+
+const nuxtApp = useNuxtApp();
+const subdomain = nuxtApp.ssrContext?.subdomain
 
 const email = ref('')
 const password = ref('')
