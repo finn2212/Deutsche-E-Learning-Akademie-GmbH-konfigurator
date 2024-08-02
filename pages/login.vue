@@ -56,9 +56,11 @@ const nuxtApp = useNuxtApp();
 const subdomain = ref('');
 
 onMounted(() => {
-  // Adjust this check to ensure you're getting the expected values
-  if (nuxtApp.ssrContext && nuxtApp.ssrContext.subdomain) {
-    subdomain.value = nuxtApp.ssrContext.subdomain;
+  if (nuxtApp.ssrContext) {
+    console.log('SSR Context:', nuxtApp.ssrContext); // Log the entire SSR context
+    if (nuxtApp.ssrContext.subdomain) {
+      subdomain.value = nuxtApp.ssrContext.subdomain;
+    }
   }
   console.log('Initial client-side subdomain:', subdomain.value);
 });
