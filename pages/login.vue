@@ -44,17 +44,28 @@
       </div>
     </div>
   </div>
-  <h1>Welcome to {{ subdomain }}!</h1>
+  <h1>Welcome to {{ subdomain }}</h1>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, useNuxtApp } from '#imports'
 import { useRouter } from 'vue-router'
 import Spinner from '@/components/Spinner.vue'
-import { definePageMeta, useNuxtApp } from '#imports'
 
+// Access nuxtApp instance
 const nuxtApp = useNuxtApp();
-const subdomain = nuxtApp.ssrContext?.subdomain
+const subdomain = ref('');
+
+// Use onMounted to initialize the subdomain value
+onMounted(() => {
+  if (process.server) {
+    subdomain.value = nuxtApp.ssrContext?.subdomain || 'default';
+  } else {
+    // For debugging: print initial subdomain
+    console.log('Initial client-side subdomain:', nuxtApp.ssrContext?.subdomain);
+    subdomain.value = nuxtApp.ssrContext?.subdomain || 'default';
+  }
+});
 
 const email = ref('')
 const password = ref('')

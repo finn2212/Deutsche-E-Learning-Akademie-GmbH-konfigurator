@@ -2,7 +2,7 @@
 
 import { defineNuxtRouteMiddleware, useNuxtApp, useRequestHeaders } from '#app';
 
-export default defineNuxtRouteMiddleware(() => {
+export default defineNuxtRouteMiddleware((context) => {
   const headers = useRequestHeaders();
   const nuxtApp = useNuxtApp();
 
@@ -12,13 +12,7 @@ export default defineNuxtRouteMiddleware(() => {
 
     // Safely add the subdomain to the existing ssrContext object
     if (nuxtApp.ssrContext) {
-      (nuxtApp.ssrContext as any).subdomain = subdomain;
-    }
-  } else if (process.client) {
-    // On client-side, check if ssrContext already has the subdomain set
-    if (nuxtApp.ssrContext && !(nuxtApp.ssrContext as any).subdomain) {
-      // Add subdomain to ssrContext on the client-side only if not already set
-      (nuxtApp.ssrContext as any).subdomain = 'default';
+      nuxtApp.ssrContext.subdomain = subdomain;
     }
   }
 });
