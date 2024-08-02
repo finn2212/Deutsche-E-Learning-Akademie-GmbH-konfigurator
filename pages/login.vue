@@ -52,19 +52,15 @@ import { ref, onMounted, useNuxtApp } from '#imports'
 import { useRouter } from 'vue-router'
 import Spinner from '@/components/Spinner.vue'
 
-// Access nuxtApp instance
 const nuxtApp = useNuxtApp();
 const subdomain = ref('');
 
-// Use onMounted to initialize the subdomain value
 onMounted(() => {
-  if (process.server) {
-    subdomain.value = nuxtApp.ssrContext?.subdomain || 'default';
-  } else {
-    // For debugging: print initial subdomain
-    console.log('Initial client-side subdomain:', nuxtApp.ssrContext?.subdomain);
-    subdomain.value = nuxtApp.ssrContext?.subdomain || 'default';
+  // Adjust this check to ensure you're getting the expected values
+  if (nuxtApp.ssrContext && nuxtApp.ssrContext.subdomain) {
+    subdomain.value = nuxtApp.ssrContext.subdomain;
   }
+  console.log('Initial client-side subdomain:', subdomain.value);
 });
 
 const email = ref('')
