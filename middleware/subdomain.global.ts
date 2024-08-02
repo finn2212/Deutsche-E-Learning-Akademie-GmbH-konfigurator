@@ -14,15 +14,11 @@ export default defineNuxtRouteMiddleware(() => {
     if (nuxtApp.ssrContext) {
       (nuxtApp.ssrContext as any).subdomain = subdomain;
     }
-  } else {
-    // Handle client-side or fallback
-    if (!process.server) {
-      // Ensure ssrContext exists before adding properties
-      if (!nuxtApp.ssrContext) {
-        nuxtApp.ssrContext = {} as any;
-      }
-      // Add subdomain to ssrContext on the client-side
-      (nuxtApp.ssrContext as any).subdomain = 'esn';
+  } else if (process.client) {
+    // On client-side, check if ssrContext already has the subdomain set
+    if (nuxtApp.ssrContext && !(nuxtApp.ssrContext as any).subdomain) {
+      // Add subdomain to ssrContext on the client-side only if not already set
+      (nuxtApp.ssrContext as any).subdomain = 'default';
     }
   }
 });
