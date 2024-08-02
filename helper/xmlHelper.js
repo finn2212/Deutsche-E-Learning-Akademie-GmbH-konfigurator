@@ -322,7 +322,7 @@ class XmlHelper {
       }
       service
         .ele("PRODUCT_ID")
-        .txt(i + "000" + combination_index)
+        .txt(i + "00" + combination_index)
         .up();
       service.ele("COURSE_TYPE").txt(this.courseType.course_type).up();
       service
