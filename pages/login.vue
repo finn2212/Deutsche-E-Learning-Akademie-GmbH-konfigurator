@@ -44,13 +44,26 @@
       </div>
     </div>
   </div>
+  <h1>Welcome to {{ subdomain }}</h1>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, useAsyncData, useNuxtApp } from '#imports'
 import { useRouter } from 'vue-router'
 import Spinner from '@/components/Spinner.vue'
-import { definePageMeta, useNuxtApp } from '#imports'
+
+// Fetch the subdomain using useAsyncData to ensure it's available on the client side
+const { data: ssrSubdomain } = useAsyncData('subdomain', async () => {
+  const nuxtApp = useNuxtApp();
+  return nuxtApp.ssrContext?.subdomain || 'default';
+});
+
+const subdomain = ref('');
+
+onMounted(() => {
+  subdomain.value = ssrSubdomain.value; // Set the subdomain value from SSR
+  console.log('Initial client-side subdomain:', subdomain.value);
+});
 
 const email = ref('')
 const password = ref('')
