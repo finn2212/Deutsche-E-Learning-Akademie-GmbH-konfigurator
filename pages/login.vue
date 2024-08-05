@@ -44,7 +44,7 @@
       </div>
     </div>
   </div>
-  <h1>Welcome to {{ subdomain }}</h1>
+  <!-- <h1>Welcome to {{ subdomain }}</h1> -->
 </template>
 
 <script setup>
