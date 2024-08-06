@@ -137,19 +137,22 @@ class XmlHelper {
   }
 
   async fetchCourseType(courseTypeId) {
+    console.log("courseTypeId:", courseTypeId); // Debugging line
+  
     const { data, error } = await this.supabase
       .from("course_types")
       .select("*")
-      .eq("id", courseTypeId)
+      .eq("id", courseTypeId.toString())
       .single();
-
+  
     if (error) {
       console.error("Error fetching course type:", error);
       return null;
     }
-
+  
     return data;
   }
+  
 
   async generateXml() {
     // Create the XML document
