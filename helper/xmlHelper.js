@@ -368,7 +368,6 @@ class XmlHelper {
     const newCatalog = root.ele("NEW_CATALOG", { FULLCATALOG: "true" });
   
     for (const course of this.selectedCourses) {
-      debugger
       let courseIndex = 0;
       const courseType = await this.fetchCourseType(course.course_type);
       const combinations = await this.returnCourseCombinations(courseType, course);
