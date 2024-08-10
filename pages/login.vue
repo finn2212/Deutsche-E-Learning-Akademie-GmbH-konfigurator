@@ -49,7 +49,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Spinner from '@/components/Spinner.vue'
+import Spinner from '@/components/layouts/Spinner.vue'
 import { definePageMeta, useNuxtApp } from '#imports'
 
 const email = ref('')

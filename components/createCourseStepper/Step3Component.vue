@@ -75,7 +75,7 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { useNuxtApp } from '#app'
-import Dropdown from '@/components/Dropdown.vue'
+import Dropdown from '@/components/layouts/Dropdown.vue'
 import { format } from 'date-fns'
 
 const props = defineProps({

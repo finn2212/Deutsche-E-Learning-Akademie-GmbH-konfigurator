@@ -119,7 +119,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useNuxtApp } from '#app'
-import CourseTypeForm from '~/components/CourseTypeForm.vue'
+import CourseTypeForm from '~/components/forms/CourseTypeForm.vue'
 
 const { $supabase } = useNuxtApp()
 const courseTypes = ref([])

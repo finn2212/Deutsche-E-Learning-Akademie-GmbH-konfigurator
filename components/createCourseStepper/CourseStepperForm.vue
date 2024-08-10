@@ -17,7 +17,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import Stepper from '@/components/createCourseStepper/Stepper.vue'
+import Stepper from '@/components/generalStepper/Stepper.vue'
 import Step1Component from '@/components/createCourseStepper/Step1Component.vue'
 import Step2Component from '@/components/createCourseStepper/Step2Component.vue'
 import Step3Component from '@/components/createCourseStepper/Step3Component.vue'
