@@ -1,7 +1,7 @@
 import { useCourseUtils } from '@/composables/useCourseUtils';
 import { format, addYears } from "date-fns";
 
-class IterationHelper {
+class IterationalHelper {
   constructor(organizationSettings) {
     this.organizationSettings = organizationSettings;
     const { fetchCourseType, returnCourseCombinations, fetchLocations, fetchStartTimes, fetchDates } = useCourseUtils();
@@ -276,4 +276,4 @@ class IterationHelper {
     }
   }
 }
-export default IterationHelper;
+export default IterationalHelper;

@@ -171,8 +171,6 @@ const downloadXML = (xmlString) => {
 }
 
 @keyframes spinner-border {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 </style>

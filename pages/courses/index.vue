@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import Stepper from '@/components/Stepper.vue'
+import Stepper from '@/components/createCourseStepper/Stepper.vue'
 import KurseKonfigurieren from '@/components/KurseKonfigurieren.vue'
 import KurseExportieren from '@/components/KurseExportieren.vue'
 import { useNuxtApp } from '#app'

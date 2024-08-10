@@ -1,5 +1,5 @@
-import FixedDataHelper from './fixedDataHelper';
-import IterationHelper from './IterationHelper';
+import HeaderHelper from './HeaderHelper';
+import IterationalHelper from './IterationalHelper';
 
 class XmlHelper {
   constructor(organizationSettings, selectedCourses) {
@@ -11,17 +11,16 @@ class XmlHelper {
   }
 
   async generateXml() {
-    const fixedDataHelper = new FixedDataHelper(this.organizationSettings);
-    const root = fixedDataHelper.generateFixedData();
+    const headerHelper = new HeaderHelper(this.organizationSettings);  // Correct variable name for instance
+    const root = headerHelper.generateFixedData();
   
     const newCatalog = root.ele("NEW_CATALOG", { FULLCATALOG: "true" });
   
-    const iterationHelper = new IterationHelper(this.organizationSettings);
-    await iterationHelper.generateServiceElements(newCatalog, this.selectedCourses);
+    const iterationalHelper = new IterationalHelper(this.organizationSettings);  // Use a different name for the instance
+    await iterationalHelper.generateServiceElements(newCatalog, this.selectedCourses);  // Correct the instance name
   
     return root.end({ prettyPrint: true });
   }
-  
 }
 
 export default XmlHelper;

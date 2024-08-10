@@ -64,7 +64,7 @@
 
 <script setup>
 import { ref, defineEmits, defineProps, watch, onMounted } from 'vue'
-import CourseStepperForm from '@/components/CourseStepperForm.vue'
+import CourseStepperForm from '@/components/createCourseStepper/CourseStepperForm'
 import { PlusIcon } from '@heroicons/vue/20/solid'
 import { useNuxtApp } from '#app'
 import { format } from 'date-fns'
