@@ -366,9 +366,9 @@ class XmlHelper {
       .up();
   
     const newCatalog = root.ele("NEW_CATALOG", { FULLCATALOG: "true" });
-  
+    let courseIndex = 0;
+    
     for (const course of this.selectedCourses) {
-      let courseIndex = 0;
       const courseType = await this.fetchCourseType(course.course_type);
       const combinations = await this.returnCourseCombinations(courseType, course);
       const titels = course.titles;
@@ -613,7 +613,7 @@ class XmlHelper {
             .up();
         });
       });
-      courseIndex ++;
+      courseIndex = courseIndex + 1;
     }
     return root.end({ prettyPrint: true });
   }
