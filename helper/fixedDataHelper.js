@@ -1,6 +1,6 @@
 import { create } from 'xmlbuilder2';
 
-class FixedDataHelper {
+class fixedDataHelper {
     constructor(organizationSettings) {
       this.organizationSettings = organizationSettings;
     }
@@ -216,5 +216,5 @@ class FixedDataHelper {
         .up();
     }
   }
-  export default FixedDataHelper;
+  export default fixedDataHelper;
   

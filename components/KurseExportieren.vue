@@ -69,7 +69,7 @@ onMounted(async () => {
     isLoading.value = false
     return
   }
-  combinations.value = await calculateCombinations(organizationSettings, selectedCoursesList.value)
+  combinations.value = await calculateCombinations(selectedCoursesList.value)
 
   isLoading.value = false
 })

@@ -5,7 +5,7 @@ class IterationHelper {
   constructor(organizationSettings) {
     this.organizationSettings = organizationSettings;
     const { fetchCourseType, returnCourseCombinations, fetchLocations, fetchStartTimes, fetchDates } = useCourseUtils();
-
+    
     this.fetchCourseType = fetchCourseType;
     this.returnCourseCombinations = returnCourseCombinations;
     this.fetchLocations = fetchLocations;
@@ -13,6 +13,7 @@ class IterationHelper {
     this.fetchDates = fetchDates;
   }
 
+  // Method to add hours to a given time
   addHoursToTime(time, hoursToAdd) {
     const [hours, minutes, seconds] = time.split(":").map(Number);
     const date = new Date();

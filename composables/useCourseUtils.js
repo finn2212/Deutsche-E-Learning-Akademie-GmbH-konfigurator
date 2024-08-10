@@ -1,5 +1,4 @@
 import { useNuxtApp } from "#app";
-import XmlHelper from '../helper/xmlHelper'; // Import the XmlHelper if needed
 
 export function useCourseUtils() {
   const { $supabase } = useNuxtApp(); // Correctly get the Supabase client with the $ prefix
@@ -89,7 +88,7 @@ export function useCourseUtils() {
     return combinations;
   };
 
-  const calculateCombinations = async (organizationSettings, selectedCourses) => {
+  const calculateCombinations = async (selectedCourses) => {
     let combinationCount = 0;
   
     for (const course of selectedCourses) {
