@@ -58,47 +58,25 @@ class XmlHelper {
   }
 
   async calculateCombinations() {
-    return 10;
-    // console.log(this.courseType.instruction_type1);
-    // const locations = await this.fetchLocations(this.course.location_ids);
-    // const startTimes = await this.fetchStartTimes(this.course.start_time_ids);
-    // const dates = await this.fetchDates(this.course.dates_ids);
-    // const titles = this.course.titles;
-    // const types = this.course.types;
-
-    // const combinations = [];
-    // if (this.courseType.instruction_type1 === "201") {
-    //   console.log("whichout locations");
-    //   for (const startTime of startTimes) {
-    //     for (const date of dates) {
-    //       for (const title of titles) {
-    //         for (const type of types) {
-    //           const combination = { startTime, date, title, type };
-    //           combinations.push(combination);
-    //         }
-    //       }
-    //     }
-    //   }
-    // } else {
-    //   for (const location of locations) {
-    //     console.log("including locations");
-    //     for (const startTime of startTimes) {
-    //       for (const date of dates) {
-    //           for (const type of types) {
-    //             const combination = { location, startTime, date, type };
-    //             combinations.push(combination);
-    //           }
-    //       }
-    //     }
-    // }
-    // }
-
-    // console.log(`Total combinations: ${combinations.length}`);
-    // return combinations;
+    let combinationCount = 0;
+  
+    for (const course of this.selectedCourses) {
+      const courseType = await this.fetchCourseType(course.course_type);
+      const combinations = await this.returnCourseCombinations(courseType, course);
+      const titles = course.titles;
+  
+      titles.forEach((title, i) => {
+        combinations.forEach((combination, combination_index) => {
+          combinationCount++;
+        });
+      });
+    }
+  
+    return combinationCount;
   }
+  
 
   async returnCourseCombinations(courseType, course) {
-    console.log(courseType.instruction_type1);
     const locations = await this.fetchLocations(course.location_ids);
     const startTimes = await this.fetchStartTimes(course.start_time_ids);
     const dates = await this.fetchDates(course.dates_ids);
@@ -107,7 +85,6 @@ class XmlHelper {
 
     const combinations = [];
     if (courseType.instruction_type1 === "201") {
-      console.log("whichout locations");
       for (const startTime of startTimes) {
         for (const date of dates) {
           for (const title of titles) {
@@ -120,7 +97,6 @@ class XmlHelper {
       }
     } else {
       for (const location of locations) {
-        console.log("including locations");
         for (const startTime of startTimes) {
           for (const date of dates) {
               for (const type of types) {
@@ -131,13 +107,10 @@ class XmlHelper {
         }
     }
     }
-
-    console.log(`Total combinations: ${combinations.length}`);
     return combinations;
   }
 
   async fetchCourseType(courseTypeId) {
-    console.log("courseTypeId:", courseTypeId); // Debugging line
   
     const { data, error } = await this.supabase
       .from("course_types")
@@ -367,7 +340,7 @@ class XmlHelper {
   
     const newCatalog = root.ele("NEW_CATALOG", { FULLCATALOG: "true" });
     let courseIndex = 0;
-    
+
     for (const course of this.selectedCourses) {
       const courseType = await this.fetchCourseType(course.course_type);
       const combinations = await this.returnCourseCombinations(courseType, course);

@@ -143,8 +143,6 @@ const downloadXML = (xmlString) => {
 
 
 onMounted(async () => {
-  console.log(props.selectedCourses)
-  console.log(selectedCoursesList.value)
   isLoading.value = true
   const organizationSettings = await fetchOrganizationSettings()
   const courseType = await fetchCourseType(props.courses[0].course_type)
@@ -155,8 +153,8 @@ onMounted(async () => {
     return
   }
 
-  const xmlHelper = new XmlHelper(organizationSettings, courseType, props.courses[0], selectedCoursesList.value)
-  combinations.value = (await xmlHelper.calculateCombinations()).length
+  const xmlHelper = new XmlHelper(organizationSettings, selectedCoursesList.value)
+  combinations.value = (await xmlHelper.calculateCombinations())
   isLoading.value = false
 })
 </script>
