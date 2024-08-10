@@ -1,4 +1,5 @@
 import { useNuxtApp } from "#app";
+import XmlHelper from '../helper/xmlHelper'; // Import the XmlHelper if needed
 
 export function useCourseUtils() {
   const { $supabase } = useNuxtApp(); // Correctly get the Supabase client with the $ prefix
@@ -88,5 +89,30 @@ export function useCourseUtils() {
     return combinations;
   };
 
-  return { fetchCourseType, returnCourseCombinations, fetchLocations, fetchStartTimes, fetchDates };
+  const calculateCombinations = async (organizationSettings, selectedCourses) => {
+    let combinationCount = 0;
+  
+    for (const course of selectedCourses) {
+      const courseType = await fetchCourseType(course.course_type);
+      const combinations = await returnCourseCombinations(courseType, course);
+      const titles = course.titles;
+  
+      titles.forEach((title, i) => {
+        combinations.forEach((combination, combination_index) => {
+          combinationCount++;
+        });
+      });
+    }
+  
+    return combinationCount;
+  };
+
+  return { 
+    fetchCourseType, 
+    returnCourseCombinations, 
+    fetchLocations, 
+    fetchStartTimes, 
+    fetchDates, 
+    calculateCombinations 
+  };
 }
