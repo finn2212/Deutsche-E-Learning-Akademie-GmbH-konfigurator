@@ -120,7 +120,7 @@ class IterationalHelper {
             });
             education
               .ele("COURSE_ID")
-              .txt(courseIndex + i + "000")
+              .txt(courseIndex + i + "0000")
               .up();
             const degree = education.ele("DEGREE", {
               type: courseType.degree_type1,

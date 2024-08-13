@@ -95,9 +95,8 @@ export function useCourseUtils() {
       const courseType = await fetchCourseType(course.course_type);
       const combinations = await returnCourseCombinations(courseType, course);
       const titles = course.titles;
-  
-      titles.forEach((title, i) => {
-        combinations.forEach((combination, combination_index) => {
+      titles.forEach(() => {
+        combinations.forEach(() => {
           combinationCount++;
         });
       });
