@@ -80,7 +80,7 @@ import { format } from 'date-fns'
 
 const props = defineProps({
   course: Object,
-  selectedCourseType: String // Add this prop to receive the selected course type
+  selectedCourseType: String // Receive the selected course type from Step 2
 })
 
 const emit = defineEmits(['prevStep', 'close', 'add-course', 'course-saved'])
@@ -238,7 +238,6 @@ const prevStep = () => {
 }
 
 const submitForm = async () => {
-  console.log("save start")
   if (props.course && props.course.id) {
     // Edit existing course
     const { data, error } = await $supabase
@@ -250,7 +249,6 @@ const submitForm = async () => {
     if (!error && data) {
       emit('add-course', data[0])
       emit('course-saved')
-      console.log("save event")
     } else {
       console.error(error)
     }
@@ -278,3 +276,4 @@ onMounted(() => {
   fetchDates()
 })
 </script>
+

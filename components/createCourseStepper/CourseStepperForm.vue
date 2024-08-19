@@ -6,8 +6,11 @@
         <Stepper :steps="steps" :modelValue="currentStep">
           <template #default="{ currentStep }">
             <Step1Component v-if="currentStep === 0" :course="course" @nextStep="nextStep" @close="closeForm" />
-            <Step2Component v-if="currentStep === 1" :course="course" @prevStep="prevStep" @nextStep="nextStepWithCourseType" @courseTypeLoaded="updateSelectedCourseType" @close="closeForm" />
-            <Step3Component v-if="currentStep === 2" :course="course" :selectedCourseType="selectedCourseType.id" @prevStep="prevStep" @close="closeForm" @add-course="addCourse" @course-saved="courseSaved" />
+            <Step2Component v-if="currentStep === 1" :course="course" @prevStep="prevStep"
+              @nextStep="nextStepWithCourseType" @courseTypeLoaded="updateSelectedCourseType" @close="closeForm" />
+            <Step3Component v-if="currentStep === 2" :course="course" :selectedCourseType="selectedCourseType"
+              @prevStep="prevStep" @close="closeForm" @add-course="addCourse" @course-saved="courseSaved" />
+
           </template>
         </Stepper>
       </div>
@@ -16,7 +19,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import Stepper from '@/components/generalStepper/Stepper.vue'
 import Step1Component from '@/components/createCourseStepper/Step1Component.vue'
 import Step2Component from '@/components/createCourseStepper/Step2Component.vue'
@@ -31,6 +34,20 @@ const emit = defineEmits(['close', 'add-course', 'course-saved'])
 const steps = ['Standard Organisations Einstellungen', 'Kurs Spezifische Fix Daten', 'Variable Kurs Daten']
 const currentStep = ref(0)
 const selectedCourseType = ref(null) // Track the selected course type
+
+// Initialize selectedCourseType with the current course type if it exists
+onMounted(() => {
+  if (props.course && props.course.course_type_id) {
+    selectedCourseType.value = props.course.course_type_id
+  }
+})
+
+// Watch for changes to the course prop and update selectedCourseType accordingly
+watch(() => props.course, (newCourse) => {
+  if (newCourse && newCourse.course_type_id) {
+    selectedCourseType.value = newCourse.course_type_id
+  }
+}, { immediate: true })
 
 const nextStep = () => {
   if (currentStep.value < steps.length - 1) {
@@ -50,7 +67,7 @@ const prevStep = () => {
 }
 
 const updateSelectedCourseType = (courseTypeDetails) => {
-  selectedCourseType.value = courseTypeDetails
+  selectedCourseType.value = courseTypeDetails.id // Ensure we track only the ID
 }
 
 const closeForm = () => {
@@ -58,7 +75,13 @@ const closeForm = () => {
 }
 
 const addCourse = (course) => {
-  emit('add-course', course)
+  // Ensure selectedCourseType is not null before emitting
+  if (selectedCourseType.value) {
+    course.course_type_id = selectedCourseType.value
+    emit('add-course', course)
+  } else {
+    console.error('No course type selected')
+  }
 }
 
 const courseSaved = () => {

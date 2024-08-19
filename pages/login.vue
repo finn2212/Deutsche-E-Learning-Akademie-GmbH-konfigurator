@@ -50,7 +50,7 @@
 <script setup>
 import { ref, onMounted, useAsyncData, useNuxtApp } from '#imports'
 import { useRouter } from 'vue-router'
-import Spinner from '@/components/Spinner.vue'
+import Spinner from '@/components/layouts/Spinner.vue'
 
 // Fetch the subdomain using useAsyncData to ensure it's available on the client side
 const { data: ssrSubdomain } = useAsyncData('subdomain', async () => {
