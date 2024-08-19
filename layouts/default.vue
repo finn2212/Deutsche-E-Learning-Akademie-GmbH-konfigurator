@@ -46,8 +46,8 @@
   import { useNuxtApp } from '#app'
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
   import { XMarkIcon } from '@heroicons/vue/24/outline'
-  import Sidebar from '@/components/Sidebar.vue'
-  import Header from '@/components/Header.vue'
+  import Sidebar from '@/components/layouts/Sidebar.vue'
+  import Header from '@/components/layouts/Header.vue'
   
   const sidebarOpen = ref(false)
   const userEmail = ref('')

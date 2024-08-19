@@ -91,6 +91,12 @@
                 </button>
               </div>
               <div class="-ml-px flex w-0 flex-1">
+                <button @click="duplicateCourseType(courseType)"
+                  class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 border border-transparent py-4 text-sm font-semibold text-gray-900">
+                  <span>Duplicate</span>
+                </button>
+              </div>
+              <div class="-ml-px flex w-0 flex-1">
                 <button @click="deleteCourseType(courseType.id)"
                   class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
                   <span>Remove</span>
@@ -113,7 +119,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useNuxtApp } from '#app'
-import CourseTypeForm from '~/components/CourseTypeForm.vue'
+import CourseTypeForm from '~/components/forms/CourseTypeForm.vue'
 
 const { $supabase } = useNuxtApp()
 const courseTypes = ref([])
@@ -175,6 +181,14 @@ const editCourseType = (courseType) => {
   currentCourseType.value = { ...courseType }
   showAddCourseTypeForm.value = true
   isEditMode.value = true
+}
+
+const duplicateCourseType = (courseType) => {
+  const duplicatedCourseType = { ...courseType }
+  duplicatedCourseType.title += ' (Kopie)'
+  delete duplicatedCourseType.id // Remove the ID to ensure a new entry is created
+  addCourseType(duplicatedCourseType)
+  getCourseTypes()
 }
 
 const deleteCourseType = async (courseTypeId) => {

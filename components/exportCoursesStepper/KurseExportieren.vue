@@ -37,8 +37,10 @@
 import { defineProps, onMounted, ref } from 'vue'
 import { useNuxtApp } from '#app'
 import XmlHelper from '../helper/xmlHelper' // Adjust the path accordingly
+import { useCourseUtils } from '@/composables/useCourseUtils'
 
 const { $supabase } = useNuxtApp()
+const { calculateCombinations } = useCourseUtils()
 
 const props = defineProps({
   courses: {
@@ -53,6 +55,24 @@ const props = defineProps({
 
 const combinations = ref(0)
 const isLoading = ref(false)
+const selectedCoursesList = computed(() => {
+  return props.courses.filter(course => props.selectedCourses.includes(course.id));
+});
+
+onMounted(async () => {
+  isLoading.value = true
+  const organizationSettings = await fetchOrganizationSettings()
+  const courseType = await fetchCourseType(props.courses[0].course_type)
+
+  if (!organizationSettings || !courseType) {
+    console.error('Failed to fetch organization settings')
+    isLoading.value = false
+    return
+  }
+  combinations.value = await calculateCombinations(selectedCoursesList.value)
+
+  isLoading.value = false
+})
 
 const getCourseName = (courseId) => {
   const course = props.courses.find(course => course.id === courseId)
@@ -99,7 +119,7 @@ const exportCourses = async () => {
     return
   }
 
-  const xmlHelper = new XmlHelper(organizationSettings, courseType, props.courses[0])
+  const xmlHelper = new XmlHelper(organizationSettings, selectedCoursesList.value)
   const xmlString = await xmlHelper.generateXml()
   downloadXML(xmlString)
   isLoading.value = false
@@ -136,24 +156,6 @@ const downloadXML = (xmlString) => {
   link.click();
   document.body.removeChild(link);
 };
-
-
-
-onMounted(async () => {
-  isLoading.value = true
-  const organizationSettings = await fetchOrganizationSettings()
-  const courseType = await fetchCourseType(props.courses[0].course_type)
-
-  if (!organizationSettings || !courseType) {
-    console.error('Failed to fetch organization settings')
-    isLoading.value = false
-    return
-  }
-
-  const xmlHelper = new XmlHelper(organizationSettings, courseType, props.courses[0])
-  combinations.value = (await xmlHelper.calculateCombinations()).length
-  isLoading.value = false
-})
 </script>
 
 <style>

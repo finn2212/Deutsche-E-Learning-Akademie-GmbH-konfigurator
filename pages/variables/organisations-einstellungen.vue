@@ -10,8 +10,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import SettingsView from '../../components/SettingsView.vue'
-import SettingsEdit from '../../components/SettingsEdit.vue'
+import SettingsView from '../../components/forms/SettingsView.vue'
+import SettingsEdit from '../../components/forms/SettingsEdit.vue'
 import { useNuxtApp } from '#app'
 
   const { $supabase } = useNuxtApp()

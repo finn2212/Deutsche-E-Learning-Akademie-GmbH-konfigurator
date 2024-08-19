@@ -74,7 +74,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useNuxtApp } from '#app'
-import AddOrtForm from '~/components/AddOrtForm.vue'
+import AddOrtForm from '~/components/forms/AddOrtForm.vue'
 
 const { $supabase } = useNuxtApp()
 const orte = ref([])

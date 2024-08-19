@@ -17,10 +17,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import Stepper from '@/components/Stepper.vue'
-import Step1Component from '@/components/Step1Component.vue'
-import Step2Component from '@/components/Step2Component.vue'
-import Step3Component from '@/components/Step3Component.vue'
+import Stepper from '@/components/generalStepper/Stepper.vue'
+import Step1Component from '@/components/createCourseStepper/Step1Component.vue'
+import Step2Component from '@/components/createCourseStepper/Step2Component.vue'
+import Step3Component from '@/components/createCourseStepper/Step3Component.vue'
 
 const props = defineProps({
   course: Object
