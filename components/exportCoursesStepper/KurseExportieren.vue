@@ -57,12 +57,41 @@
           </div>
         </div>
       </div>
+
+      <!-- Export History Section -->
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-4">Export Verlauf</h3>
+        <table class="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr>
+              <th class="py-2 px-4 border-b">Datum</th>
+              <th class="py-2 px-4 border-b">Exportierte Kurse</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="history in exportHistory" :key="history.id">
+              <td class="py-2 px-4 border-b">{{ new Date(history.exported_at).toLocaleString() }}</td>
+              <td class="py-2 px-4 border-b">
+                <ul>
+                  <li v-for="course in history.exported_courses" :key="course.name">
+                    {{ course.name }} ({{ course.prefix }}) 
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr v-if="exportHistory.length === 0">
+              <td colspan="2" class="py-2 px-4 text-center">Keine Exporte verfügbar</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
 
+
 <script setup>
-import { defineProps, ref, computed, onMounted } from 'vue'
+import { defineProps, ref, computed, onMounted, computed } from 'vue'
 import { useNuxtApp } from '#app'
 import XmlHelper from '../helper/xmlHelper' // Adjust the path accordingly
 import { useCourseUtils } from '@/composables/useCourseUtils'
@@ -83,12 +112,15 @@ const props = defineProps({
 
 const combinations = ref(0)
 const isLoading = ref(false)
+const exportHistory = ref([])
+
 const selectedCoursesList = computed(() => {
   return props.courses.filter(course => props.selectedCourses.includes(course.id))
 })
 
 onMounted(async () => {
   isLoading.value = true
+  await fetchExportHistory() // Fetch export history on load
   const organizationSettings = await fetchOrganizationSettings()
   const courseType = await fetchCourseType(props.courses[0].course_type)
 
@@ -136,6 +168,19 @@ const fetchCourseType = async (courseTypeId) => {
   return data
 }
 
+const fetchExportHistory = async () => {
+  const { data, error } = await $supabase
+    .from('export_history')
+    .select('*')
+    .order('exported_at', { ascending: false })
+
+  if (!error && data) {
+    exportHistory.value = data
+  } else {
+    console.error('Error fetching export history:', error)
+  }
+}
+
 const exportCourses = async () => {
   isLoading.value = true
   const organizationSettings = await fetchOrganizationSettings()
@@ -149,6 +194,23 @@ const exportCourses = async () => {
 
   const xmlHelper = new XmlHelper(organizationSettings, selectedCoursesList.value)
   const xmlString = await xmlHelper.generateXml()
+
+  // Save the export data to the export_history table
+  const exportData = selectedCoursesList.value.map(course => ({
+    name: course.name,
+    prefix: course.course_prefix
+  }))
+
+  const { error } = await $supabase
+    .from('export_history')
+    .insert([{ exported_courses: exportData }])
+
+  if (error) {
+    console.error('Error saving export history:', error)
+  } else {
+    await fetchExportHistory() // Refresh the export history
+  }
+
   downloadXML(xmlString)
   isLoading.value = false
 }
@@ -229,7 +291,7 @@ const downloadXML = (xmlString) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-};
+}
 </script>
 
 
