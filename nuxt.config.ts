@@ -11,6 +11,11 @@ export default {
   css: [
     '@/assets/css/tailwind.css',
   ],
+  runtimeConfig: {
+    public: {
+      SERVERURL: process.env.SERVERURL
+    }
+  },
   router: {
     middleware: ['auth', 'subdomain'] // Ensure your subdomain middleware is correctly referenced
   },

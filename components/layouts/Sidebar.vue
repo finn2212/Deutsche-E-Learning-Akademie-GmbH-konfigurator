@@ -33,6 +33,20 @@
           </ul>
         </li>
         <li>
+          <div class="text-xs font-semibold leading-6 text-gray-400">Kursnet</div>
+          <ul role="list" class="-mx-2 mt-2 space-y-1">
+            <li v-for="setting in kursnet" :key="setting.name">
+              <NuxtLink :to="setting.href"
+                :class="[setting.current ? 'bg-gray-50 text-indigo-600' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600', 'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6']">
+                <component :is="setting.icon"
+                  :class="[setting.current ? 'text-indigo-600' : 'text-gray-400 group-hover:text-indigo-600', 'h-6 w-6 shrink-0']"
+                  aria-hidden="true" />
+                {{ setting.name }}
+              </NuxtLink>
+            </li>
+          </ul>
+        </li>
+        <li>
           <div class="text-xs font-semibold leading-6 text-gray-400">Fixe Einstellungen</div>
           <ul role="list" class="-mx-2 mt-2 space-y-1">
             <li v-for="setting in settings" :key="setting.name">
@@ -67,6 +81,13 @@ const variables = [
   { name: 'Art des Kurses', href: '/variables/vollzeit-teilzeit', icon: IdentificationIcon, current: false },
   { name: 'Ort des Kurses', href: '/variables/ort', icon: FlagIcon, current: false },
 
+
+]
+
+const kursnet = [
+  { name: 'Anbieter finden', href: '/find-anbieter', icon: UserGroupIcon, current: false },
+  { name: 'Seiten Zählen', href: '/count-pages', icon: LinkIcon, current: false },
+  { name: 'Alle Anbieter', href: '/all-anbieter', icon: LinkIcon, current: false },
 
 ]
 
