@@ -3,7 +3,6 @@ import { checkUserRole } from '~/utils/authHelper';
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const { $supabase } = useNuxtApp();  // Access $supabase globally
-  console.log("requiered path: " + to.fullPath)
 
   // Define dynamic roles based on route path
   const roleMap = {
@@ -11,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     '/moderator': 'moderator',
     '/participant-dashboard': 'participant',
     '/organization-dashboard': ['organization_owner', 'organization_worker'],
-    '/find-anbieter': 'super-admin',  // Ensure correct route with leading slash
+    '/find-anbieter': 'super_admin',  // Ensure correct route with leading slash
   };
 
   // Get the required role for the current route

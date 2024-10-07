@@ -20,10 +20,6 @@ export async function checkUserRole($supabase, requiredRole) {
     const decodedToken = jwtDecode(token);
     const userRole = decodedToken.user_role;
 
-    console.log("requiere Role:", requiredRole)
-    console.log(" Role:", userRole)
-    debugger
-
     // Check if the user's role matches the required role
     if (Array.isArray(requiredRole)) {
       if (!requiredRole.includes(userRole)) {
