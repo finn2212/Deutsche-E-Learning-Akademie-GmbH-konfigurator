@@ -71,7 +71,11 @@ const fetchCourseTypes = async () => {
   
   if (data) {
     courseTypes.value = data
-    if (courseTypes.value.length > 0) {
+
+    // Set the initial selected course type
+    if (props.course && props.course.course_type_id) {
+      selectedCourseType.value = props.course.course_type_id
+    } else if (courseTypes.value.length > 0) {
       selectedCourseType.value = courseTypes.value[0].id
     }
   } else {
@@ -102,3 +106,4 @@ onMounted(() => {
   fetchCourseTypes()
 })
 </script>
+
