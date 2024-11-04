@@ -32,7 +32,7 @@
             </li>
           </ul>
         </li>
-        <li>
+        <li v-if="userRole === Roles.SUPER_ADMIN">
           <div class="text-xs font-semibold leading-6 text-gray-400">Kursnet</div>
           <ul role="list" class="-mx-2 mt-2 space-y-1">
             <li v-for="setting in kursnet" :key="setting.name">
@@ -69,6 +69,8 @@
 import { ref } from 'vue'
 import { NuxtLink } from '#components'
 import { HomeIcon, FolderIcon, CogIcon, FlagIcon, IdentificationIcon, LinkIcon, UserGroupIcon, ClockIcon } from '@heroicons/vue/24/outline'
+import { useAuth } from '~/composables/useAuth';
+import { Roles } from '~/utils/roles';  // Import the Roles enum
 
 const navigation = [
   { name: 'Start', href: '/Start', icon: HomeIcon, current: false },
@@ -95,4 +97,7 @@ const settings = [
   { name: 'Organisations Einstellungen', href: '/variables/organisations-einstellungen', icon: UserGroupIcon, current: false },
   { name: 'Kurs Typen', href: '/variables/fixe-kurse-variablen', icon: LinkIcon, current: false },
 ]
+
+const { userRole, fetchUserRole } = useAuth(); 
+await fetchUserRole();
 </script>

@@ -1,16 +1,19 @@
 // middleware/auth.global.js
 import { checkUserRole } from '~/utils/authHelper';
+import { useAuth } from '~/composables/useAuth';
+import { Roles } from '~/utils/roles';  // Import the Roles enum
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const { $supabase } = useNuxtApp();  // Access $supabase globally
+  const { $router } = useNuxtApp();  // Use $router to access navigation
+
+  const { userRole, fetchUserRole } = useAuth(); 
+
+  await fetchUserRole();
 
   // Define dynamic roles based on route path
   const roleMap = {
-    '/admin': 'admin',
-    '/moderator': 'moderator',
-    '/participant-dashboard': 'participant',
-    '/organization-dashboard': ['organization_owner', 'organization_worker'],
-    '/find-anbieter': 'super_admin',  // Ensure correct route with leading slash
+    '/start': [Roles.SUPER_ADMIN, Roles.MODERATOR,Roles.ORGANIZATION_OWNER, Roles.ORGANIZATION_WORKER],
+    '/find-anbieter': Roles.SUPER_ADMIN,  // Ensure correct route with leading slash
   };
 
   // Get the required role for the current route
@@ -18,6 +21,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // If a role is required for this route, call the helper function with that role
   if (requiredRole) {
-    await checkUserRole($supabase, requiredRole);
+    await checkUserRole(userRole.value, requiredRole, (path, options = {}) => {
+      return $router.push(path, options);  // Use $router to navigate
+    });
   }
 });
