@@ -105,12 +105,74 @@ export function useCourseUtils() {
     return combinationCount;
   };
 
+  const fetchSelectedCoursesDetails = async (selectedCourseIds) => {
+
+    try {
+      // Step 1: Fetch selected courses by IDs
+      const { data: courses, error: courseError } = await $supabase
+        .from('all_termine')
+        .select('id, title,type, course_type, date_id, location_id')
+        .in('id', selectedCourseIds);
+        
+      if (courseError) throw courseError;
+  
+      // Collect unique date and location IDs to fetch details only once
+      const dateIds = [...new Set(courses.map(course => course.date_id))];
+      const locationIds = [...new Set(courses.map(course => course.location_id))];
+  
+      // Step 2: Fetch date details
+      const { data: dates, error: dateError } = await $supabase
+        .from('dates')
+        .select('*')
+        .in('id', dateIds);
+  
+      if (dateError) throw dateError;
+  
+      // Step 3: Fetch location details
+      const { data: locations, error: locationError } = await $supabase
+        .from('places')
+        .select('*')
+        .in('id', locationIds);
+  
+      if (locationError) throw locationError;
+  
+      // Step 4: Map dates and locations by their IDs for easy lookup
+      const dateMap = Object.fromEntries(dates.map(date => [date.id, date]));
+      const locationMap = Object.fromEntries(locations.map(location => [location.id, location]));
+  
+      // Step 5: Combine course data with related date and location details
+      return groupCoursesByType(courses.map(course => ({
+        ...course,
+        date: dateMap[course.date_id],
+        location: locationMap[course.location_id]
+      })));
+  
+    } catch (error) {
+      console.error('Error fetching course details:', error);
+      return [];
+    }
+  }
+
+  const groupCoursesByType = (courses) => {
+    // Reduce the courses array into an object, grouped by course_type
+    return courses.reduce((grouped, course) => {
+      // Check if the course_type already exists in grouped object
+      if (!grouped[course.course_type]) {
+        grouped[course.course_type] = [];
+      }
+      // Add the course to the respective group
+      grouped[course.course_type].push(course);
+      return grouped;
+    }, {});
+  };
+
   return { 
     fetchCourseType, 
     returnCourseCombinations, 
     fetchLocations, 
     fetchStartTimes, 
     fetchDates, 
-    calculateCombinations 
+    calculateCombinations,
+    fetchSelectedCoursesDetails
   };
 }

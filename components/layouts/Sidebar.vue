@@ -75,6 +75,7 @@ import { Roles } from '~/utils/roles';  // Import the Roles enum
 const navigation = [
   { name: 'Start', href: '/Start', icon: HomeIcon, current: false },
   { name: 'Kurse erstellen', href: '/courses', icon: FolderIcon, current: false },
+  { name: 'Kurs Konfig', href: '/config-termine', icon: FolderIcon, current: false },
 ]
 
 const variables = [
