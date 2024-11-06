@@ -226,7 +226,7 @@ watch(() => props.course, (newCourse) => {
       location_ids: newCourse.location_ids || [],
       start_time_ids: newCourse.start_time_ids || [],
       dates_ids: newCourse.dates_ids || [],
-      course_type: props.selectedCourseType // Ensure this value is included
+      course_type: props.course.course_type // Ensure this value is included
     }
   } else {
     form.value = { name: '', titles: [''], types: [], location_ids: [], start_time_ids: [], dates_ids: [], course_type: props.selectedCourseType }
@@ -238,36 +238,79 @@ const prevStep = () => {
 }
 
 const submitForm = async () => {
-  if (props.course && props.course.id) {
-    // Edit existing course
-    const { data, error } = await $supabase
-      .from('courses')
-      .update({ ...form.value })
-      .eq('id', props.course.id)
-      .select()
+  debugger
+  const { course_type, dates_ids, location_ids, name, start_time_ids, titles, types } = form.value;
 
-    if (!error && data) {
-      emit('add-course', data[0])
-      emit('course-saved')
-    } else {
-      console.error(error)
-    }
+  // Create combinations for each unique entry
+  const allCombinations = [];
+  dates_ids.forEach(dateId => {
+    location_ids.forEach(locationId => {
+      start_time_ids.forEach(startTimeId => {
+        types.forEach(type => {
+          allCombinations.push({
+            course_type,
+            date_id: dateId,
+            location_id: locationId,
+            name,
+            start_time_id: startTimeId,
+            title: titles[0],  // Assuming one title per course
+            type
+          });
+        });
+      });
+    });
+  });
+
+  // Insert each combination into the 'all_termine' table
+  const { data, error } = await $supabase
+    .from('all_termine')
+    .insert(allCombinations)
+    .select();
+
+  if (error) {
+    console.error("Error inserting combinations:", error);
   } else {
-    // Add new course
-    const { data, error } = await $supabase
-      .from('courses')
-      .insert([{ ...form.value }])
-      .select()
-
-    if (!error && data) {
-      emit('add-course', data[0])
-      emit('course-saved')
-    } else {
-      console.error(error)
-    }
+    console.log("Inserted combinations:", data);
+    emit('all-termine-saved', data); // Emit event for successful save
   }
-  emit('close')
-}
+
+  emit('close');
+};
+
+
+// const submitForm = async () => {
+//   if (props.course && props.course.id) {
+
+//     debugger;
+//     // Edit existing course
+//     const { data, error } = await $supabase
+//       .from('courses')
+//       .update({ ...form.value })
+//       .eq('id', props.course.id)
+//       .select()
+
+//     if (!error && data) {
+//       emit('add-course', data[0])
+//       emit('course-saved')
+//     } else {
+//       console.error(error)
+//     }
+//   } else {
+//     // Add new course
+//     const { data, error } = await $supabase
+//       .from('courses')
+//       .insert([{ ...form.value }])
+//       .select()
+
+//     if (!error && data) {
+//       emit('add-course', data[0])
+//       emit('course-saved')
+//     } else {
+//       console.error(error)
+//     }
+//   }
+//   emit('close')
+// }
 
 onMounted(() => {
   fetchTypes()

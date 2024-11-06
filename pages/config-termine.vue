@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import FilterSection from '../components/config-termine/FilterSection.vue';
 import ActionButtons from '../components/config-termine/ActionButtons.vue';
 import KursTable from '../components/config-termine/KursTable.vue';
+import ConfigBshTermine from '../components/config-termine/ConfigBshTermine.vue';
 import { useNuxtApp } from '#app';
 import XmlHelper2 from '../helper/xmlHelper2.0';
 
@@ -11,6 +12,9 @@ const kursData = ref([]);
 const selectedCourses = ref([]);
 const filters = ref({ kurs: "", standort: "", vzTz: "", startd: "", status: "" });
 const selectAll = ref(false);
+
+// State to control view mode (table view or config mode)
+const isConfigMode = ref(false);
 
 const fetchKursData = async () => {
   const { data, error } = await $supabase.from('all_termine').select('*');
@@ -37,7 +41,6 @@ const filteredKursData = computed(() => {
   });
 });
 
-// Trigger xmlHelper2.0 based on action
 const handleActionEvent = async ({ type }) => {
   if (selectedCourses.value.length === 0) {
     console.warn('No courses selected for action');
@@ -52,32 +55,23 @@ const handleActionEvent = async ({ type }) => {
 };
 
 const downloadXML = (xmlString) => {
-  // Get current date and time
   const now = new Date();
   const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const month = String(now.getMonth() + 1).padStart(2, '0'); 
   const year = now.getFullYear();
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
 
-  // Format the date and time as DDMMYYHHMM
   const formattedDateTime = `${day}${month}${String(year).slice(2)}${hours}${minutes}`;
-
-  // Create the filename
   const filename = `DELAKursexport${formattedDateTime}.xml`;
 
-  // Create a Blob from the XML string
   const blob = new Blob([xmlString], { type: 'application/xml' });
-
-  // Create a URL for the Blob
   const url = URL.createObjectURL(blob);
 
-  // Create a link element
   const link = document.createElement('a');
   link.href = url;
   link.download = filename;
 
-  // Append the link to the document, click it to start the download, then remove it
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -97,8 +91,9 @@ const fetchOrganizationSettings = async () => {
   return data
 }
 
+// Show ConfigBshTermine component and hide table view
 const addSingleAppointment = () => {
-  console.log('Adding single appointment');
+  isConfigMode.value = true;
 };
 
 // Update selected courses
@@ -110,21 +105,35 @@ const updateSelectedCourses = (updatedCourses) => {
 const toggleSelectAll = () => {
   selectAll.value = !selectAll.value;
 };
+
+// Function to return to the table view from ConfigBshTermine
+const goBackToTable = () => {
+  isConfigMode.value = false;
+};
 </script>
 
 <template>
   <div class="p-6 space-y-4">
     <h1 class="text-2xl font-semibold mb-4">Kurstermine</h1>
-    <FilterSection :filters="filters" />
-    <ActionButtons @action="handleActionEvent" @addSingleAppointment="addSingleAppointment" />
-    <div class="overflow-x-auto">
-      <KursTable
-        :filteredKursData="filteredKursData"
-        :selectAll="selectAll"
-        :selectedCourses="selectedCourses"
-        @toggleSelectAll="toggleSelectAll"
-        @updateSelectedCourses="updateSelectedCourses"
-      />
+    
+    <!-- Show FilterSection, ActionButtons, and KursTable if not in config mode -->
+    <div v-if="!isConfigMode">
+      <FilterSection :filters="filters" />
+      <ActionButtons @action="handleActionEvent" @addSingleAppointment="addSingleAppointment" />
+      <div class="overflow-x-auto mt-5">
+        <KursTable
+          :filteredKursData="filteredKursData"
+          :selectAll="selectAll"
+          :selectedCourses="selectedCourses"
+          @toggleSelectAll="toggleSelectAll"
+          @updateSelectedCourses="updateSelectedCourses"
+        />
+      </div>
+    </div>
+
+    <!-- Show ConfigBshTermine if in config mode -->
+    <div v-else>
+      <ConfigBshTermine @goBack="goBackToTable" />
     </div>
   </div>
 </template>

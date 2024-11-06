@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-2 mt-2">
       <div class="relative">
         <button @click="toggleDropdown" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Actions</button>
         <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200">
