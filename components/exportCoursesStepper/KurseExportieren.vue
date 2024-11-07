@@ -5,41 +5,13 @@
       <h3 class="mt-2 text-sm font-semibold text-gray-900">No courses selected for export</h3>
     </div>
     <div v-else>
-      <table class="min-w-full bg-white">
-        <!-- Table content remains the same as before -->
-        <thead>
-          <tr>
-            <th class="py-2 px-4 border-b">Name</th>
-            <th class="py-2 px-4 border-b">Kurs Präfix</th>
-            <th class="py-2 px-4 border-b">Manuelle Sequenz</th>
-            <th class="py-2 px-4 border-b">Aktionen</th>
-            <th class="py-2 px-4 border-b">Ersatzlieferung</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="course in selectedCoursesList" :key="course.id">
-            <td class="py-2 px-4 border-b">{{ course.name }}</td>
-            <td class="py-2 px-4 border-b">{{ course.course_prefix }}</td>
-            <td class="py-2 px-4 border-b">
-              <input v-model="course.manual_sequence" type="number" class="form-input" placeholder="Sequenz eingeben">
-            </td>
-            <td class="py-2 px-4 border-b">
-              <button @click="applyManualPrefix(course.id, course.manual_sequence)" class="text-black underline block">
-                Präfix überschreiben
-              </button>
-              <button @click="createNewPrefix(course.id)" class="text-black underline block mt-2">
-                Neuen Präfix erstellen
-              </button>
-            </td>
-            <td class="py-2 px-4 border-b">
-              <select class="form-select">
-                <option value="0">Neue Lieferung</option>
-                <option value="1">Ersatzlieferung</option>
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <ul>
+        <li v-for="courseId in selectedCourses" :key="courseId">
+          <div>
+            <h3 class="text-sm font-medium text-gray-900">{{ getCourseName(courseId) }}</h3>
+          </div>
+        </li>
+      </ul>
       <div class="mt-4">
         <div class="flex justify-between items-center border-t border-gray-200 pt-4">
           <div>
@@ -57,19 +29,15 @@
           </div>
         </div>
       </div>
-
-      <!-- Include the ExportHistory component -->
-      <ExportHistory />
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, ref, computed, onMounted } from 'vue'
+import { defineProps, onMounted, ref } from 'vue'
 import { useNuxtApp } from '#app'
 import XmlHelper from '../helper/xmlHelper' // Adjust the path accordingly
 import { useCourseUtils } from '@/composables/useCourseUtils'
-import ExportHistory from '@/components/exportCoursesStepper/ExportHistory.vue' // Import the new component
 
 const { $supabase } = useNuxtApp()
 const { calculateCombinations } = useCourseUtils()
@@ -87,10 +55,9 @@ const props = defineProps({
 
 const combinations = ref(0)
 const isLoading = ref(false)
-
 const selectedCoursesList = computed(() => {
-  return props.courses.filter(course => props.selectedCourses.includes(course.id))
-})
+  return props.courses.filter(course => props.selectedCourses.includes(course.id));
+});
 
 onMounted(async () => {
   isLoading.value = true
@@ -103,6 +70,7 @@ onMounted(async () => {
     return
   }
   combinations.value = await calculateCombinations(selectedCoursesList.value)
+
   isLoading.value = false
 })
 
@@ -140,19 +108,6 @@ const fetchCourseType = async (courseTypeId) => {
   return data
 }
 
-const fetchExportHistory = async () => {
-  const { data, error } = await $supabase
-    .from('export_history')
-    .select('*')
-    .order('exported_at', { ascending: false })
-
-  if (!error && data) {
-    exportHistory.value = data
-  } else {
-    console.error('Error fetching export history:', error)
-  }
-}
-
 const exportCourses = async () => {
   isLoading.value = true
   const organizationSettings = await fetchOrganizationSettings()
@@ -166,121 +121,42 @@ const exportCourses = async () => {
 
   const xmlHelper = new XmlHelper(organizationSettings, selectedCoursesList.value)
   const xmlString = await xmlHelper.generateXml()
-
-  // Save the export data to the export_history table
-  const exportData = selectedCoursesList.value.map(course => ({
-    name: course.name,
-    prefix: course.course_prefix
-  }))
-
-  const { error } = await $supabase
-    .from('export_history')
-    .insert([{ exported_courses: exportData }])
-
-  if (error) {
-    console.error('Error saving export history:', error)
-  } else {
-    await fetchExportHistory() // Refresh the export history
-  }
-
   downloadXML(xmlString)
   isLoading.value = false
 }
 
-const deleteExportHistory = async (historyId) => {
-  const { error } = await $supabase
-    .from('export_history')
-    .delete()
-    .eq('id', historyId)
-
-  if (error) {
-    console.error('Error deleting export history:', error)
-  } else {
-    await fetchExportHistory() // Refresh the export history after deletion
-  }
-}
-
-const createNewPrefix = async (courseId) => {
-  const newPrefix = await generateNewCoursePrefix()
-  const { data, error } = await $supabase
-    .from('courses')
-    .update({ course_prefix: newPrefix })
-    .eq('id', courseId)
-
-  if (error) {
-    console.error('Error updating course prefix:', error)
-    return
-  }
-
-  // Update the local course data
-  const course = selectedCoursesList.value.find(course => course.id === courseId)
-  if (course) {
-    course.course_prefix = newPrefix
-  }
-}
-
-const applyManualPrefix = async (courseId, manualSequence) => {
-  if (!manualSequence || manualSequence <= 0) {
-    console.error('Invalid manual sequence');
-    return;
-  }
-
-  const newPrefix = 'DELA' + String(manualSequence).padStart(3, '0'); // Ensure the sequence is 3 digits
-
-  const { data, error } = await $supabase
-    .from('courses')
-    .update({ course_prefix: newPrefix })
-    .eq('id', courseId);
-
-  if (error) {
-    console.error('Error updating course prefix:', error);
-    return;
-  }
-
-  // Update the local course data
-  const course = selectedCoursesList.value.find(course => course.id === courseId);
-  if (course) {
-    course.course_prefix = newPrefix;
-  }
-}
-
-const generateNewCoursePrefix = async () => {
-  const { data, error } = await $supabase
-    .rpc('generate_sequential_course_prefix') // Assuming you have this function in your database
-    .single()
-
-  if (error) {
-    console.error('Error generating new course prefix:', error)
-    return null
-  }
-
-  return data
-}
-
 const downloadXML = (xmlString) => {
+  // Get current date and time
   const now = new Date();
   const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
   const year = now.getFullYear();
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
 
+  // Format the date and time as DDMMYYHHMM
   const formattedDateTime = `${day}${month}${String(year).slice(2)}${hours}${minutes}`;
+
+  // Create the filename
   const filename = `DELAKursexport${formattedDateTime}.xml`;
 
+  // Create a Blob from the XML string
   const blob = new Blob([xmlString], { type: 'application/xml' });
+
+  // Create a URL for the Blob
   const url = URL.createObjectURL(blob);
+
+  // Create a link element
   const link = document.createElement('a');
   link.href = url;
   link.download = filename;
+
+  // Append the link to the document, click it to start the download, then remove it
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-}
+};
 </script>
-
-
-
 
 <style>
 .spinner-border {
@@ -295,8 +171,6 @@ const downloadXML = (xmlString) => {
 }
 
 @keyframes spinner-border {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 </style>
