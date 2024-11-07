@@ -49,17 +49,17 @@ class IterationalHelper {
               .up();
             }
             service.ele("COURSE_TYPE").txt(courseType.course_type).up();
-            service
-              .ele("SUPPLIER_ID_REF", { type: "supplier_specific" })
-              .txt(this.organizationSettings.supplier_id_ref)
-              .up();
+            // service
+            //   .ele("SUPPLIER_ID_REF", { type: "supplier_specific" })
+            //   .txt(this.organizationSettings.supplier_id_ref)
+            //   .up();
             const serviceDetails = service.ele("SERVICE_DETAILS");
             serviceDetails.ele("TITLE").txt(course.title).up();
             serviceDetails
               .ele("DESCRIPTION_LONG")
               .txt(courseType.description_long)
               .up();
-            serviceDetails.ele("SUPPLIER_ALT_PID").txt("266026029").up();
+            serviceDetails.ele("SUPPLIER_ALT_PID").txt(course.id).up();
             const contact = serviceDetails.ele("CONTACT");
             contact
               .ele("CONTACT_ROLE", {
