@@ -4,6 +4,16 @@ class HeaderHelper {
     constructor(organizationSettings) {
       this.organizationSettings = organizationSettings;
     }
+
+    getCurrentFormattedDate() {
+      const date = new Date();
+      const offset = -date.getTimezoneOffset();
+      const sign = offset >= 0 ? "+" : "-";
+      const pad = num => String(num).padStart(2, "0");
+  
+      const dateString = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${String(date.getMilliseconds()).padStart(3, "0")}${sign}${pad(Math.floor(Math.abs(offset) / 60))}:${pad(Math.abs(offset) % 60)}`;
+      return dateString;
+    }
   
     generateFixedData() {
       return create({
@@ -18,7 +28,7 @@ class HeaderHelper {
         })
         .ele("HEADER")
         .ele("GENERATOR_INFO")
-        .txt("Export OpenQ 3.45.0")
+        .txt("Stübi Export 0.1")
         .up()
         .ele("CATALOG")
         .ele("LANGUAGE")
@@ -34,7 +44,7 @@ class HeaderHelper {
         .txt("KURSNET-Export")
         .up()
         .ele("GENERATION_DATE")
-        .txt("2024-07-09T09:56:09.912+02:00")
+        .txt(this.getCurrentFormattedDate())
         .up()
         .up()
         .ele("DOCUMENT_CREATOR")
@@ -52,22 +62,22 @@ class HeaderHelper {
         // .up()
         .ele("ADDRESS")
         .ele("NAME")
-        .txt("IT-Systemhaus")
+        .txt("Deutsche E-Learning Akademie GmbH")
         .up()
         .ele("STREET")
-        .txt("Regensburgerstr. 104")
+        .txt("Fürstenwall 178")
         .up()
         .ele("ZIP")
-        .txt("90478")
+        .txt("40215")
         .up()
         .ele("CITY")
-        .txt("Nürnberg")
+        .txt("Düsseldorf")
         .up()
         .ele("COUNTRY")
         .txt("DE")
         .up()
         .ele("URL")
-        .txt("http://www.kursnet-online.arbeitsagentur.de")
+        .txt("https://www.dela-akademie.de/")
         .up()
         // .ele("ID_DB")
         // .txt("adr:160")
