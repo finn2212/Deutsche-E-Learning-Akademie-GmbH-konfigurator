@@ -62,7 +62,8 @@ class XmlHelper {
      newCatalog = root.ele("NEW_CATALOG", { FULLCATALOG: "true" });
   } else if(this.type === "update"){
     const seqNumber = await this.getSequenceNumber();
-    newCatalog = root.ele("UPDATE_CATALOG", { seq_number: seqNumber });
+    const updateCatalog = root.ele("UPDATE_CATALOG", { seq_number: seqNumber });
+    newCatalog = updateCatalog.ele("NEW");  // Creates the <NEW> element inside <UPDATE_CATALOG>
   } else {
 
   }

@@ -59,7 +59,7 @@ class IterationalHelper {
               .ele("DESCRIPTION_LONG")
               .txt(courseType.description_long)
               .up();
-            serviceDetails.ele("SUPPLIER_ALT_PID").txt(course.id).up();
+            serviceDetails.ele("SUPPLIER_ALT_PID").txt(courseTypeId).up();
             const contact = serviceDetails.ele("CONTACT");
             contact
               .ele("CONTACT_ROLE", {
@@ -186,7 +186,7 @@ class IterationalHelper {
             extendedInfo.ele("PRACTICAL_PART").txt(false).up();
             extendedInfo
               .ele("EDUCATION_TYPE", { type: courseType.education_type2 })
-              .txt(courseType.education_type2_name)
+              .txt(courseType.education_type1)
               .up();
             extendedInfo
               .ele("MEASURE_NUMBER")
