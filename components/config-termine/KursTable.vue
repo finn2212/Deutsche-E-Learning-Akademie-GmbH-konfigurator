@@ -14,33 +14,33 @@
         <th class="px-4 py-2 border-b">Kurs</th>
         <th class="px-4 py-2 border-b">Standort</th>
         <th class="px-4 py-2 border-b">Vz/Tz</th>
-        <th class="px-4 py-2 border-b">Start Datum</th>
-        <th class="px-4 py-2 border-b">Start Zeit.</th>
+        <th class="px-4 py-2 border-b">Startd.</th>
         <th class="px-4 py-2 border-b">Status</th>
         <th class="px-4 py-2 border-b">Aktionen</th>
       </tr>
     </thead>
     <tbody>
+      <!-- Loop through filteredKursData -->
       <TableRow
         v-for="item in filteredKursData"
         :key="item.id"
         :item="item"
         :isSelected="selectedCourses.includes(item.id)"
         @selectCourse="updateSelectedCourses"
-        @deleteCourse="emitDeleteCourse"
+        @deleteCourse="deleteCourse"
       />
     </tbody>
   </table>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 import TableRow from './TableRow.vue';
 
 const props = defineProps({
-  filteredKursData: Array,
+  filteredKursData: Array, // Accept filtered data as a prop
   selectAll: Boolean,
-  selectedCourses: Array,
+  selectedCourses: Array
 });
 
 const emit = defineEmits(['toggleSelectAll', 'updateSelectedCourses', 'deleteCourse']);
@@ -53,19 +53,5 @@ const toggleSelectAll = () => {
     emit('updateSelectedCourses', props.filteredKursData.map(item => item.id));
   }
   emit('toggleSelectAll');
-};
-
-// Update selected courses when a row is selected/deselected
-const updateSelectedCourses = (courseId, isSelected) => {
-  const updatedCourses = isSelected
-    ? [...props.selectedCourses, courseId]
-    : props.selectedCourses.filter(id => id !== courseId);
-
-  emit('updateSelectedCourses', updatedCourses);
-};
-
-// Emit delete event to the parent component
-const emitDeleteCourse = (courseId) => {
-  emit('deleteCourse', courseId); // Emit the deleteCourse event to the main page component
 };
 </script>

@@ -12,11 +12,19 @@ import { format } from 'date-fns';
 const { $supabase } = useNuxtApp();
 const kursData = ref([]);
 const selectedCourses = ref([]);
-const filters = ref({ kurs: "", standort: "", vzTz: "", startd: "", status: "" });
 const selectAll = ref(false);
 
 // State to control view mode (table view or config mode)
 const isConfigMode = ref(false);
+
+const filters = ref({
+  kurs: { label: 'Kurs', value: '', class: 'block w-48', options: [{ value: '', label: 'All' }] },
+  standort: { label: 'Standort', value: '', class: 'block w-48', options: [{ value: '', label: 'All' }] },
+  vzTz: { label: 'Vz/Tz', value: '', class: 'block w-48', options: [{ value: '', label: 'All' }, { value: 'Vz', label: 'Vollzeit' }, { value: 'Tz', label: 'Teilzeit' }] },
+  startd: { label: 'Startd.', value: '', class: 'block w-48', type: 'date', options: [{ value: '', label: 'All' }] },
+  status: { label: 'Status', value: '', class: 'block w-48', options: [{ value: '', label: 'All' }, { value: 'Aktiv', label: 'Aktiv' }, { value: 'Inaktiv', label: 'Inaktiv' }] }
+});
+
 
 const fetchKursData = async () => {
   const { data, error } = await $supabase.from('all_termine').select('*');
@@ -44,22 +52,69 @@ const fetchKursData = async () => {
   }
 };
 
+const loadFilterOptions = async () => {
+  try {
+    // Fetch all values, then filter unique ones in JavaScript
+
+    // Fetch kurs options
+    const { data: kursData, error: kursError } = await $supabase
+      .from('course_types')
+      .select('title');
+
+    // Fetch standort options
+    const { data: standortData, error: standortError } = await $supabase
+      .from('places')
+      .select('name');
+
+    // Fetch startd options
+    const { data: startdData, error: startdError } = await $supabase
+      .from('dates')
+      .select('id');
+
+    // Check for errors and handle them
+    if (kursError || standortError || startdError) {
+      console.error("Error fetching filter data:", kursError || standortError || startdError);
+      return;
+    }
+
+    // Create unique filter options by removing duplicates and mapping correctly
+    filters.value.kurs.options = [
+      { value: '', label: 'All' },
+      ...Array.from(new Set(kursData.map(k => k.title))).map(value => ({ value, label: value }))
+    ];
+    filters.value.standort.options = [
+      { value: '', label: 'All' },
+      ...Array.from(new Set(standortData.map(s => s.name))).map(value => ({ value, label: value }))
+    ];
+    filters.value.startd.options = [
+      { value: '', label: 'All' },
+      ...Array.from(new Set(startdData.map(d => d.id))).map(value => ({ value, label: value }))
+    ];
+  } catch (error) {
+    console.error("Error loading filter options:", error);
+  }
+};
+
+
 
 onMounted(() => {
   fetchKursData();
+  loadFilterOptions();
 });
 
 const filteredKursData = computed(() => {
   return kursData.value.filter(item => {
     return (
-      (filters.value.kurs === "" || item.kurs === filters.value.kurs) &&
-      (filters.value.standort === "" || item.standort === filters.value.standort) &&
-      (filters.value.vzTz === "" || item.type === filters.value.vzTz) &&
-      (filters.value.startd === "" || item.startd === filters.value.startd) &&
-      (filters.value.status === "" || item.status === filters.value.status)
+      (filters.value.kurs.value === "" || item.title === filters.value.kurs.value) && // Assumes 'title' is the field for 'kurs'
+      (filters.value.standort.value === "" || item.location_name === filters.value.standort.value) && // 'location_name' for 'standort'
+      (filters.value.vzTz.value === "" || item.type === filters.value.vzTz.value) &&
+      (filters.value.startd.value === "" || item.date_label.includes(filters.value.startd.value)) && // 'date_label' for 'startd'
+      (filters.value.status.value === "" || item.status === filters.value.status.value)
     );
   });
 });
+
+
 
 const handleActionEvent = async ({ type }) => {
   if (selectedCourses.value.length === 0) {
@@ -144,6 +199,11 @@ const deleteCourse = async (courseId) => {
     await fetchKursData(); // Refresh the table data after deletion
   }
 };
+
+const handleFilterUpdate = ({ key, value }) => {
+  debugger
+  filters.value[key].value = value;
+};
 </script>
 
 <template>
@@ -152,7 +212,7 @@ const deleteCourse = async (courseId) => {
     
     <!-- Show FilterSection, ActionButtons, and KursTable if not in config mode -->
     <div v-if="!isConfigMode">
-      <FilterSection :filters="filters" />
+      <FilterSection :filters="filters" @updateFilter="handleFilterUpdate" />
       <ActionButtons @action="handleActionEvent" @addSingleAppointment="addSingleAppointment" />
       <div class="overflow-x-auto mt-5">
         <KursTable
