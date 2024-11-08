@@ -238,7 +238,6 @@ const prevStep = () => {
 }
 
 const submitForm = async () => {
-  debugger
   const { course_type, dates_ids, location_ids, name, start_time_ids, titles, types } = form.value;
 
   // Create combinations for each unique entry

@@ -74,7 +74,7 @@ const config = useRuntimeConfig();
 // Fetch job logs on component mount and fetch user role
 onMounted(async () => {
   fetchJobLogs();
-  await fetchUserRole();  // Fetch user role on component mount
+  //await fetchUserRole();  // Fetch user role on component mount
 });
 
 // Function to scroll the log window to the bottom
@@ -110,15 +110,15 @@ const startJobManually = async () => {
   }
 };
 
-// Function to fetch the user's role from the JWT
-const fetchUserRole = async () => {
+// // Function to fetch the user's role from the JWT
+// const fetchUserRole = async () => {
   
-  const { data: session } = await $supabase.auth.getSession();
-  if (session && session.session.access_token) {
-    const decodedToken = jwtDecode(session.session.access_token);  // Decode JWT to extract claims
-    userRole.value = decodedToken.user_role || 'No role found';  // Set the user role or default message
-  }
-};
+//   const { data: session } = await $supabase.auth.getSession();
+//   if (session && session.session.access_token) {
+//     const decodedToken = jwtDecode(session.session.access_token);  // Decode JWT to extract claims
+//     userRole.value = decodedToken.user_role || 'No role found';  // Set the user role or default message
+//   }
+// };
 
 // Function to fetch and display job logs from Supabase
 const fetchJobLogs = async () => {

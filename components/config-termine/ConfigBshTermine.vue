@@ -10,11 +10,6 @@
         <!-- Form or configuration fields for BSH Termine -->
         <form @submit.prevent="submitForm" class="space-y-4">
             <!-- Course Name Input -->
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Course Name</label>
-                <input v-model="form.name" type="text" required placeholder="Enter Course Name"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-            </div>
 
             <!-- Additional form fields, similar to the previous form structure -->
 
@@ -266,13 +261,44 @@ const dateDropdownOptions = computed(() =>
   dateOptions.value.map(option => ({ value: option.id, label: `${format(new Date(option.start_date), 'dd.MM.yyyy')} - ${format(new Date(option.end_date), 'dd.MM.yyyy')}` }))
 )
 
-// Function to handle form submission
-const submitForm = () => {
-    // Emit the 'config-saved' event with form data
-    emit('config-saved', form.value);
 
-    // Clear the form or perform additional actions as needed
-    form.value = { name: '', titles: [''] };
+const submitForm = async () => {
+  const { course_type, dates_ids, location_ids, name, start_time_ids, titles, types } = form.value;
+
+  // Create combinations for each unique entry
+  const allCombinations = [];
+  dates_ids.forEach(dateId => {
+    location_ids.forEach(locationId => {
+      start_time_ids.forEach(startTimeId => {
+        types.forEach(type => {
+            debugger
+          allCombinations.push({
+            
+            course_type,
+            date_id: dateId,
+            location_id: locationId,
+            name,
+            start_time_id: startTimeId,
+            title: titles[0],  // Assuming one title per course
+            type
+          });
+        });
+      });
+    });
+  });
+
+  // Insert each combination into the 'all_termine' table
+  const { data, error } = await $supabase
+    .from('all_termine')
+    .insert(allCombinations)
+    .select();
+
+  if (error) {
+    console.error("Error inserting combinations:", error);
+  } else {
+    console.log("Inserted combinations:", data);
+    emit('goBack');
+  }
 };
 
 onMounted(async () => {
@@ -281,7 +307,6 @@ onMounted(async () => {
     await fetchStartTimes()
     await fetchDates()
     await fetchCourse_types()
-    debugger
 })
 </script>
 

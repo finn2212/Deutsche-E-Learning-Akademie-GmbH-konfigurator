@@ -10,12 +10,15 @@
     </td>
     <td class="px-4 py-2 border-b text-center">{{ item.id }}</td>
     <td class="px-4 py-2 border-b">{{ item.title }}</td>
-    <td class="px-4 py-2 border-b">{{ item.location_id }}</td>
+    <td class="px-4 py-2 border-b">{{ item.location_name || item.location_id }}</td> <!-- Display location name -->
     <td class="px-4 py-2 border-b text-center">{{ item.type }}</td>
-    <td class="px-4 py-2 border-b text-center">{{ item.start_time_id }}</td>
+    <td class="px-4 py-2 border-b text-center">{{ item.date_label || item.date_id }}</td> <!-- Display date label -->
+    <td class="px-4 py-2 border-b text-center">{{ item.start_time_label || item.start_time_id }}</td> <!-- Display start time label -->
     <td class="px-4 py-2 border-b text-center">{{ item.status }}</td>
     <td class="px-4 py-2 border-b text-center">
-      <!-- Additional action buttons can go here -->
+      <button @click="handleDelete" class="text-red-500 hover:text-red-700">
+        🗑️
+      </button>
     </td>
   </tr>
 </template>
@@ -28,9 +31,13 @@ const props = defineProps({
   isSelected: Boolean
 });
 
-const emit = defineEmits(['selectCourse']);
+const emit = defineEmits(['selectCourse', 'deleteCourse']);
 
 const toggleSelection = () => {
   emit('selectCourse', props.item.id, !props.isSelected);
+};
+
+const handleDelete = () => {
+  emit('deleteCourse', props.item.id);
 };
 </script>

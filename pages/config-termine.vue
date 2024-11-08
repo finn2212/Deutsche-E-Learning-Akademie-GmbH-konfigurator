@@ -6,6 +6,8 @@ import KursTable from '../components/config-termine/KursTable.vue';
 import ConfigBshTermine from '../components/config-termine/ConfigBshTermine.vue';
 import { useNuxtApp } from '#app';
 import XmlHelper2 from '../helper/xmlHelper2.0';
+import { format } from 'date-fns';
+
 
 const { $supabase } = useNuxtApp();
 const kursData = ref([]);
@@ -21,9 +23,27 @@ const fetchKursData = async () => {
   if (error) {
     console.error('Error fetching data:', error);
   } else {
-    kursData.value = data.map(item => ({ ...item, selected: false }));
+    const { data: locations } = await $supabase.from('places').select('*');
+    const { data: startTimes } = await $supabase.from('start_times').select('*');
+    const { data: dates } = await $supabase.from('dates').select('*');
+
+    kursData.value = data.map(item => {
+      const location = locations.find(l => l.id === item.location_id);
+      const startTime = startTimes.find(s => s.id === item.start_time_id);
+      const date = dates.find(d => d.id === item.date_id);
+
+      return {
+        ...item,
+        location_name: location ? location.name : '',
+        start_time_label: startTime ? startTime.time : '',
+        date_label: date
+          ? `${format(new Date(date.start_date), 'dd.MM.yyyy')} - ${format(new Date(date.end_date), 'dd.MM.yyyy')}`
+          : ''
+      };
+    });
   }
 };
+
 
 onMounted(() => {
   fetchKursData();
@@ -110,6 +130,20 @@ const toggleSelectAll = () => {
 const goBackToTable = () => {
   isConfigMode.value = false;
 };
+
+const deleteCourse = async (courseId) => {
+  const { error } = await $supabase
+    .from('all_termine')
+    .delete()
+    .eq('id', courseId);
+
+  if (error) {
+    console.error("Error deleting course:", error);
+  } else {
+    console.log(`Deleted course with ID: ${courseId}`);
+    await fetchKursData(); // Refresh the table data after deletion
+  }
+};
 </script>
 
 <template>
@@ -127,6 +161,7 @@ const goBackToTable = () => {
           :selectedCourses="selectedCourses"
           @toggleSelectAll="toggleSelectAll"
           @updateSelectedCourses="updateSelectedCourses"
+          @deleteCourse="deleteCourse"
         />
       </div>
     </div>

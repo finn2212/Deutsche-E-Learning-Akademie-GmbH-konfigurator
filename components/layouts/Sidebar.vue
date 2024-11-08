@@ -100,5 +100,5 @@ const settings = [
 ]
 
 const { userRole, fetchUserRole } = useAuth(); 
-await fetchUserRole();
+//await fetchUserRole();
 </script>

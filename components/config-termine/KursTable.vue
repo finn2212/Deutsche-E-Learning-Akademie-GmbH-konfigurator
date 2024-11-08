@@ -14,7 +14,8 @@
         <th class="px-4 py-2 border-b">Kurs</th>
         <th class="px-4 py-2 border-b">Standort</th>
         <th class="px-4 py-2 border-b">Vz/Tz</th>
-        <th class="px-4 py-2 border-b">Startd.</th>
+        <th class="px-4 py-2 border-b">Start Datum</th>
+        <th class="px-4 py-2 border-b">Start Zeit.</th>
         <th class="px-4 py-2 border-b">Status</th>
         <th class="px-4 py-2 border-b">Aktionen</th>
       </tr>
@@ -26,6 +27,7 @@
         :item="item"
         :isSelected="selectedCourses.includes(item.id)"
         @selectCourse="updateSelectedCourses"
+        @deleteCourse="emitDeleteCourse"
       />
     </tbody>
   </table>
@@ -41,7 +43,7 @@ const props = defineProps({
   selectedCourses: Array,
 });
 
-const emit = defineEmits(['toggleSelectAll', 'updateSelectedCourses']);
+const emit = defineEmits(['toggleSelectAll', 'updateSelectedCourses', 'deleteCourse']);
 
 // Toggle select all functionality
 const toggleSelectAll = () => {
@@ -60,5 +62,10 @@ const updateSelectedCourses = (courseId, isSelected) => {
     : props.selectedCourses.filter(id => id !== courseId);
 
   emit('updateSelectedCourses', updatedCourses);
+};
+
+// Emit delete event to the parent component
+const emitDeleteCourse = (courseId) => {
+  emit('deleteCourse', courseId); // Emit the deleteCourse event to the main page component
 };
 </script>
