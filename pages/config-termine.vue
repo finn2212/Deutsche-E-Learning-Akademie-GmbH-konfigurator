@@ -7,12 +7,14 @@ import ConfigBshTermine from '../components/config-termine/ConfigBshTermine.vue'
 import { useNuxtApp } from '#app';
 import XmlHelper2 from '../helper/xmlHelper2.0';
 import { format } from 'date-fns';
+import DetailView from '../components/config-termine/DetailView.vue';
 
 
 const { $supabase } = useNuxtApp();
 const kursData = ref([]);
 const selectedCourses = ref([]);
 const selectAll = ref(false);
+const selectedItem = ref(null);
 
 // State to control view mode (table view or config mode)
 const isConfigMode = ref(false);
@@ -201,8 +203,12 @@ const deleteCourse = async (courseId) => {
 };
 
 const handleFilterUpdate = ({ key, value }) => {
-  debugger
   filters.value[key].value = value;
+};
+
+const openDetails = (item) => {
+  selectedItem.value = item;
+  isConfigMode.value = true; // Show detail view
 };
 </script>
 
@@ -222,10 +228,11 @@ const handleFilterUpdate = ({ key, value }) => {
           @toggleSelectAll="toggleSelectAll"
           @updateSelectedCourses="updateSelectedCourses"
           @deleteCourse="deleteCourse"
+          @openDetails="openDetails"
         />
       </div>
     </div>
-
+    <DetailView v-else-if="selectedItem" :item="selectedItem" @goBack="goBackToTable" />
     <!-- Show ConfigBshTermine if in config mode -->
     <div v-else>
       <ConfigBshTermine @goBack="goBackToTable" />

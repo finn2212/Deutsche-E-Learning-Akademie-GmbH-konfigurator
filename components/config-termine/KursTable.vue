@@ -20,7 +20,6 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Loop through filteredKursData -->
       <TableRow
         v-for="item in filteredKursData"
         :key="item.id"
@@ -28,6 +27,7 @@
         :isSelected="selectedCourses.includes(item.id)"
         @selectCourse="updateSelectedCourses"
         @deleteCourse="deleteCourse"
+        @openDetails="openDetails"
       />
     </tbody>
   </table>
@@ -38,12 +38,17 @@ import { defineProps, defineEmits } from 'vue';
 import TableRow from './TableRow.vue';
 
 const props = defineProps({
-  filteredKursData: Array, // Accept filtered data as a prop
+  filteredKursData: Array,
   selectAll: Boolean,
   selectedCourses: Array
 });
 
-const emit = defineEmits(['toggleSelectAll', 'updateSelectedCourses', 'deleteCourse']);
+const emit = defineEmits(['toggleSelectAll', 'updateSelectedCourses', 'deleteCourse', 'openDetails']);
+
+// Emit openDetails event up to the parent
+const openDetails = (item) => {
+  emit('openDetails', item);
+};
 
 // Toggle select all functionality
 const toggleSelectAll = () => {
