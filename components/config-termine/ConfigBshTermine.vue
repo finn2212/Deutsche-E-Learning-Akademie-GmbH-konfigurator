@@ -17,7 +17,7 @@
             <div>
                 <label for="titles" class="block text-sm font-medium text-gray-700">Kurs Typ</label>
                 <div class="mt-1">
-                    <Dropdown v-model="form.course_types[index]" :options="courseTypeOptions" />
+                    <Dropdown v-model="form.course_type" :options="courseTypeOptions" />
                 </div>
                 
             </div>
@@ -271,7 +271,6 @@ const submitForm = async () => {
     location_ids.forEach(locationId => {
       start_time_ids.forEach(startTimeId => {
         types.forEach(type => {
-            debugger
           allCombinations.push({
             
             course_type,

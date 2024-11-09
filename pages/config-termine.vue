@@ -186,6 +186,9 @@ const toggleSelectAll = () => {
 // Function to return to the table view from ConfigBshTermine
 const goBackToTable = () => {
   isConfigMode.value = false;
+  selectedItem.value = null;
+  fetchKursData()
+  
 };
 
 const deleteCourse = async (courseId) => {

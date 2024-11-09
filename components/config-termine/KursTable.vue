@@ -26,7 +26,7 @@
         :item="item"
         :isSelected="selectedCourses.includes(item.id)"
         @selectCourse="updateSelectedCourses"
-        @deleteCourse="deleteCourse"
+        @deleteCourse="emitDeleteCourse"
         @openDetails="openDetails"
       />
     </tbody>
@@ -48,6 +48,19 @@ const emit = defineEmits(['toggleSelectAll', 'updateSelectedCourses', 'deleteCou
 // Emit openDetails event up to the parent
 const openDetails = (item) => {
   emit('openDetails', item);
+};
+
+// Emit delete event to the parent component
+const emitDeleteCourse = (courseId) => {
+  emit('deleteCourse', courseId); // Emit the deleteCourse event to the main page component
+};
+
+// Update selected courses when a row is selected/deselected
+const updateSelectedCourses = (courseId, isSelected) => {
+  const updatedCourses = isSelected
+    ? [...props.selectedCourses, courseId]
+    : props.selectedCourses.filter(id => id !== courseId);
+  emit('updateSelectedCourses', updatedCourses);
 };
 
 // Toggle select all functionality

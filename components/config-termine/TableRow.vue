@@ -7,7 +7,8 @@
       <input
         type="checkbox"
         :checked="isSelected"
-        @change.stop="toggleSelection"
+        @change="toggleSelection"
+        @click.stop
         class="form-checkbox"
       />
     </td>
