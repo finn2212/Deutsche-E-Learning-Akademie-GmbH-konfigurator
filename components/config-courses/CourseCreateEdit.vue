@@ -1,0 +1,198 @@
+<template>
+    <div class="space-y-6">
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold">{{ isEditMode ? 'Edit Course Type' : 'Create New Course Type' }}</h2>
+            <button @click="closeForm" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                Cancel
+            </button>
+        </div>
+        <form @submit.prevent="submitForm">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <!-- Text Fields -->
+                <div v-for="(label, field) in textFields" :key="field" class="mb-4">
+                    <label :for="field" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+                    <input v-model="formData[field]" type="text" :id="field"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                </div>
+
+                <!-- Education Types Dropdown -->
+                <div class="mb-4">
+                    <label for="education_type" class="block text-sm font-medium text-gray-700">Education Type</label>
+                    <select v-model="selectedEducationType" @change="updateEducationTypeText"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="" disabled>Select Education Type</option>
+                        <option v-for="education in educationTypes" :key="education.id" :value="education.id">{{
+                            education.text }}</option>
+                    </select>
+                </div>
+
+                <!-- TeachingTypes Types Dropdown -->
+                <div class="mb-4">
+                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Teaching Types</label>
+                    <select v-model="selectedTeachingForm" @change="updateTeachingForms"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="" disabled>Select Education Type</option>
+                        <option v-for="teachingType in teachingForms" :key="teachingType.id" :value="teachingType.id">{{
+                            teachingType.text }}</option>
+                    </select>
+                </div>
+
+                <!-- Textarea Fields -->
+                <div v-for="(label, field) in textareaFields" :key="field" class="mb-4">
+                    <label :for="field" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+                    <textarea v-model="formData[field]" :id="field"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                </div>
+
+                <!-- Number Field -->
+                <div class="mb-4">
+                    <label for="price_amount" class="block text-sm font-medium text-gray-700">Price Amount</label>
+                    <input v-model="formData.price_amount" type="number" step="0.01"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                </div>
+
+                <!-- Checkbox Fields -->
+                <div v-for="(label, field) in checkboxFields" :key="field" class="mb-4">
+                    <label :for="field" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+                    <input v-model="formData[field]" type="checkbox" :id="field" class="mt-1 block" />
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end">
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Save</button>
+            </div>
+        </form>
+    </div>
+</template>
+
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+import { useReferenceData } from '@/composables/useReferenceData';
+
+const props = defineProps({
+    course: Object,
+    isEditMode: Boolean
+});
+
+const emit = defineEmits(['closeForm', 'saveCourse']);
+
+const { fetchEducationTypes, fetchTeachingForms } = useReferenceData();
+const educationTypes = ref([]);
+const teachingForms = ref([]);
+const selectedEducationType = ref("")
+const selectedTeachingForm = ref("")
+
+onMounted(async () => {
+    educationTypes.value = await fetchEducationTypes();
+    teachingForms.value = await fetchTeachingForms();
+    // Set initial values for dropdowns in edit mode
+    if (props.isEditMode && props.course) {
+        selectedEducationType.value = props.course.education_type2 || "";
+        selectedTeachingForm.value = props.course.instruction_type1 || "";
+    }
+});
+// Form data structure
+const formData = ref({
+    type: '',
+    course_type: '',
+    title: '',
+    description_long: '',
+    requirements: '',
+    keywords_group: '',
+    target_group_text: '',
+    degree_type1: '',
+    degree_title: '',
+    degree_type2: '',
+    examiner: '',
+    degree_add_qualification: '',
+    degree_entitled: '',
+    subsidy_description: '',
+    instruction_form: '',
+    instruction_type1: '',
+    instruction_type2: '',
+    inhouse_seminar: false,
+    extra_occupational: false,
+    practical_part: false,
+    education_type1: '',
+    education_type2: '',
+    duration_type: '',
+    flexible_start: false,
+    segment_type2: '',
+    reference_classification_system_name: '',
+    fname: '',
+    fvalue: '',
+    price_amount: 0,
+    price_currency: 'EUR',
+    measure_number: '',
+    manual_id: ''
+});
+
+// Define field labels for reusability
+const textFields = {
+    type: 'Type',
+    course_type: 'Kurs Type',
+    title: 'Title',
+    degree_type1: 'Degree Type 1',
+    degree_title: 'Degree Title',
+    degree_type2: 'Degree Type 2',
+    examiner: 'Examiner',
+    degree_add_qualification: 'Degree Add Qualification',
+    degree_entitled: 'Degree Entitled',
+    instruction_type2: 'Instruction Type 2',
+    duration_type: 'Duration Type',
+    segment_type2: 'Segment Type 2',
+    reference_classification_system_name: 'Reference Classification System Name',
+    fname: 'FNAME',
+    fvalue: 'FVALUE',
+    price_currency: 'Price Currency',
+    measure_number: 'Measure Number',
+    manual_id: 'Manual Kurs ID'
+};
+
+const textareaFields = {
+    description_long: 'Description Long',
+    requirements: 'Requirements',
+    keywords_group: 'Keywords Group',
+    target_group_text: 'Target Group Text',
+    subsidy_description: 'Subsidy Description',
+};
+
+const checkboxFields = {
+    inhouse_seminar: 'Inhouse Seminar',
+    extra_occupational: 'Extra Occupational',
+    practical_part: 'Practical Part',
+    flexible_start: 'Flexible Start'
+};
+
+const updateEducationTypeText = () => {
+    const selectedEducation = educationTypes.value.find(item => item.id === selectedEducationType.value);
+    formData.value.education_type1 = selectedEducation ? selectedEducation.text : '';
+    formData.value.education_type2 = selectedEducation ? selectedEducation.id : '';
+};
+
+const updateTeachingForms = () => {
+    const selectedTeachingForm = teachingForms.value.find(item => item.id === selectedTeachingForm.value);
+    formData.value.instruction_type1 = selectedTeachingForm ? selectedTeachingForm.id : '';
+    formData.value.instruction_form = selectedTeachingForm ? selectedTeachingForm.text : '';
+};
+
+// Update form data when course prop changes
+watch(() => props.course, (newCourse) => {
+    formData.value = newCourse ? { ...newCourse } : {};
+}, { immediate: true });
+
+// Close form handler
+const closeForm = () => {
+    emit('closeForm');
+};
+
+// Form submission handler
+const submitForm = () => {
+    emit('saveCourse', formData.value);
+};
+</script>
+
+<style scoped>
+/* Optional styles for form */
+</style>

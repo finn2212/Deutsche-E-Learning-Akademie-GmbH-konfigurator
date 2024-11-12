@@ -43,7 +43,7 @@
             <p><strong>Subsidy Description:</strong> {{ courseTypeDetails.subsidy_description }}</p>
             <p><strong>Instruction Form:</strong> {{ courseTypeDetails.instruction_form }}</p>
             <p><strong>Instruction Type 1:</strong> {{ courseTypeDetails.instruction_type1 }}</p>
-            <p><strong>Instruction Form Name:</strong> {{ courseTypeDetails.instruction_form_name }}</p>
+            <p><strong>Instruction Form:</strong> {{ courseTypeDetails.instruction_form }}</p>
             <p><strong>Instruction Type 2:</strong> {{ courseTypeDetails.instruction_type2 }}</p>
             <p><strong>Inhouse Seminar:</strong> {{ courseTypeDetails.inhouse_seminar ? 'Yes' : 'No' }}</p>
             <p><strong>Extra Occupational:</strong> {{ courseTypeDetails.extra_occupational ? 'Yes' : 'No' }}</p>

@@ -300,7 +300,7 @@ class IterationalHelper {
       .up();
     extendedInfo
       .ele("INSTRUCTION_FORM", { type: courseType.instruction_type1 })
-      .txt(courseType.instruction_form_name)
+      .txt(courseType.instruction_form)
       .up();
     extendedInfo
       .ele("INSTRUCTION_TIME", { type: course.type === "Teilzeit" ? 2 : 1 })

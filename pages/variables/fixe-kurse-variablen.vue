@@ -58,8 +58,8 @@
             </p>
             <p class="text-sm text-gray-500 mt-2"><strong>Instruction Type 1:</strong> {{ courseType.instruction_type1
               }}</p>
-            <p class="text-sm text-gray-500 mt-2"><strong>Instruction Form Name:</strong> {{
-          courseType.instruction_form_name }}</p>
+            <p class="text-sm text-gray-500 mt-2"><strong>Instruction Form:</strong> {{
+          courseType.instruction_form}}</p>
             <p class="text-sm text-gray-500 mt-2"><strong>Instruction Type 2:</strong> {{ courseType.instruction_type2
               }}</p>
             <p class="text-sm text-gray-500 mt-2"><strong>Inhouse Seminar:</strong> {{ courseType.inhouse_seminar }}</p>

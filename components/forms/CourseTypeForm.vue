@@ -76,10 +76,6 @@
             <input v-model="form.instruction_type1" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Instruction Type 1" />
           </div>
           <div class="mb-4">
-            <label for="instruction_form_name" class="block text-sm font-medium text-gray-700">Instruction Form Name</label>
-            <input v-model="form.instruction_form_name" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Instruction Form Name" />
-          </div>
-          <div class="mb-4">
             <label for="instruction_type2" class="block text-sm font-medium text-gray-700">Instruction Type 2</label>
             <input v-model="form.instruction_type2" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Instruction Type 2" />
           </div>
@@ -180,7 +176,6 @@ const form = ref({
   subsidy_description: '',
   instruction_form: '',
   instruction_type1: '',
-  instruction_form_name: '',
   instruction_type2: '',
   inhouse_seminar: false,
   extra_occupational: false,
@@ -220,7 +215,6 @@ watch(() => props.courseType, (newCourseType) => {
       subsidy_description: '',
       instruction_form: '',
       instruction_type1: '',
-      instruction_form_name: '',
       instruction_type2: '',
       inhouse_seminar: false,
       extra_occupational: false,

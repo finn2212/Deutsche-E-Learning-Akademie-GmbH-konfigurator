@@ -26,7 +26,6 @@
         <p><strong>Subsidy Description:</strong> {{ selectedCourseTypeDetails.subsidy_description }}</p>
         <p><strong>Instruction Form:</strong> {{ selectedCourseTypeDetails.instruction_form }}</p>
         <p><strong>Instruction Type 1:</strong> {{ selectedCourseTypeDetails.instruction_type1 }}</p>
-        <p><strong>Instruction Form Name:</strong> {{ selectedCourseTypeDetails.instruction_form_name }}</p>
         <p><strong>Instruction Type 2:</strong> {{ selectedCourseTypeDetails.instruction_type2 }}</p>
         <p><strong>Inhouse Seminar:</strong> {{ selectedCourseTypeDetails.inhouse_seminar ? 'Yes' : 'No' }}</p>
         <p><strong>Extra Occupational:</strong> {{ selectedCourseTypeDetails.extra_occupational ? 'Yes' : 'No' }}</p>
