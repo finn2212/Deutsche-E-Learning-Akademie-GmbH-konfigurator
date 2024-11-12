@@ -3,6 +3,21 @@ import { useNuxtApp } from "#app";
 export function useCourseUtils() {
   const { $supabase } = useNuxtApp(); // Correctly get the Supabase client with the $ prefix
 
+  const fetchLocationById = async (locationId) => {
+    const { data, error } = await $supabase
+      .from("places")
+      .select("*")
+      .eq("id", locationId)
+      .single();
+  
+    if (error) {
+      console.error("Error fetching location:", error);
+      return null;
+    }
+    
+    return data;
+  };
+
   const fetchLocations = async (locationIds) => {
     const { data, error } = await $supabase
       .from("places")
@@ -173,6 +188,7 @@ export function useCourseUtils() {
     fetchStartTimes, 
     fetchDates, 
     calculateCombinations,
-    fetchSelectedCoursesDetails
+    fetchSelectedCoursesDetails,
+    fetchLocationById
   };
 }

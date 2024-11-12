@@ -128,19 +128,27 @@ const handleActionEvent = async ({ type }) => {
   const xmlHelper2 = new XmlHelper2(organizationSettings, selectedCourses.value, type);
   const xmlString = await xmlHelper2.generateXml();
 
-  downloadXML(xmlString);
+  downloadXML(xmlString, type);
 };
 
-const downloadXML = (xmlString) => {
+const downloadXML = (xmlString, type) => {
   const now = new Date();
   const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0'); 
-  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = String(now.getFullYear()).slice(2); // Get last two digits of the year
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
 
-  const formattedDateTime = `${day}${month}${String(year).slice(2)}${hours}${minutes}`;
-  const filename = `DELAKursexport${formattedDateTime}.xml`;
+  // Format date as "dd.mm.yy_hh:mm"
+  const formattedDateTime = `${day}-${month}-${year}_${hours}-${minutes}`;
+
+  let filename = "";
+  if (type === "new") {
+    filename = `Neulieferung_rsexport_vom_${formattedDateTime}.xml`;
+  } else if (type === "update") {
+    filename = `Differenzlierferung_Kursexport_vom_${formattedDateTime}.xml`;
+  }
+
 
   const blob = new Blob([xmlString], { type: 'application/xml' });
   const url = URL.createObjectURL(blob);
@@ -188,7 +196,7 @@ const goBackToTable = () => {
   isConfigMode.value = false;
   selectedItem.value = null;
   fetchKursData()
-  
+
 };
 
 const deleteCourse = async (courseId) => {
@@ -218,21 +226,15 @@ const openDetails = (item) => {
 <template>
   <div class="p-6 space-y-4">
     <h1 class="text-2xl font-semibold mb-4">Kurstermine</h1>
-    
+
     <!-- Show FilterSection, ActionButtons, and KursTable if not in config mode -->
     <div v-if="!isConfigMode">
       <FilterSection :filters="filters" @updateFilter="handleFilterUpdate" />
       <ActionButtons @action="handleActionEvent" @addSingleAppointment="addSingleAppointment" />
       <div class="overflow-x-auto mt-5">
-        <KursTable
-          :filteredKursData="filteredKursData"
-          :selectAll="selectAll"
-          :selectedCourses="selectedCourses"
-          @toggleSelectAll="toggleSelectAll"
-          @updateSelectedCourses="updateSelectedCourses"
-          @deleteCourse="deleteCourse"
-          @openDetails="openDetails"
-        />
+        <KursTable :filteredKursData="filteredKursData" :selectAll="selectAll" :selectedCourses="selectedCourses"
+          @toggleSelectAll="toggleSelectAll" @updateSelectedCourses="updateSelectedCourses" @deleteCourse="deleteCourse"
+          @openDetails="openDetails" />
       </div>
     </div>
     <DetailView v-else-if="selectedItem" :item="selectedItem" @goBack="goBackToTable" />
