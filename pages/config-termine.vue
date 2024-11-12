@@ -146,7 +146,7 @@ const downloadXML = (xmlString, type) => {
   if (type === "new") {
     filename = `Neulieferung_rsexport_vom_${formattedDateTime}.xml`;
   } else if (type === "update") {
-    filename = `Differenzlierferung_Kursexport_vom_${formattedDateTime}.xml`;
+    filename = `Differenzlierferung-Kursexport-vom_${formattedDateTime}.xml`;
   }
 
 
