@@ -140,6 +140,10 @@
             <input v-model="form.measure_number" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Measure Number" />
           </div>
         </div>
+        <div class="mb-4">
+            <label for="Manuelle Id" class="block text-sm font-medium text-gray-700">Manuelle Kurs Id</label>
+            <input v-model="form.manual_id" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Manuelle id" />
+        </div>
         <div class="flex justify-end sticky bottom-0 bg-white py-4">
           <button type="button" @click="closeForm" class="mr-2 px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
           <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Save</button>
@@ -191,7 +195,8 @@ const form = ref({
   fvalue: '',
   price_amount: 0,
   price_currency: 'EUR',
-  measure_number: ''
+  measure_number: '',
+  manual_id:'',
 })
 
 watch(() => props.courseType, (newCourseType) => {
@@ -230,7 +235,8 @@ watch(() => props.courseType, (newCourseType) => {
       fvalue: '',
       price_amount: 0,
       price_currency: 'EUR',
-      measure_number: ''
+      measure_number: '',
+      manual_id: ''
     }
   }
 }, { immediate: true })

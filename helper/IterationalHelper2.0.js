@@ -43,13 +43,19 @@ class IterationalHelper {
     for (const [courseTypeId, courses] of Object.entries(groupedCourses)) {
       const courseType = await this.fetchCourseType(courseTypeId);
       const service = newCatalog.ele("SERVICE", { mode: "new" });
-      service.ele("PRODUCT_ID").txt(courseTypeId).up();
+      let course_id = "";
+      if (courseType.manual_id){
+        course_id = courseType.manual_id;
+      } else {
+        course_id = courseTypeId;
+      }
+      service.ele("PRODUCT_ID").txt(course_id).up();
       service.ele("COURSE_TYPE").txt(courseType.course_type).up();
       this.addServiceDetailsForCourse(
         service,
         courses[0],
         courseType,
-        courseTypeId,
+        course_id,
         0
       );
 
