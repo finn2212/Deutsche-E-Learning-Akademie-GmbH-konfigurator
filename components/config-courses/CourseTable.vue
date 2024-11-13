@@ -5,6 +5,7 @@
           <th class="px-4 py-2 border-b text-left">ID</th>
           <th class="px-4 py-2 border-b text-left">Title</th>
           <th class="px-4 py-2 border-b text-left">Kurs Form</th>
+          <th class="px-4 py-2 border-b text-left">Kurs Art</th>
           <th class="px-4 py-2 border-b text-left">Actions</th>
         </tr>
       </thead>
@@ -13,6 +14,7 @@
           <td class="px-4 py-2 border-b text-left">{{ course.id }}</td>
           <td class="px-4 py-2 border-b text-left">{{ course.title }}</td>
           <td class="px-4 py-2 border-b text-left">{{ course.instruction_form }}</td>
+          <td class="px-4 py-2 border-b text-left">{{ course.fvalue }}</td>
           <td class="px-4 py-2 border-b text-left">
             <button @click="editCourse(course)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
             <button @click="deleteCourse(course.id)" class="text-red-500 hover:text-red-700">🗑️</button>

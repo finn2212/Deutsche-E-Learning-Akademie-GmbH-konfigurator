@@ -6,12 +6,15 @@
         <form @submit.prevent="submitForm">
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <!-- Text Fields -->
-                <div v-for="(label, field) in textFields" :key="field" class="mb-4">
-                    <label :for="field" class="block text-sm font-medium text-gray-700">{{ label }}</label>
-                    <input v-model="formData[field]" type="text" :id="field"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                <div class="mb-4">
+                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Kursart</label>
+                    <select v-model="selectedOfferType" @change="updateOfferType"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="" disabled>Select Offer Type</option>
+                        <option v-for="offerType in offerTypes" :key="offerType.id" :value="offerType.id">{{
+                            offerType.text }}</option>
+                    </select>
                 </div>
-
                 <!-- Education Types Dropdown -->
                 <div class="mb-4">
                     <label for="education_type" class="block text-sm font-medium text-gray-700">Education Type</label>
@@ -33,6 +36,7 @@
                             teachingType.text }}</option>
                     </select>
                 </div>
+               
                 <!-- Search Component for ref entries -->
                 <div class="mb-4">
                     <label for="search" class="block text-sm font-medium text-gray-700">Search Entries</label>
@@ -47,7 +51,13 @@
                         </li>
                     </ul>
                 </div>
+                <div v-for="(label, field) in textFields" :key="field" class="mb-4">
+                    <label :for="field" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+                    <input v-model="formData[field]" type="text" :id="field"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                </div>
 
+                
                 <!-- Textarea Fields -->
                 <div v-for="(label, field) in textareaFields" :key="field" class="mb-4">
                     <label :for="field" class="block text-sm font-medium text-gray-700">{{ label }}</label>
@@ -89,13 +99,15 @@ const props = defineProps({
     isEditMode: Boolean
 });
 
-const emit = defineEmits(['closeForm', 'saveCourse, update:classificationGroup']);
+const emit = defineEmits(['closeForm', 'saveCourse']);
 
-const { fetchEducationTypes, fetchTeachingForms, fetchRefGroups, fetchRefGroupById, } = useReferenceData();
+const { fetchEducationTypes, fetchTeachingForms, fetchRefGroups, fetchRefGroupById, fetchOfferTypes } = useReferenceData();
 const educationTypes = ref([]);
 const teachingForms = ref([]);
+const offerTypes = ref([])
 const selectedEducationType = ref("")
 const selectedTeachingForm = ref("")
+const selectedOfferType = ref("");
 const searchQuery = ref("");
 const suggestions = ref([]);
 const selectedSuggestion = ref(null);
@@ -103,10 +115,12 @@ const selectedSuggestion = ref(null);
 onMounted(async () => {
     educationTypes.value = await fetchEducationTypes();
     teachingForms.value = await fetchTeachingForms();
+    offerTypes.value = await fetchOfferTypes()
     // Set initial values for dropdowns in edit mode
     if (props.isEditMode && props.course) {
         selectedEducationType.value = props.course.education_type2 || "";
         selectedTeachingForm.value = props.course.instruction_type1 || "";
+        selectedOfferType.value = props.course.course_type || "";
         const savedGroup = await fetchRefGroupById(props.course.classification_group_id);
         if (savedGroup) {
             selectedSuggestion.value = savedGroup;
@@ -132,11 +146,9 @@ const selectSuggestion = (suggestion) => {
     formData.value.classification_group_id = suggestion.id
     formData.value.fvalue = suggestion.ref_group_description
     formData.value.fname = suggestion.ref_group_name
-    emit("update:classificationGroup", suggestion);
 };
 // Form data structure
 const formData = ref({
-    type: '',
     course_type: '',
     title: '',
     description_long: '',
@@ -173,8 +185,6 @@ const formData = ref({
 
 // Define field labels for reusability
 const textFields = {
-    type: 'Type',
-    course_type: 'Kurs Type',
     title: 'Title',
     degree_type1: 'Degree Type 1',
     degree_title: 'Degree Title',
@@ -216,6 +226,10 @@ const updateTeachingForms = () => {
     const selectedTeachingForm = teachingForms.value.find(item => item.id === selectedTeachingForm.value);
     formData.value.instruction_type1 = selectedTeachingForm ? selectedTeachingForm.id : '';
     formData.value.instruction_form = selectedTeachingForm ? selectedTeachingForm.text : '';
+};
+const updateOfferType = () => {
+    const selectedOffer = offerTypes.value.find(item => item.id === selectedOfferType.value);
+    formData.value.course_type = selectedOffer.id;
 };
 
 // Update form data when course prop changes
