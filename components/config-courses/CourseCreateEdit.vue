@@ -89,7 +89,7 @@ const props = defineProps({
     isEditMode: Boolean
 });
 
-const emit = defineEmits(['closeForm', 'saveCourse']);
+const emit = defineEmits(['closeForm', 'saveCourse, update:classificationGroup']);
 
 const { fetchEducationTypes, fetchTeachingForms, fetchRefGroups, fetchRefGroupById, } = useReferenceData();
 const educationTypes = ref([]);
@@ -107,9 +107,12 @@ onMounted(async () => {
     if (props.isEditMode && props.course) {
         selectedEducationType.value = props.course.education_type2 || "";
         selectedTeachingForm.value = props.course.instruction_type1 || "";
-        selectedSuggestion.value = await fetchRefGroupById(props.course.classification_group_id) || "";
+        const savedGroup = await fetchRefGroupById(props.course.classification_group_id);
+        if (savedGroup) {
+            selectedSuggestion.value = savedGroup;
+            searchQuery.value = `${savedGroup.ref_group_description} - ${savedGroup.ref_group_name}`;
+        }
     }
-    debugger
 });
 
 // Search functionality
@@ -124,10 +127,12 @@ const handleSearch = async () => {
 
 const selectSuggestion = (suggestion) => {
     selectedSuggestion.value = suggestion;
-    searchQuery.value = `${suggestion.ref_group_name} - ${suggestion.ref_group_description}`; // Optionally show the selected suggestion in the input
-    suggestions.value = []; // Clear suggestions after selection
-    formData.classification_group_id = suggestion.ref_group_id
-    debugger
+    searchQuery.value = `${suggestion.ref_group_description} - ${suggestion.ref_group_name}`;
+    suggestions.value = []; // Clear suggestions
+    formData.value.classification_group_id = suggestion.id
+    formData.value.fvalue = suggestion.ref_group_description
+    formData.value.fname = suggestion.ref_group_name
+    emit("update:classificationGroup", suggestion);
 };
 // Form data structure
 const formData = ref({
@@ -181,8 +186,6 @@ const textFields = {
     duration_type: 'Duration Type',
     segment_type2: 'Segment Type 2',
     reference_classification_system_name: 'Reference Classification System Name',
-    fname: 'FNAME',
-    fvalue: 'FVALUE',
     price_currency: 'Price Currency',
     measure_number: 'Measure Number',
     manual_id: 'Manual Kurs ID'
