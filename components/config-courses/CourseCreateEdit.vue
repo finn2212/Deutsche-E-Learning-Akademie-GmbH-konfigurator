@@ -2,9 +2,6 @@
     <div class="space-y-6">
         <div class="flex justify-between items-center">
             <h2 class="text-xl font-semibold">{{ isEditMode ? 'Edit Course Type' : 'Create New Course Type' }}</h2>
-            <button @click="closeForm" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                Cancel
-            </button>
         </div>
         <form @submit.prevent="submitForm">
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -36,6 +33,20 @@
                             teachingType.text }}</option>
                     </select>
                 </div>
+                <!-- Search Component for ref entries -->
+                <div class="mb-4">
+                    <label for="search" class="block text-sm font-medium text-gray-700">Search Entries</label>
+                    <input v-model="searchQuery" @input="handleSearch" type="text" id="search"
+                        placeholder="Search by Group Description"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                    <ul v-if="suggestions.length"
+                        class="border border-gray-300 rounded-md mt-2 bg-white shadow-sm max-h-48 overflow-y-auto">
+                        <li v-for="(suggestion, index) in suggestions" :key="index"
+                            @click="selectSuggestion(suggestion)" class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                            {{ suggestion.ref_group_description }} - {{ suggestion.ref_group_name }}
+                        </li>
+                    </ul>
+                </div>
 
                 <!-- Textarea Fields -->
                 <div v-for="(label, field) in textareaFields" :key="field" class="mb-4">
@@ -60,7 +71,10 @@
 
             <!-- Action Buttons -->
             <div class="flex justify-end">
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Save</button>
+                <button @click="closeForm" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 ml-5 py-2 bg-green-600 text-white rounded">Save</button>
             </div>
         </form>
     </div>
@@ -77,11 +91,14 @@ const props = defineProps({
 
 const emit = defineEmits(['closeForm', 'saveCourse']);
 
-const { fetchEducationTypes, fetchTeachingForms } = useReferenceData();
+const { fetchEducationTypes, fetchTeachingForms, fetchRefGroups, fetchRefGroupById, } = useReferenceData();
 const educationTypes = ref([]);
 const teachingForms = ref([]);
 const selectedEducationType = ref("")
 const selectedTeachingForm = ref("")
+const searchQuery = ref("");
+const suggestions = ref([]);
+const selectedSuggestion = ref(null);
 
 onMounted(async () => {
     educationTypes.value = await fetchEducationTypes();
@@ -90,8 +107,28 @@ onMounted(async () => {
     if (props.isEditMode && props.course) {
         selectedEducationType.value = props.course.education_type2 || "";
         selectedTeachingForm.value = props.course.instruction_type1 || "";
+        selectedSuggestion.value = await fetchRefGroupById(props.course.classification_group_id) || "";
     }
+    debugger
 });
+
+// Search functionality
+
+const handleSearch = async () => {
+    if (searchQuery.value.length >= 2) { // Start searching after 3 characters
+        suggestions.value = await fetchRefGroups(searchQuery.value);
+    } else {
+        suggestions.value = []; // Clear suggestions if query is too short
+    }
+};
+
+const selectSuggestion = (suggestion) => {
+    selectedSuggestion.value = suggestion;
+    searchQuery.value = `${suggestion.ref_group_name} - ${suggestion.ref_group_description}`; // Optionally show the selected suggestion in the input
+    suggestions.value = []; // Clear suggestions after selection
+    formData.classification_group_id = suggestion.ref_group_id
+    debugger
+};
 // Form data structure
 const formData = ref({
     type: '',
@@ -125,7 +162,8 @@ const formData = ref({
     price_amount: 0,
     price_currency: 'EUR',
     measure_number: '',
-    manual_id: ''
+    manual_id: '',
+    classification_group_id: ""
 });
 
 // Define field labels for reusability

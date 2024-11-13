@@ -3,7 +3,7 @@
     class="odd:bg-gray-100 even:bg-gray-50 cursor-pointer"
     @click="openDetails"
   >
-    <td class="px-4 py-2 border-b text-center">
+    <td class="px-4 py-2 border-b text-left">
       <input
         type="checkbox"
         :checked="isSelected"
@@ -12,14 +12,14 @@
         class="form-checkbox"
       />
     </td>
-    <td class="px-4 py-2 border-b text-center">{{ item.id }}</td>
-    <td class="px-4 py-2 border-b">{{ item.title }}</td>
-    <td class="px-4 py-2 border-b">{{ item.location_name || item.location_id }}</td>
-    <td class="px-4 py-2 border-b text-center">{{ item.type }}</td>
-    <td class="px-4 py-2 border-b text-center">{{ item.date_label || item.date_id }}</td>
-    <td class="px-4 py-2 border-b text-center">{{ item.start_time_label || item.start_time_id }}</td>
-    <td class="px-4 py-2 border-b text-center">{{ item.status }}</td>
-    <td class="px-4 py-2 border-b text-center">
+    <td class="px-4 py-2 border-b text-left">{{ item.id }}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.title }}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.location_name || item.location_id }}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.type }}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.date_label || item.date_id }}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.start_time_label || item.start_time_id }}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.status }}</td>
+    <td class="px-4 py-2 border-b text-left">
       <button @click.stop="handleDelete" class="text-red-500 hover:text-red-700">
         🗑️
       </button>

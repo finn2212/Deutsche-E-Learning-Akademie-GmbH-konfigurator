@@ -10,13 +10,13 @@
             class="form-checkbox"
           />
         </th>
-        <th class="px-4 py-2 border-b">ID</th>
-        <th class="px-4 py-2 border-b">Kurs</th>
-        <th class="px-4 py-2 border-b">Standort</th>
-        <th class="px-4 py-2 border-b">Vz/Tz</th>
-        <th class="px-4 py-2 border-b">Startd.</th>
-        <th class="px-4 py-2 border-b">Status</th>
-        <th class="px-4 py-2 border-b">Aktionen</th>
+        <th class="px-4 py-2 border-b text-left">ID</th>
+        <th class="px-4 py-2 border-b text-left">Kurs</th>
+        <th class="px-4 py-2 border-b text-left">Standort</th>
+        <th class="px-4 py-2 border-b text-left">Vz/Tz</th>
+        <th class="px-4 py-2 border-b text-left">Startd.</th>
+        <th class="px-4 py-2 border-b text-left">Status</th>
+        <th class="px-4 py-2 border-b text-left">Aktionen</th>
       </tr>
     </thead>
     <tbody>

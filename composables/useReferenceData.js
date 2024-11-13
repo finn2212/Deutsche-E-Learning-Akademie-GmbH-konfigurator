@@ -42,6 +42,48 @@ export function useReferenceData() {
   const fetchAdmissionModes = () => fetchReferenceData('ref_admission_modes');
   const fetchAdmissionSemesters = () => fetchReferenceData('ref_admission_semesters');
 
+
+  const fetchRefGroups = async (query) => {
+    const { data, error } = await $supabase
+      .from('ref_classification_groups') // Ensure this is the correct table name in your Supabase setup
+      .select('ref_group_id, ref_group_description, ref_group_name')
+      .or(`ref_group_description.ilike.%${query}%,ref_group_name.ilike.%${query}%`) // Search by both description and name
+      .limit(40); // Limit results to top 40 suggestions
+  
+    if (error) {
+      console.error('Error fetching ref groups:', error);
+      return [];
+    }
+  
+    // Return matched entries with their IDs, names, and descriptions
+    return data.map(entry => ({
+      id: entry.ref_group_id,
+      ref_group_description: entry.ref_group_description,
+      ref_group_name: entry.ref_group_name
+    }));
+  };
+
+    // Function to fetch a single group by ID
+    const fetchRefGroupById = async (id) => {
+      const { data, error } = await $supabase
+        .from('ref_classification_groups') // Ensure this is the correct table name
+        .select('ref_group_id, ref_group_description, ref_group_name') // Specify the fields to fetch
+        .eq('ref_group_id', id) // Match by ID
+        .single(); // Expect a single result
+  
+      if (error) {
+        console.error(`Error fetching ref group by ID (${id}):`, error);
+        return null;
+      }
+  
+      // Return the fetched group
+      return {
+        id: data.ref_group_id,
+        ref_group_description: data.ref_group_description,
+        ref_group_name: data.ref_group_name,
+      };
+    };
+
   return {
     fetchDegrees,
     fetchAccreditationTypes,
@@ -63,6 +105,8 @@ export function useReferenceData() {
     fetchCertificationStatuses,
     fetchAffiliationTypes,
     fetchAdmissionModes,
-    fetchAdmissionSemesters
+    fetchAdmissionSemesters,
+    fetchRefGroups,
+    fetchRefGroupById
   };
 }
