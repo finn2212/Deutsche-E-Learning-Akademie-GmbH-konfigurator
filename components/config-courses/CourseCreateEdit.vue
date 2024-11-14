@@ -36,7 +36,18 @@
                             teachingType.text }}</option>
                     </select>
                 </div>
-               
+
+                <!-- Founding Types Dropdown -->
+                <div class="mb-4">
+                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Founding Type</label>
+                    <select v-model="selectedFundingType" @change="updateFundingType"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="" disabled>Select Funding Type</option>
+                        <option v-for="fundingType in fundingTypes" :key="fundingType.id" :value="fundingType.id">{{
+                            fundingType.text }}</option>
+                    </select>
+                </div>
+
                 <!-- Search Component for ref entries -->
                 <div class="mb-4">
                     <label for="search" class="block text-sm font-medium text-gray-700">Search Entries</label>
@@ -57,7 +68,7 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                 </div>
 
-                
+
                 <!-- Textarea Fields -->
                 <div v-for="(label, field) in textareaFields" :key="field" class="mb-4">
                     <label :for="field" class="block text-sm font-medium text-gray-700">{{ label }}</label>
@@ -101,26 +112,32 @@ const props = defineProps({
 
 const emit = defineEmits(['closeForm', 'saveCourse']);
 
-const { fetchEducationTypes, fetchTeachingForms, fetchRefGroups, fetchRefGroupById, fetchOfferTypes } = useReferenceData();
+const { fetchEducationTypes, fetchTeachingForms, fetchRefGroups, fetchRefGroupById, fetchOfferTypes, fetchFederalFundingTypes } = useReferenceData();
 const educationTypes = ref([]);
 const teachingForms = ref([]);
 const offerTypes = ref([])
+const fundingTypes = ref([])
 const selectedEducationType = ref("")
 const selectedTeachingForm = ref("")
 const selectedOfferType = ref("");
+const selectedFundingType = ref("");
 const searchQuery = ref("");
 const suggestions = ref([]);
 const selectedSuggestion = ref(null);
 
+
 onMounted(async () => {
     educationTypes.value = await fetchEducationTypes();
     teachingForms.value = await fetchTeachingForms();
-    offerTypes.value = await fetchOfferTypes()
+    offerTypes.value = await fetchOfferTypes();
+    fundingTypes.value = await fetchFederalFundingTypes();
     // Set initial values for dropdowns in edit mode
     if (props.isEditMode && props.course) {
         selectedEducationType.value = props.course.education_type2 || "";
         selectedTeachingForm.value = props.course.instruction_type1 || "";
         selectedOfferType.value = props.course.course_type || "";
+        selectedFundingType.value = props.course.funding_type_id || "";
+
         const savedGroup = await fetchRefGroupById(props.course.classification_group_id);
         if (savedGroup) {
             selectedSuggestion.value = savedGroup;
@@ -180,7 +197,9 @@ const formData = ref({
     price_currency: 'EUR',
     measure_number: '',
     manual_id: '',
-    classification_group_id: ""
+    classification_group_id: "",
+    funding_type_id: "",
+    funding_type_name: ""
 });
 
 // Define field labels for reusability
@@ -230,6 +249,12 @@ const updateTeachingForms = () => {
 const updateOfferType = () => {
     const selectedOffer = offerTypes.value.find(item => item.id === selectedOfferType.value);
     formData.value.course_type = selectedOffer.id;
+};
+
+const updateFundingType = () => {
+    const selectedFunding = fundingTypes.value.find(item => item.id === selectedFundingType.value);
+    formData.value.funding_type_id = selectedFunding.id;
+    formData.value.funding_type_name = selectedFunding.text;
 };
 
 // Update form data when course prop changes
