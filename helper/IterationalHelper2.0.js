@@ -44,7 +44,7 @@ class IterationalHelper {
       const courseType = await this.fetchCourseType(courseTypeId);
       const service = newCatalog.ele("SERVICE", { mode: "new" });
       let course_id = "";
-      if (courseType.manual_id){
+      if (courseType.manual_id) {
         course_id = courseType.manual_id;
       } else {
         course_id = courseTypeId;
@@ -310,11 +310,13 @@ class IterationalHelper {
     extendedInfo.ele("EXTRA_OCCUPATIONAL").txt(false).up();
     extendedInfo.ele("PRACTICAL_PART").txt(false).up();
 
-    if (location && courseType.funding_type_id) {
-      extendedInfo
-        .ele("FUNDING_TYPES_FEDERAL", { type: courseType.funding_type_id })
-        .txt(courseType.funding_type_name)
-        .up();
+    if (location) {
+      if (courseType.funding_type_id) {
+        extendedInfo
+          .ele("FUNDING_TYPES_FEDERAL", { type: courseType.funding_type_id })
+          .txt(courseType.funding_type_name)
+          .up();
+      }
       extendedInfo.ele("DIGITAL_ACCESSIBILITY").txt(false).up();
       extendedInfo.ele("DIGITAL_ACCESSIBILITY_REMARKS").up();
     }
