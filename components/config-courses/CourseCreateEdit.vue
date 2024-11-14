@@ -7,7 +7,7 @@
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <!-- Text Fields -->
                 <div class="mb-4">
-                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Kursart</label>
+                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Kursart*</label>
                     <select v-model="selectedOfferType" @change="updateOfferType"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="" disabled>Select Offer Type</option>
@@ -17,7 +17,7 @@
                 </div>
                 <!-- Education Types Dropdown -->
                 <div class="mb-4">
-                    <label for="education_type" class="block text-sm font-medium text-gray-700">Education Type</label>
+                    <label for="education_type" class="block text-sm font-medium text-gray-700">Bildungsart*</label>
                     <select v-model="selectedEducationType" @change="updateEducationTypeText"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="" disabled>Select Education Type</option>
@@ -28,7 +28,7 @@
 
                 <!-- TeachingTypes Types Dropdown -->
                 <div class="mb-4">
-                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Teaching Types</label>
+                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Unterrichtsform*</label>
                     <select v-model="selectedTeachingForm" @change="updateTeachingForms"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="" disabled>Select Education Type</option>
@@ -39,10 +39,11 @@
 
                 <!-- Founding Types Dropdown -->
                 <div class="mb-4">
-                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Founding Type</label>
+                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Förderung</label>
                     <select v-model="selectedFundingType" @change="updateFundingType"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="" disabled>Select Funding Type</option>
+                        <option value="">Keine Fördermöglichkeit</option>
                         <option v-for="fundingType in fundingTypes" :key="fundingType.id" :value="fundingType.id">{{
                             fundingType.text }}</option>
                     </select>
@@ -50,7 +51,7 @@
 
                 <!-- Search Component for ref entries -->
                 <div class="mb-4">
-                    <label for="search" class="block text-sm font-medium text-gray-700">Search Entries</label>
+                    <label for="search" class="block text-sm font-medium text-gray-700">Kurssystematik Suchen*</label>
                     <input v-model="searchQuery" @input="handleSearch" type="text" id="search"
                         placeholder="Search by Group Description"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
@@ -172,7 +173,7 @@ const formData = ref({
     requirements: '',
     keywords_group: '',
     target_group_text: '',
-    degree_type1: '',
+    degree_type1: 0,
     degree_title: '',
     degree_type2: '',
     examiner: '',
@@ -204,16 +205,14 @@ const formData = ref({
 
 // Define field labels for reusability
 const textFields = {
-    title: 'Title',
-    degree_type1: 'Degree Type 1',
-    degree_title: 'Degree Title',
-    degree_type2: 'Degree Type 2',
-    examiner: 'Examiner',
-    degree_add_qualification: 'Degree Add Qualification',
-    degree_entitled: 'Degree Entitled',
-    instruction_type2: 'Instruction Type 2',
-    duration_type: 'Duration Type',
-    segment_type2: 'Segment Type 2',
+    title: 'Title*',
+    degree_type1: 'Degree Type - Meistens 0',
+    degree_title: 'Degree Title - Abschlussbezeichnung',
+    degree_type2: 'Degree Type 2 - Abschlussart',
+    examiner: 'Examiner Prüfende Stelle',
+    degree_add_qualification: 'Zusatzqualifikation',
+    degree_entitled: 'Berechtigung',
+    duration_type: 'Duration Type Dauer',
     reference_classification_system_name: 'Reference Classification System Name',
     price_currency: 'Price Currency',
     measure_number: 'Measure Number',
