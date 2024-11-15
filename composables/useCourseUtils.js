@@ -126,7 +126,7 @@ export function useCourseUtils() {
       // Step 1: Fetch selected courses by IDs
       const { data: courses, error: courseError } = await $supabase
         .from('all_termine')
-        .select('id, title,type, course_type, date_id, location_id')
+        .select('*')
         .in('id', selectedCourseIds);
         
       if (courseError) throw courseError;

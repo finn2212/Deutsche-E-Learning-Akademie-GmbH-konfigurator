@@ -8,7 +8,7 @@
           <button @click="triggerAction('delete')" class="block w-full px-4 py-2 text-left">Delete</button>
         </div>
       </div>
-      <button @click="addSingleAppointment" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Einzelnen Termin anlegen</button>
+      <button @click="addSingleAppointment" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Termine anlegen</button>
     </div>
   </template>
   

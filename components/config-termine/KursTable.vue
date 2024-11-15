@@ -13,6 +13,7 @@
         <th class="px-4 py-2 border-b text-left">ID</th>
         <th class="px-4 py-2 border-b text-left">Kurs</th>
         <th class="px-4 py-2 border-b text-left">Standort</th>
+        <th class="px-4 py-2 border-b text-left">Unterrichtsform</th>
         <th class="px-4 py-2 border-b text-left">Vz/Tz</th>
         <th class="px-4 py-2 border-b text-left">Startd.</th>
         <th class="px-4 py-2 border-b text-left">Status</th>

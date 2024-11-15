@@ -26,17 +26,6 @@
                     </select>
                 </div>
 
-                <!-- TeachingTypes Types Dropdown -->
-                <div class="mb-4">
-                    <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Unterrichtsform*</label>
-                    <select v-model="selectedTeachingForm" @change="updateTeachingForms"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        <option value="" disabled>Select Education Type</option>
-                        <option v-for="teachingType in teachingForms" :key="teachingType.id" :value="teachingType.id">{{
-                            teachingType.text }}</option>
-                    </select>
-                </div>
-
                 <!-- Founding Types Dropdown -->
                 <div class="mb-4">
                     <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Förderung</label>
@@ -113,13 +102,11 @@ const props = defineProps({
 
 const emit = defineEmits(['closeForm', 'saveCourse']);
 
-const { fetchEducationTypes, fetchTeachingForms, fetchRefGroups, fetchRefGroupById, fetchOfferTypes, fetchFederalFundingTypes } = useReferenceData();
+const { fetchEducationTypes,fetchRefGroups ,fetchRefGroupById, fetchOfferTypes, fetchFederalFundingTypes } = useReferenceData();
 const educationTypes = ref([]);
-const teachingForms = ref([]);
 const offerTypes = ref([])
 const fundingTypes = ref([])
 const selectedEducationType = ref("")
-const selectedTeachingForm = ref("")
 const selectedOfferType = ref("");
 const selectedFundingType = ref("");
 const searchQuery = ref("");
@@ -129,13 +116,11 @@ const selectedSuggestion = ref(null);
 
 onMounted(async () => {
     educationTypes.value = await fetchEducationTypes();
-    teachingForms.value = await fetchTeachingForms();
     offerTypes.value = await fetchOfferTypes();
     fundingTypes.value = await fetchFederalFundingTypes();
     // Set initial values for dropdowns in edit mode
     if (props.isEditMode && props.course) {
         selectedEducationType.value = props.course.education_type2 || "";
-        selectedTeachingForm.value = props.course.instruction_type1 || "";
         selectedOfferType.value = props.course.course_type || "";
         selectedFundingType.value = props.course.funding_type_id || "";
 
@@ -151,7 +136,7 @@ onMounted(async () => {
 
 const handleSearch = async () => {
     if (searchQuery.value.length >= 2) { // Start searching after 3 characters
-        suggestions.value = await fetchRefGroups(searchQuery.value);
+        suggestions.value = await fetchRefGroups(searchQuery.value, selectedOfferType.value);
     } else {
         suggestions.value = []; // Clear suggestions if query is too short
     }
@@ -180,8 +165,6 @@ const formData = ref({
     degree_add_qualification: '',
     degree_entitled: '',
     subsidy_description: '',
-    instruction_form: '',
-    instruction_type1: '',
     instruction_type2: '',
     inhouse_seminar: false,
     extra_occupational: false,
@@ -238,12 +221,6 @@ const updateEducationTypeText = () => {
     const selectedEducation = educationTypes.value.find(item => item.id === selectedEducationType.value);
     formData.value.education_type1 = selectedEducation ? selectedEducation.text : '';
     formData.value.education_type2 = selectedEducation ? selectedEducation.id : '';
-};
-
-const updateTeachingForms = () => {
-    const selectedTeachingForm = teachingForms.value.find(item => item.id === selectedTeachingForm.value);
-    formData.value.instruction_type1 = selectedTeachingForm ? selectedTeachingForm.id : '';
-    formData.value.instruction_form = selectedTeachingForm ? selectedTeachingForm.text : '';
 };
 const updateOfferType = () => {
     const selectedOffer = offerTypes.value.find(item => item.id === selectedOfferType.value);
