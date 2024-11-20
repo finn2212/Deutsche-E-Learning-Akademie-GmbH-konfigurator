@@ -53,6 +53,7 @@ class IterationalHelper {
     const groupedCourses = await this.fetchSelectedCoursesDetails(
       selectedCourses
     );
+    debugger
 
     for (const [courseTypeId, courses] of Object.entries(groupedCourses)) {
       const courseType = await this.fetchCourseType(courseTypeId);
@@ -84,7 +85,7 @@ class IterationalHelper {
           serviceEvent,
           course,
           courseType,
-          courseTypeId,
+          course_id,
           index,
           location,
           startTime
@@ -154,13 +155,13 @@ class IterationalHelper {
     this.addServicePriceDetails(service, courseType, true);
 
     // MIME Info
-    const mimeInfo = service.ele("MIME_INFO");
-    mimeInfo
-      .ele("MIME_ELEMENT")
-      .ele("MIME_SOURCE")
-      .txt(this.organizationSettings.mime_source)
-      .up()
-      .up();
+    // const mimeInfo = service.ele("MIME_INFO");
+    // mimeInfo
+    //   .ele("MIME_ELEMENT")
+    //   .ele("MIME_SOURCE")
+    //   .txt(this.organizationSettings.mime_source)
+    //   .up()
+    //   .up();
   }
 
   // Helper method to add Service Details section
@@ -413,7 +414,8 @@ class IterationalHelper {
     servicePrice.ele("PRICE_CURRENCY").txt(courseType.price_currency).up().up();
     servicePriceDetails
       .ele("REMARKS")
-      .txt(courseType.subsidy_description || "")
+      .txt("")
+      // .txt(courseType.subsidy_description || "")
       .up();
   }
 }

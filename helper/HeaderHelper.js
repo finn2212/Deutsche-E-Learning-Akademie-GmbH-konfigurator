@@ -62,7 +62,7 @@ class HeaderHelper {
         // .up()
         .ele("ADDRESS")
         .ele("NAME")
-        .txt("Deutsche E-Learning Akademie GmbH")
+        .txt("Deutsche E-Learning Akademie")
         .up()
         .ele("STREET")
         .txt("Fürstenwall 178")
