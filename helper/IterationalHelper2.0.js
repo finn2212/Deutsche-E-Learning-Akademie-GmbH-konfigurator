@@ -53,7 +53,7 @@ class IterationalHelper {
     const groupedCourses = await this.fetchSelectedCoursesDetails(
       selectedCourses
     );
-    debugger
+    debugger;
 
     for (const [courseTypeId, courses] of Object.entries(groupedCourses)) {
       const courseType = await this.fetchCourseType(courseTypeId);
@@ -154,14 +154,13 @@ class IterationalHelper {
     // Service Price Details
     this.addServicePriceDetails(service, courseType, true);
 
-    // MIME Info
-    // const mimeInfo = service.ele("MIME_INFO");
-    // mimeInfo
-    //   .ele("MIME_ELEMENT")
-    //   .ele("MIME_SOURCE")
-    //   .txt(this.organizationSettings.mime_source)
-    //   .up()
-    //   .up();
+    const mimeInfo = service.ele("MIME_INFO");
+    mimeInfo
+      .ele("MIME_ELEMENT")
+      .ele("MIME_SOURCE")
+      .txt(this.organizationSettings.mime_source)
+      .up()
+      .up();
   }
 
   // Helper method to add Service Details section
@@ -207,13 +206,6 @@ class IterationalHelper {
     // serviceDetails.ele('TERMS_AND_CONDITIONS').txt(courseType.terms_and_conditions || '').up();
 
     // MIME Info
-    const mimeInfo = service.ele("MIME_INFO");
-    mimeInfo
-      .ele("MIME_ELEMENT")
-      .ele("MIME_SOURCE")
-      .txt(this.organizationSettings.mime_source)
-      .up()
-      .up();
 
     // Service Module
     this.addServiceModule(
@@ -295,6 +287,15 @@ class IterationalHelper {
       .txt(courseType.degree_add_qualification)
       .up();
     degree.ele("DEGREE_ENTITLED").txt(courseType.degree_entitled).up();
+    if (location) {
+      const mimeInfo = education.ele("MIME_INFO");
+      mimeInfo
+        .ele("MIME_ELEMENT")
+        .ele("MIME_SOURCE")
+        .txt(this.organizationSettings.mime_source)
+        .up()
+        .up();
+    }
 
     // Certificate details
     const certificate = education.ele("CERTIFICATE");
