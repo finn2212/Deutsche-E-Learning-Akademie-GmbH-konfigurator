@@ -8,7 +8,7 @@ class IterationalHelper {
       fetchCourseType,
       returnCourseCombinations,
       fetchLocations,
-      fetchStartTimes,
+      fetchStartTimeById,
       fetchDates,
       fetchSelectedCoursesDetails,
       fetchLocationById,
@@ -17,12 +17,26 @@ class IterationalHelper {
     this.fetchCourseType = fetchCourseType;
     this.returnCourseCombinations = returnCourseCombinations;
     this.fetchLocations = fetchLocations;
-    this.fetchStartTimes = fetchStartTimes;
+    this.fetchStartTimeById = fetchStartTimeById;
     this.fetchDates = fetchDates;
     this.fetchSelectedCoursesDetails = fetchSelectedCoursesDetails;
     this.fetchLocationById = fetchLocationById;
   }
 
+  formatInstructionRemarks(startTime) {
+    const [hours, minutes, seconds] = startTime.time.split(":").map(Number);
+    const startDate = new Date(0, 0, 0, hours, minutes, seconds);
+
+    // Add 7 hours
+    const endDate = new Date(startDate.getTime() + 7 * 60 * 60 * 1000);
+
+    const endHours = String(endDate.getHours()).padStart(2, "0");
+    const endMinutes = String(endDate.getMinutes()).padStart(2, "0");
+
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}-${endHours}:${endMinutes} Uhr`;
+  }
   // Method to add hours to a given time
   addHoursToTime(time, hoursToAdd) {
     const [hours, minutes, seconds] = time.split(":").map(Number);
@@ -61,6 +75,7 @@ class IterationalHelper {
 
       for (const [index, course] of courses.entries()) {
         const location = await this.fetchLocationById(course.location_id);
+        const startTime = await this.fetchStartTimeById(course.start_time_id);
         const serviceEvent = newCatalog.ele("SERVICE");
         serviceEvent.ele("PRODUCT_ID").txt(course.id).up();
 
@@ -71,7 +86,8 @@ class IterationalHelper {
           courseType,
           courseTypeId,
           index,
-          location
+          location,
+          startTime
         );
       }
     }
@@ -154,7 +170,8 @@ class IterationalHelper {
     courseType,
     courseTypeId,
     index,
-    location
+    location,
+    startTime
   ) {
     const serviceDetails = service.ele("SERVICE_DETAILS");
     serviceDetails.ele("TITLE").txt(course.title).up();
@@ -204,7 +221,8 @@ class IterationalHelper {
       courseType,
       courseTypeId,
       1,
-      location
+      location,
+      startTime
     );
 
     // // Service Classification
@@ -253,7 +271,8 @@ class IterationalHelper {
     courseType,
     courseTypeId,
     index,
-    location
+    location,
+    startTime
   ) {
     const serviceModule = serviceDetails.ele("SERVICE_MODULE");
     const education = serviceModule.ele("EDUCATION", {
@@ -327,7 +346,8 @@ class IterationalHelper {
 
     // Location details
     if (location) {
-      const locationEl = education.ele("MODULE_COURSE").ele("LOCATION");
+      const moduleEl = education.ele("MODULE_COURSE");
+      const locationEl = moduleEl.ele("LOCATION");
       locationEl.ele("NAME").txt("Deutsche").up();
       locationEl.ele("NAME2").txt("E-Learning").up();
       locationEl.ele("NAME3").txt("Akademie").up();
@@ -346,12 +366,12 @@ class IterationalHelper {
       locationEl.ele("BARRIER_FREE_LOCATION").txt(false).up();
 
       // Additional module course details
-      locationEl
-        .ele("MODULE_COURSE")
-        .ele("INSTRUCTION_REMARKS")
-        .txt("Startzeiten 08:00 Uhr")
-        .up();
-      locationEl.ele("MODULE_COURSE").ele("FLEXIBLE_START").txt(false).up();
+      debugger;
+      const formattedTime = this.formatInstructionRemarks(startTime);
+
+      moduleEl.ele("INSTRUCTION_REMARKS").txt(formattedTime).up();
+      debugger;
+      moduleEl.ele("FLEXIBLE_START").txt(false).up();
     } else {
       // Add an empty LOCATION element
       const emptyLocationEl = education.ele("MODULE_COURSE").ele("LOCATION");

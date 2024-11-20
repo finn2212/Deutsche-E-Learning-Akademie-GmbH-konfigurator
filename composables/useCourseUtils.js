@@ -18,6 +18,21 @@ export function useCourseUtils() {
     return data;
   };
 
+  const fetchStartTimeById = async (startTimeId) => {
+    const { data, error } = await $supabase
+      .from("start_times")
+      .select("*")
+      .eq("id", startTimeId)
+      .single();
+  
+    if (error) {
+      console.error("Error fetching location:", error);
+      return null;
+    }
+    
+    return data;
+  };
+
   const fetchLocations = async (locationIds) => {
     const { data, error } = await $supabase
       .from("places")
@@ -189,6 +204,7 @@ export function useCourseUtils() {
     fetchDates, 
     calculateCombinations,
     fetchSelectedCoursesDetails,
-    fetchLocationById
+    fetchLocationById,
+    fetchStartTimeById
   };
 }
