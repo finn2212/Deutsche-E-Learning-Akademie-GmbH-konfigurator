@@ -3,19 +3,16 @@
     <h1 class="text-2xl font-semibold mb-4">Course Types</h1>
 
     <!-- "Create New" Button, shown only when form is not visible -->
-    <button v-if="!isFormVisible" @click="openCreateForm" class="px-4 py-2 bg-green-600 text-white rounded mb-4">Create New</button>
+    <button v-if="!isFormVisible" @click="openCreateForm" class="px-4 py-2 bg-green-600 text-white rounded mb-4">Create
+      New</button>
 
     <!-- Show CourseTable if form is not visible -->
-    <CourseTable v-if="!isFormVisible" :courseTypes="courseTypes" @editCourse="openEditForm" @deleteCourse="deleteCourse" />
+    <CourseTable v-if="!isFormVisible" :courseTypes="courseTypes" @editCourse="openEditForm"
+      @deleteCourse="deleteCourse" @copyCourse="copyCourse" />
 
     <!-- Show CourseCreateEdit for creating/editing if form is visible -->
-    <CourseCreateEdit
-      v-else
-      :course="selectedCourse"
-      :isEditMode="isEditMode"
-      @closeForm="closeForm"
-      @saveCourse="saveCourse"
-    />
+    <CourseCreateEdit v-else :course="selectedCourse" :isEditMode="isEditMode" @closeForm="closeForm"
+      @saveCourse="saveCourse" />
   </div>
 </template>
 
@@ -85,6 +82,19 @@ const deleteCourse = async (courseId) => {
     console.error("Error deleting course:", error);
   } else {
     fetchCourseTypes(); // Refresh course data after deletion
+  }
+};
+
+// Copy course data in Supabase
+const copyCourse = async (course) => {
+  // Remove the ID field from the course object to let Supabase generate a new ID
+  const { id, ...courseDataWithoutId } = course;
+
+  const { error } = await $supabase.from('course_types').insert(courseDataWithoutId);
+  if (error) {
+    console.error("Error copying course:", error);
+  } else {
+    fetchCourseTypes(); // Refresh course data after copying
   }
 };
 
