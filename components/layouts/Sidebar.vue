@@ -95,8 +95,7 @@ const kursnet = [
 ]
 
 const settings = [
-  { name: 'Organisations Einstellungen', href: '/variables/organisations-einstellungen', icon: UserGroupIcon, current: false },
-  { name: 'Kurs Typen', href: '/variables/fixe-kurse-variablen', icon: LinkIcon, current: false },
+  { name: 'Organisations Einstellungen', href: '/variables/organisations-einstellungen', icon: UserGroupIcon, current: false }
 ]
 
 const { userRole, fetchUserRole } = useAuth(); 

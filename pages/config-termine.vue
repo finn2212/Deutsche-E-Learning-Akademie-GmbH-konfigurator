@@ -125,7 +125,6 @@ const handleActionEvent = async ({ type }) => {
   }
 
   const organizationSettings = await fetchOrganizationSettings()
-  debugger
   const xmlHelper2 = new XmlHelper2(organizationSettings, selectedCourses.value, type);
   const xmlString = await xmlHelper2.generateXml();
 

@@ -1,98 +1,7 @@
-import { useCourseUtils } from "@/composables/useCourseUtils";
-import { format, addYears } from "date-fns";
-
-class IterationalHelper {
-  constructor(organizationSettings) {
-    this.organizationSettings = organizationSettings;
-    const {
-      fetchCourseType,
-      returnCourseCombinations,
-      fetchLocations,
-      fetchStartTimeById,
-      fetchDates,
-      fetchSelectedCoursesDetails,
-      fetchLocationById,
-    } = useCourseUtils();
-
-    this.fetchCourseType = fetchCourseType;
-    this.returnCourseCombinations = returnCourseCombinations;
-    this.fetchLocations = fetchLocations;
-    this.fetchStartTimeById = fetchStartTimeById;
-    this.fetchDates = fetchDates;
-    this.fetchSelectedCoursesDetails = fetchSelectedCoursesDetails;
-    this.fetchLocationById = fetchLocationById;
-  }
-
-  formatInstructionRemarks(startTime) {
-    const [hours, minutes, seconds] = startTime.time.split(":").map(Number);
-    const startDate = new Date(0, 0, 0, hours, minutes, seconds);
-
-    // Add 7 hours
-    const endDate = new Date(startDate.getTime() + 7 * 60 * 60 * 1000);
-
-    const endHours = String(endDate.getHours()).padStart(2, "0");
-    const endMinutes = String(endDate.getMinutes()).padStart(2, "0");
-
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}-${endHours}:${endMinutes} Uhr`;
-  }
-  // Method to add hours to a given time
-  addHoursToTime(time, hoursToAdd) {
-    const [hours, minutes, seconds] = time.split(":").map(Number);
-    const date = new Date();
-    date.setHours(hours + hoursToAdd, minutes, seconds);
-    const newHours = String(date.getHours()).padStart(2, "0");
-    const newMinutes = String(date.getMinutes()).padStart(2, "0");
-    const newSeconds = String(date.getSeconds()).padStart(2, "0");
-    return `${newHours}:${newMinutes}:${newSeconds}`;
-  }
-
-  // Generate service elements and structure them according to XML requirements
-  async generateServiceElements(newCatalog, selectedCourses) {
-    const groupedCourses = await this.fetchSelectedCoursesDetails(
-      selectedCourses
-    );
-    debugger;
-
-    for (const [courseTypeId, courses] of Object.entries(groupedCourses)) {
-      const courseType = await this.fetchCourseType(courseTypeId);
-      const service = newCatalog.ele("SERVICE", { mode: "new" });
-      let course_id = "";
-      if (courseType.manual_id) {
-        course_id = courseType.manual_id;
-      } else {
-        course_id = courseTypeId;
+class courseHelper {
+    constructor(organizationSettings) {
+        this.organizationSettings = organizationSettings;
       }
-      service.ele("PRODUCT_ID").txt(course_id).up();
-      service.ele("COURSE_TYPE").txt(courseType.course_type).up();
-      this.addServiceDetailsForCourse(
-        service,
-        courses[0],
-        courseType,
-        course_id,
-        0
-      );
-
-      for (const [index, course] of courses.entries()) {
-        const location = await this.fetchLocationById(course.location_id);
-        const startTime = await this.fetchStartTimeById(course.start_time_id);
-        const serviceEvent = newCatalog.ele("SERVICE");
-        serviceEvent.ele("PRODUCT_ID").txt(course.id).up();
-
-        serviceEvent.ele("COURSE_TYPE").txt(courseType.course_type).up();
-        this.addServiceDetailsForEvent(
-          serviceEvent,
-          course,
-          courseType,
-          course_id,
-          index,
-          location,
-          startTime
-        );
-      }
-    }
-  }
   addServiceDetailsForCourse(service, course, courseType, courseTypeId, index) {
     const serviceDetails = service.ele("SERVICE_DETAILS");
     serviceDetails.ele("TITLE").txt(course.title).up();
@@ -163,69 +72,6 @@ class IterationalHelper {
       .up();
   }
 
-  // Helper method to add Service Details section
-  addServiceDetailsForEvent(
-    service,
-    course,
-    courseType,
-    courseTypeId,
-    index,
-    location,
-    startTime
-  ) {
-    const serviceDetails = service.ele("SERVICE_DETAILS");
-    serviceDetails.ele("TITLE").txt(course.title).up();
-
-    // Not Part of Events
-    // serviceDetails.ele('DESCRIPTION_LONG').txt(courseType.description_long).up();
-    // serviceDetails.ele('SUPPLIER_ALT_PID').txt(courseTypeId).up();
-
-    // Contact information
-    // const contact = serviceDetails.ele('CONTACT');
-    // this.addContactInfo(contact);
-
-    // Service Dates
-    const serviceDate = serviceDetails.ele("SERVICE_DATE");
-    serviceDate
-      .ele("START_DATE")
-      .txt(course.date.start_date + "T00:00:00.000+02:00")
-      .up();
-    serviceDate
-      .ele("END_DATE")
-      .txt(course.date.end_date + "T00:00:00.000+02:00")
-      .up();
-
-    // Keywords
-    // Not Part of Events
-    // this.addKeywords(serviceDetails, courseType.keywords_group);
-
-    // Target Group
-    // serviceDetails.ele('TARGET_GROUP').ele('TARGET_GROUP_TEXT').txt(courseType.target_group_text).up().up();
-
-    // Terms and Conditions
-    // serviceDetails.ele('TERMS_AND_CONDITIONS').txt(courseType.terms_and_conditions || '').up();
-
-    // MIME Info
-
-    // Service Module
-    this.addServiceModule(
-      serviceDetails,
-      course,
-      courseType,
-      courseTypeId,
-      1,
-      location,
-      startTime
-    );
-
-    // // Service Classification
-    // this.addServiceClassification(service, courseType);
-
-    // Service Price Details
-    this.addServicePriceDetails(service, courseType, false);
-  }
-
-  // Helper method to add contact information
   addContactInfo(contact) {
     contact
       .ele("CONTACT_ROLE", { type: this.organizationSettings.contact_type })
@@ -248,14 +94,6 @@ class IterationalHelper {
       .txt(this.organizationSettings.contact_remarks)
       .up()
       .up();
-  }
-
-  // Helper method to add keywords
-  addKeywords(serviceDetails, keywordsGroup) {
-    const keywords = keywordsGroup.split(",").map((keyword) => keyword.trim());
-    keywords.forEach((keyword) => {
-      serviceDetails.ele("KEYWORD").txt(keyword).up();
-    });
   }
 
   addServiceModule(
@@ -368,11 +206,9 @@ class IterationalHelper {
       locationEl.ele("BARRIER_FREE_LOCATION").txt(false).up();
 
       // Additional module course details
-      debugger;
       const formattedTime = this.formatInstructionRemarks(startTime);
 
       moduleEl.ele("INSTRUCTION_REMARKS").txt(formattedTime).up();
-      debugger;
       moduleEl.ele("FLEXIBLE_START").txt(false).up();
     } else {
       // Add an empty LOCATION element
@@ -403,6 +239,12 @@ class IterationalHelper {
       .up();
   }
 
+  addKeywords(serviceDetails, keywordsGroup) {
+    const keywords = keywordsGroup.split(",").map((keyword) => keyword.trim());
+    keywords.forEach((keyword) => {
+      serviceDetails.ele("KEYWORD").txt(keyword).up();
+    });
+  }
   // Helper method to add service price details
   addServicePriceDetails(service, courseType, isWithoutPrice) {
     const servicePriceDetails = service.ele("SERVICE_PRICE_DETAILS");
@@ -420,4 +262,4 @@ class IterationalHelper {
       .up();
   }
 }
-export default IterationalHelper;
+export default courseHelper;
