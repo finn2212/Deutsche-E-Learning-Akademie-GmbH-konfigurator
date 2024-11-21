@@ -36,7 +36,7 @@
 <script setup>
 import { defineProps, onMounted, ref } from 'vue'
 import { useNuxtApp } from '#app'
-import XmlHelper from '../helper/xmlHelper' // Adjust the path accordingly
+
 import { useCourseUtils } from '@/composables/useCourseUtils'
 
 const { $supabase } = useNuxtApp()
@@ -108,54 +108,8 @@ const fetchCourseType = async (courseTypeId) => {
   return data
 }
 
-const exportCourses = async () => {
-  isLoading.value = true
-  const organizationSettings = await fetchOrganizationSettings()
-  const courseType = await fetchCourseType(props.courses[0].course_type)
 
-  if (!organizationSettings || !courseType) {
-    console.error('Failed to fetch organization settings')
-    isLoading.value = false
-    return
-  }
 
-  const xmlHelper = new XmlHelper(organizationSettings, selectedCoursesList.value)
-  const xmlString = await xmlHelper.generateXml()
-  downloadXML(xmlString)
-  isLoading.value = false
-}
-
-const downloadXML = (xmlString) => {
-  // Get current date and time
-  const now = new Date();
-  const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const year = now.getFullYear();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-
-  // Format the date and time as DDMMYYHHMM
-  const formattedDateTime = `${day}${month}${String(year).slice(2)}${hours}${minutes}`;
-
-  // Create the filename
-  const filename = `DELAKursexport${formattedDateTime}.xml`;
-
-  // Create a Blob from the XML string
-  const blob = new Blob([xmlString], { type: 'application/xml' });
-
-  // Create a URL for the Blob
-  const url = URL.createObjectURL(blob);
-
-  // Create a link element
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-
-  // Append the link to the document, click it to start the download, then remove it
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
 </script>
 
 <style>
