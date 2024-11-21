@@ -3,7 +3,8 @@ export default {
   ssr: true,
   target: 'server', // Ensure your target is set to 'server' for full SSR capabilities
   plugins: [
-    { src: '~/plugins/supabase.js', mode: 'client' }
+    { src: '~/plugins/supabase.js', mode: 'client' },
+    '~/plugins/vue-multiselect.js'
   ],
   modules: [
     '@nuxtjs/tailwindcss',

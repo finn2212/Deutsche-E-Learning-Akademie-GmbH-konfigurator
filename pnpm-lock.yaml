@@ -41,6 +41,9 @@ dependencies:
   vue-json-tree-view:
     specifier: ^2.1.6
     version: 2.1.6
+  vue-multiselect:
+    specifier: ^3.1.0
+    version: 3.1.0
   vue-router:
     specifier: ^4.3.3
     version: 4.4.0(vue@3.4.30)
@@ -7206,6 +7209,11 @@ packages:
     dependencies:
       lodash: 4.17.21
       vue: 2.7.16
+    dev: false
+
+  /vue-multiselect@3.1.0:
+    resolution: {integrity: sha512-+i/fjTqFBpaay9NP+lU7obBeNaw2DdFDFs4mqhsM0aEtKRdvIf7CfREAx2o2B4XDmPrBt1r7x1YCM3BOMLaUgQ==}
+    engines: {node: '>= 14.18.1', npm: '>= 6.14.15'}
     dev: false
 
   /vue-router@4.4.0(vue@3.4.30):

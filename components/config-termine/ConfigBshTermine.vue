@@ -56,7 +56,7 @@
         </div>
       </div>
       <!-- Locations input fields -->
-      <div class="mb-4">
+      <!-- <div class="mb-4">
         <label for="locations" class="block text-sm font-medium text-gray-700">Locations</label>
         <div class="mt-1">
           <div v-for="(locationId, index) in form.location_ids" :key="index" class="flex items-center mb-2">
@@ -66,6 +66,23 @@
           </div>
           <button type="button" @click="addLocation"
             class="mt-2 font-semibold text-indigo-600 hover:text-indigo-500">Add Location</button>
+        </div>
+      </div> -->
+      <!-- Locations multi-select field -->
+      <div class="mb-4">
+        <label for="locations" class="block text-sm font-medium text-gray-700">Locations</label>
+        <div class="mt-1">
+          <Multiselect
+          v-model="form.location_ids"
+          @update:model-value="onChangeLocations"
+          :options="locationDropdownWithSelectAll"
+          :multiple="true"
+          :close-on-select="false"
+          placeholder="Select Locations"
+          label="label"
+          track-by="value"
+          class="w-full"
+        />
         </div>
       </div>
       <!-- Start times input fields -->
@@ -109,6 +126,7 @@ import { useNuxtApp } from '#app'
 import { format } from 'date-fns'
 import Dropdown from '@/components/layouts/Dropdown.vue'
 import { useReferenceData } from '@/composables/useReferenceData';
+import 'vue-multiselect/dist/vue-multiselect.css'
 
 const emit = defineEmits(['goBack', 'config-saved']);
 
@@ -178,7 +196,7 @@ const fetchLocations = async () => {
   if (!error && data) {
     locationOptions.value = data
     if (!form.value.location_ids.length && locationOptions.value.length) {
-      form.value.location_ids.push(locationOptions.value[0].id)
+      form.value.location_ids.push({ value: locationOptions.value[0].id, label: locationOptions.value[0].name })
     }
   } else {
     console.error(error)
@@ -231,14 +249,6 @@ const removeType = (index) => {
   form.value.types.splice(index, 1)
 }
 
-const addLocation = () => {
-  form.value.location_ids.push(locationOptions.value[0]?.id || '')
-}
-
-const removeLocation = (index) => {
-  form.value.location_ids.splice(index, 1)
-}
-
 const addStartTime = () => {
   form.value.start_time_ids.push(startTimeOptions.value[0]?.id || '')
 }
@@ -288,10 +298,9 @@ const submitForm = async () => {
       start_time_ids.forEach(startTimeId => {
         types.forEach(type => {
           allCombinations.push({
-
             course_type,
             date_id: dateId,
-            location_id: locationId,
+            location_id: locationId.value,
             name,
             start_time_id: startTimeId,
             title: titles[0],  // Assuming one title per course
@@ -318,6 +327,37 @@ const submitForm = async () => {
   }
 };
 
+// Handle changes in the multi-select
+const onChangeLocations = (selectedValues) => {
+  if (selectedValues.some(item => item.value === 'all')) {
+    // If "Select All" is selected
+    if (selectedValues.length === 1 || selectedValues.length - 1 < locationOptions.value.length) {
+      // Select all items
+      form.value.location_ids = locationOptions.value.map(location => ({
+        value: location.id,
+        label: location.name
+      }));
+    } else {
+      // Deselect all items
+      form.value.location_ids = []
+    }
+  } else {
+    // Regular selection logic
+    form.value.location_ids = selectedValues
+  }
+
+  console.log('Selected Locations:', form.value.location_ids)
+}
+// Prepend "Select All" option
+const locationDropdownWithSelectAll = computed(() => [
+  { value: 'all', label: 'Alle Auswählen' }, // Select All option
+  ...locationOptions.value.map(option => ({
+    value: option.id,
+    label: option.name
+  }))
+])
+
+
 onMounted(async () => {
   await fetchTypes()
   await fetchLocations()
@@ -325,6 +365,7 @@ onMounted(async () => {
   await fetchDates()
   await fetchCourse_types()
   teachingForms.value = await fetchTeachingForms();
+  
 })
 </script>
 
