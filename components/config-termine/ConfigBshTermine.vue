@@ -21,17 +21,6 @@
         </div>
 
       </div>
-      <div>
-        <label for="titles" class="block text-sm font-medium text-gray-700">Titles</label>
-        <div v-for="(title, index) in form.titles" :key="index" class="flex items-center mb-2">
-          <input v-model="form.titles[index]" type="text" required placeholder="Enter Title"
-            class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-          <button type="button" @click="removeTitle(index)"
-            class="ml-2 font-semibold text-indigo-600 hover:text-indigo-500">Remove</button>
-        </div>
-        <button type="button" @click="addTitle" class="mt-2 font-semibold text-indigo-600 hover:text-indigo-500">Add
-          Title</button>
-      </div>
       <!-- TeachingTypes Types Dropdown -->
       <div class="mb-4">
         <label for="teachingTypes" class="block text-sm font-medium text-gray-700">Unterrichtsform*</label>
@@ -233,14 +222,6 @@ const fetchDates = async () => {
   }
 }
 
-const addTitle = () => {
-  form.value.titles.push('')
-}
-
-const removeTitle = (index) => {
-  form.value.titles.splice(index, 1)
-}
-
 const addType = () => {
   form.value.types.push(typeOptions.value[0]?.name || 'Vollzeit')
 }
@@ -269,10 +250,6 @@ const typeDropdownOptions = computed(() =>
   typeOptions.value.map(option => ({ value: option.name, label: option.name }))
 )
 
-const locationDropdownOptions = computed(() =>
-  locationOptions.value.map(option => ({ value: option.id, label: option.name }))
-)
-
 const startTimeDropdownOptions = computed(() =>
   startTimeOptions.value.map(option => ({ value: option.id, label: option.time }))
 )
@@ -286,6 +263,7 @@ const dateDropdownOptions = computed(() =>
 
 
 const submitForm = async () => {
+  debugger
   const { course_type, dates_ids, location_ids, name, start_time_ids, titles, types } = form.value;
 
   // Create combinations for each unique entry
@@ -303,7 +281,7 @@ const submitForm = async () => {
             location_id: locationId.value,
             name,
             start_time_id: startTimeId,
-            title: titles[0],  // Assuming one title per course
+            title: course_types.value.find((entry) => entry.id === course_type).title,  // Assuming one title per course
             type,
             instruction_type1,
             instruction_form

@@ -8,6 +8,7 @@ import { useNuxtApp } from '#app';
 import XmlHelper2 from '../helper/xmlHelper2.0';
 import { format } from 'date-fns';
 import DetailView from '../components/config-termine/DetailView.vue';
+import { useCourses } from '@/composables/useCourses';
 
 
 const { $supabase } = useNuxtApp();
@@ -15,6 +16,7 @@ const kursData = ref([]);
 const selectedCourses = ref([]);
 const selectAll = ref(false);
 const selectedItem = ref(null);
+const { deleteCourse, deleteMultipleCourses } = useCourses();
 
 // State to control view mode (table view or config mode)
 const isConfigMode = ref(false);
@@ -123,12 +125,23 @@ const handleActionEvent = async ({ type }) => {
     console.warn('No courses selected for action');
     return;
   }
+  if (type === "deleteAll") {
+    await deleteMultipleCourses(selectedCourses.value);
+    await fetchKursData();
 
-  const organizationSettings = await fetchOrganizationSettings()
-  const xmlHelper2 = new XmlHelper2(organizationSettings, selectedCourses.value, type);
-  const xmlString = await xmlHelper2.generateXml();
 
-  downloadXML(xmlString, type);
+  } else if (type === "copy") {
+
+  } else {
+    const organizationSettings = await fetchOrganizationSettings()
+    const xmlHelper2 = new XmlHelper2(organizationSettings, selectedCourses.value, type);
+    const xmlString = await xmlHelper2.generateXml();
+
+    downloadXML(xmlString, type);
+  }
+
+
+
 };
 
 const downloadXML = (xmlString, type) => {
@@ -199,20 +212,6 @@ const goBackToTable = () => {
 
 };
 
-const deleteCourse = async (courseId) => {
-  const { error } = await $supabase
-    .from('all_termine')
-    .delete()
-    .eq('id', courseId);
-
-  if (error) {
-    console.error("Error deleting course:", error);
-  } else {
-    console.log(`Deleted course with ID: ${courseId}`);
-    await fetchKursData(); // Refresh the table data after deletion
-  }
-};
-
 const handleFilterUpdate = ({ key, value }) => {
   filters.value[key].value = value;
 };
@@ -221,6 +220,13 @@ const openDetails = (item) => {
   selectedItem.value = item;
   isConfigMode.value = true; // Show detail view
 };
+
+const deleteSingleCourseCourse = async (courseId) => {
+  await deleteCourse(courseId)
+  await fetchKursData();
+
+};
+
 </script>
 
 <template>
@@ -233,8 +239,8 @@ const openDetails = (item) => {
       <ActionButtons @action="handleActionEvent" @addSingleAppointment="addSingleAppointment" />
       <div class="overflow-x-auto mt-5">
         <KursTable :filteredKursData="filteredKursData" :selectAll="selectAll" :selectedCourses="selectedCourses"
-          @toggleSelectAll="toggleSelectAll" @updateSelectedCourses="updateSelectedCourses" @deleteCourse="deleteCourse"
-          @openDetails="openDetails" />
+          @toggleSelectAll="toggleSelectAll" @updateSelectedCourses="updateSelectedCourses"
+          @deleteCourse="deleteSingleCourseCourse" @openDetails="openDetails" />
       </div>
     </div>
     <DetailView v-else-if="selectedItem" :item="selectedItem" @goBack="goBackToTable" />
