@@ -4,6 +4,7 @@ import FilterSection from '../components/config-termine/FilterSection.vue';
 import ActionButtons from '../components/config-termine/ActionButtons.vue';
 import KursTable from '../components/config-termine/KursTable.vue';
 import ConfigBshTermine from '../components/config-termine/ConfigBshTermine.vue';
+import CopyTermine from '../components/config-termine/CopyTermine.vue';
 import { useNuxtApp } from '#app';
 import XmlHelper2 from '../helper/xmlHelper2.0';
 import { format } from 'date-fns';
@@ -20,6 +21,7 @@ const { deleteCourse, deleteMultipleCourses } = useCourses();
 
 // State to control view mode (table view or config mode)
 const isConfigMode = ref(false);
+const isCopyMode = ref(false);
 
 const filters = ref({
   kurs: { label: 'Kurs', value: '', class: 'block w-48', options: [{ value: '', label: 'All' }] },
@@ -128,10 +130,11 @@ const handleActionEvent = async ({ type }) => {
   if (type === "deleteAll") {
     await deleteMultipleCourses(selectedCourses.value);
     await fetchKursData();
+    selectedCourses.value = [];
 
 
   } else if (type === "copy") {
-
+    isCopyMode.value = true
   } else {
     const organizationSettings = await fetchOrganizationSettings()
     const xmlHelper2 = new XmlHelper2(organizationSettings, selectedCourses.value, type);
@@ -207,6 +210,7 @@ const toggleSelectAll = () => {
 // Function to return to the table view from ConfigBshTermine
 const goBackToTable = () => {
   isConfigMode.value = false;
+  isCopyMode.value = false;
   selectedItem.value = null;
   fetchKursData()
 
@@ -234,7 +238,7 @@ const deleteSingleCourseCourse = async (courseId) => {
     <h1 class="text-2xl font-semibold mb-4">Kurstermine</h1>
 
     <!-- Show FilterSection, ActionButtons, and KursTable if not in config mode -->
-    <div v-if="!isConfigMode">
+    <div v-if="!isConfigMode && !isCopyMode">
       <FilterSection :filters="filters" @updateFilter="handleFilterUpdate" />
       <ActionButtons @action="handleActionEvent" @addSingleAppointment="addSingleAppointment" />
       <div class="overflow-x-auto mt-5">
@@ -245,8 +249,14 @@ const deleteSingleCourseCourse = async (courseId) => {
     </div>
     <DetailView v-else-if="selectedItem" :item="selectedItem" @goBack="goBackToTable" />
     <!-- Show ConfigBshTermine if in config mode -->
-    <div v-else>
+    <!-- Config Mode -->
+    <div v-else-if="isConfigMode">
       <ConfigBshTermine @goBack="goBackToTable" />
+    </div>
+
+    <!-- Copy Mode -->
+    <div v-else-if="isCopyMode">
+      <CopyTermine :selectedCourses="selectedCourses" @goBack="goBackToTable" />
     </div>
   </div>
 </template>

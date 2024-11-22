@@ -9,11 +9,6 @@
 
     <!-- Form or configuration fields for BSH Termine -->
     <form @submit.prevent="submitForm" class="space-y-4">
-      <!-- Course Name Input -->
-
-      <!-- Additional form fields, similar to the previous form structure -->
-
-      <!-- Titles Input Fields -->
       <div>
         <label for="titles" class="block text-sm font-medium text-gray-700">Kurs Typ</label>
         <div class="mt-1">
@@ -44,20 +39,6 @@
             Type</button>
         </div>
       </div>
-      <!-- Locations input fields -->
-      <!-- <div class="mb-4">
-        <label for="locations" class="block text-sm font-medium text-gray-700">Locations</label>
-        <div class="mt-1">
-          <div v-for="(locationId, index) in form.location_ids" :key="index" class="flex items-center mb-2">
-            <Dropdown v-model="form.location_ids[index]" :options="locationDropdownOptions" />
-            <button type="button" @click="removeLocation(index)"
-              class="ml-2 font-semibold text-indigo-600 hover:text-indigo-500">Remove</button>
-          </div>
-          <button type="button" @click="addLocation"
-            class="mt-2 font-semibold text-indigo-600 hover:text-indigo-500">Add Location</button>
-        </div>
-      </div> -->
-      <!-- Locations multi-select field -->
       <div class="mb-4">
         <label for="locations" class="block text-sm font-medium text-gray-700">Locations</label>
         <div class="mt-1">
@@ -263,7 +244,6 @@ const dateDropdownOptions = computed(() =>
 
 
 const submitForm = async () => {
-  debugger
   const { course_type, dates_ids, location_ids, name, start_time_ids, titles, types } = form.value;
 
   // Create combinations for each unique entry
