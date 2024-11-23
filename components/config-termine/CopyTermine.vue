@@ -47,7 +47,8 @@
         </div>
 
         <!-- Add New Date Form -->
-        <div class="mt-5">
+        <!-- Add New Date Form -->
+        <div class="mt-5 max-w-80">
             <h2 class="text-xl font-semibold mb-4">Add New Date</h2>
             <form @submit.prevent="addNewDate" class="space-y-4">
                 <div>
@@ -56,15 +57,40 @@
                         class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-gray-700">End Date Mode</label>
+                    <select v-model="endDateMode"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="manual">Manual End Date</option>
+                        <option value="smart">Smart End Date</option>
+                    </select>
+                </div>
+                <div v-if="endDateMode === 'manual'">
                     <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
                     <input id="end_date" v-model="newDate.end_date" type="date" required
                         class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                </div>
+                <div v-if="endDateMode === 'smart'">
+                    <label for="smart_end_date" class="block text-sm font-medium text-gray-700">Smart End Date</label>
+                    <select id="smart_end_date" v-model="smartEndDateOption"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="1_week">1 Week</option>
+                        <option value="2_weeks">2 Weeks</option>
+                        <option value="3_weeks">3 Weeks</option>
+                        <option value="4_weeks">4 Weeks</option>
+                        <option value="1_month">1 Month</option>
+                        <option value="2_months">2 Months</option>
+                        <option value="3_months">3 Months</option>
+                        <option value="4_months">4 Months</option>
+                        <option value="5_months">5 Months</option>
+                        <option value="6_months">6 Months</option>
+                    </select>
                 </div>
                 <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
                     Save New Date
                 </button>
             </form>
         </div>
+
 
     </div>
 </template>
@@ -87,17 +113,8 @@ const termine = ref([]);
 const dates = ref([]);
 const selectedDate = ref(null);
 const newDate = ref({ start_date: '', end_date: '' });
-
-// Add new date to the database
-const addNewDate = async () => {
-    if (!newDate.value.start_date || !newDate.value.end_date) {
-        console.warn('Both start_date and end_date are required.');
-        return;
-    }
-    await saveDate(newDate.value);
-    dates.value = await fetchAllDates(); g
-
-};
+const endDateMode = ref('manual'); // 'manual' or 'smart'
+const smartEndDateOption = ref('');
 
 // Save Termine with new date_id
 const saveTermineWithNewDate = async () => {
@@ -121,6 +138,76 @@ const saveTermineWithNewDate = async () => {
     } else {
         console.error('Failed to save termine.');
     }
+};
+
+const addNewDate = async () => {
+    if (!newDate.value.start_date) {
+        console.warn('Start date is required.');
+        return;
+    }
+
+    if (endDateMode.value === 'manual' && !newDate.value.end_date) {
+        console.warn('End date is required for manual mode.');
+        return;
+    }
+
+    if (endDateMode.value === 'smart') {
+        newDate.value.end_date = calculateSmartEndDate(newDate.value.start_date, smartEndDateOption.value);
+        if (!newDate.value.end_date) {
+            console.warn('Invalid smart end date option.');
+            return;
+        }
+    }
+
+    await saveDate(newDate.value);
+    dates.value = await fetchAllDates();
+
+    // Reset form
+    newDate.value = { start_date: '', end_date: '' };
+    smartEndDateOption.value = '';
+    endDateMode.value = 'manual';
+};
+
+const calculateSmartEndDate = (startDate, option) => {
+    const date = new Date(startDate);
+    if (!date) return null;
+
+    switch (option) {
+        case '1_week':
+            date.setDate(date.getDate() + 7);
+            break;
+        case '2_weeks':
+            date.setDate(date.getDate() + 14);
+            break;
+        case '3_weeks':
+            date.setDate(date.getDate() + 21);
+            break;
+        case '4_weeks':
+            date.setDate(date.getDate() + 28);
+            break;
+        case '1_month':
+            date.setMonth(date.getMonth() + 1);
+            break;
+        case '2_months':
+            date.setMonth(date.getMonth() + 2);
+            break;
+        case '3_months':
+            date.setMonth(date.getMonth() + 3);
+            break;
+        case '4_months':
+            date.setMonth(date.getMonth() + 4);
+            break;
+        case '5_months':
+            date.setMonth(date.getMonth() + 5);
+            break;
+        case '6_months':
+            date.setMonth(date.getMonth() + 6);
+            break;
+        default:
+            return null;
+    }
+
+    return date.toISOString().split('T')[0]; // Return date in 'YYYY-MM-DD' format
 };
 
 onMounted(async () => {
