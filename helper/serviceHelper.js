@@ -9,7 +9,6 @@ class ServiceHelper {
       fetchCourseType,
       returnCourseCombinations,
       fetchLocations,
-      fetchStartTimeById,
       fetchDates,
       fetchSelectedCoursesDetails,
       fetchLocationById,
@@ -18,7 +17,6 @@ class ServiceHelper {
     this.fetchCourseType = fetchCourseType;
     this.returnCourseCombinations = returnCourseCombinations;
     this.fetchLocations = fetchLocations;
-    this.fetchStartTimeById = fetchStartTimeById;
     this.fetchDates = fetchDates;
     this.fetchSelectedCoursesDetails = fetchSelectedCoursesDetails;
     this.fetchLocationById = fetchLocationById;
@@ -52,7 +50,6 @@ class ServiceHelper {
 
       for (const [index, course] of courses.entries()) {
         const location = await this.fetchLocationById(course.location_id);
-        const startTime = await this.fetchStartTimeById(course.start_time_id);
         const serviceEvent = newCatalog.ele("SERVICE");
         serviceEvent.ele("PRODUCT_ID").txt(course.id).up();
 
@@ -64,7 +61,6 @@ class ServiceHelper {
           course_id,
           index,
           location,
-          startTime
         );
       }
     }
