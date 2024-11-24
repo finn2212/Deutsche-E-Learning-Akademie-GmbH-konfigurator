@@ -1,29 +1,21 @@
 <template>
-  <tr 
-    class="odd:bg-gray-100 even:bg-gray-50 cursor-pointer"
-    @click="openDetails"
-  >
+  <tr class="odd:bg-gray-100 even:bg-gray-50 cursor-pointer" >
     <td class="px-4 py-2 border-b text-left">
-      <input
-        type="checkbox"
-        :checked="isSelected"
-        @change="toggleSelection"
-        @click.stop
-        class="form-checkbox"
-      />
+      <input type="checkbox" :checked="isSelected" @change="toggleSelection" @click.stop class="form-checkbox" />
     </td>
     <td class="px-4 py-2 border-b text-left">{{ item.id }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.title }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.location_name || item.location_id }}</td>
-    <td class="px-4 py-2 border-b text-left">{{ item.instruction_form}}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.instruction_form }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.type }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.date_label || item.date_id }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.start_time_label || item.start_time_id }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.status }}</td>
     <td class="px-4 py-2 border-b text-left">
-      <button @click.stop="handleDelete" class="text-red-500 hover:text-red-700">
-        🗑️
-      </button>
+      <div class="flex space-x-2">
+        <button @click="edit" class="text-blue-500 hover:text-blue-700">✏️</button>
+        <button @click.stop="handleDelete" class="text-red-500 hover:text-red-700">🗑️</button>
+      </div>
     </td>
   </tr>
 </template>
@@ -36,7 +28,7 @@ const props = defineProps({
   isSelected: Boolean
 });
 
-const emit = defineEmits(['selectCourse', 'deleteCourse', 'openDetails']);
+const emit = defineEmits(['selectCourse', 'deleteCourse', 'edit']);
 
 const toggleSelection = () => {
   emit('selectCourse', props.item.id, !props.isSelected);
@@ -45,9 +37,8 @@ const toggleSelection = () => {
 const handleDelete = () => {
   emit('deleteCourse', props.item.id);
 };
-
-// Emit an event to open details
-const openDetails = () => {
-  emit('openDetails', props.item);
+const edit = () => {
+  emit('edit', props.item);
 };
+
 </script>

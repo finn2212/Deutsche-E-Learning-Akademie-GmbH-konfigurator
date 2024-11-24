@@ -220,7 +220,7 @@ const handleFilterUpdate = ({ key, value }) => {
   filters.value[key].value = value;
 };
 
-const openDetails = (item) => {
+const edit = (item) => {
   selectedItem.value = item;
   isConfigMode.value = true; // Show detail view
 };
@@ -244,7 +244,8 @@ const deleteSingleCourseCourse = async (courseId) => {
       <div class="overflow-x-auto mt-5">
         <KursTable :filteredKursData="filteredKursData" :selectAll="selectAll" :selectedCourses="selectedCourses"
           @toggleSelectAll="toggleSelectAll" @updateSelectedCourses="updateSelectedCourses"
-          @deleteCourse="deleteSingleCourseCourse" @openDetails="openDetails" />
+          @deleteCourse="deleteSingleCourseCourse" 
+          @edit="edit"/>
       </div>
     </div>
     <DetailView v-else-if="selectedItem" :item="selectedItem" @goBack="goBackToTable" />

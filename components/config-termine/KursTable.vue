@@ -29,6 +29,7 @@
         @selectCourse="updateSelectedCourses"
         @deleteCourse="emitDeleteCourse"
         @openDetails="openDetails"
+        @edit="edit"
       />
     </tbody>
   </table>
@@ -46,14 +47,13 @@ const props = defineProps({
 
 const emit = defineEmits(['toggleSelectAll', 'updateSelectedCourses', 'deleteCourse', 'openDetails']);
 
-// Emit openDetails event up to the parent
-const openDetails = (item) => {
-  emit('openDetails', item);
-};
-
 // Emit delete event to the parent component
 const emitDeleteCourse = (courseId) => {
   emit('deleteCourse', courseId); // Emit the deleteCourse event to the main page component
+};
+
+const edit = (course) => {
+  emit('edit', course);
 };
 
 // Update selected courses when a row is selected/deselected
