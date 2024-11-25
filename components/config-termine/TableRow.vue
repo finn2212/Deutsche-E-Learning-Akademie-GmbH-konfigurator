@@ -10,7 +10,6 @@
     <td class="px-4 py-2 border-b text-left">{{ item.type }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.start_time }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.end_time || item.start_time_id }}</td>
-    <td class="px-4 py-2 border-b text-left">{{ item.status }}</td>
     <td class="px-4 py-2 border-b text-left">
       <div class="flex space-x-2">
         <button @click="edit" class="text-blue-500 hover:text-blue-700">✏️</button>
