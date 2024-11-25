@@ -36,5 +36,20 @@ export function useCourses() {
     }
   };
 
-  return { deleteCourse, deleteMultipleCourses };
+  const addCourses = async (courses) => {
+    // Insert each combination into the 'all_termine' table
+    const { data, error } = await $supabase
+      .from("all_termine")
+      .insert(courses)
+      .select();
+
+    if (error) {
+      console.error("Error inserting combinations:", error);
+    } else {
+      console.log("Inserted combinations:", data);
+
+    }
+  };
+
+  return { deleteCourse, deleteMultipleCourses, addCourses };
 }

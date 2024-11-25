@@ -48,33 +48,33 @@
         </div>
       </div>
       <div class="mb-4">
-  <label for="timeRanges" class="block text-sm font-medium text-gray-700">Kurs Zeiten</label>
-  <div class="mt-1">
-    <!-- Existing Time Ranges -->
-    <div v-if="form.timeRanges.length === 0" class="text-gray-500 text-sm mb-2">
-      Noch keine Zeiten Hinzugefügt.
-    </div>
-    <div v-for="(time, index) in form.timeRanges" :key="index" class="flex items-center mb-2">
-      <span class="block w-32">{{ time.start_time }}</span>
-      <span class="mx-2 text-gray-600">Bis</span>
-      <span class="block w-32">{{ time.end_time }}</span>
-      <button type="button" @click="removeTimeRange(index)"
-        class="ml-2 font-semibold text-indigo-600 hover:text-indigo-500">Entfernen</button>
-    </div>
+        <label for="timeRanges" class="block text-sm font-medium text-gray-700">Kurs Zeiten</label>
+        <div class="mt-1">
+          <!-- Existing Time Ranges -->
+          <div v-if="form.timeRanges.length === 0" class="text-gray-500 text-sm mb-2">
+            Noch keine Zeiten Hinzugefügt.
+          </div>
+          <div v-for="(time, index) in form.timeRanges" :key="index" class="flex items-center mb-2">
+            <span class="block w-32">{{ time.start_time }}</span>
+            <span class="mx-2 text-gray-600">Bis</span>
+            <span class="block w-32">{{ time.end_time }}</span>
+            <button type="button" @click="removeTimeRange(index)"
+              class="ml-2 font-semibold text-indigo-600 hover:text-indigo-500">Entfernen</button>
+          </div>
 
-    <!-- New Time Range Inputs -->
-    <div class="flex items-center mb-4">
-      <input v-model="newTimeRange.start_time" @change="validateAndAddTimeRange" type="time"
-        class="mt-1 block w-32 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-      <span class="mx-2 text-gray-600">Bis</span>
-      <input v-model="newTimeRange.end_time" @change="validateAndAddTimeRange" type="time"
-        class="mt-1 block w-32 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-    </div>
+          <!-- New Time Range Inputs -->
+          <div class="flex items-center mb-4">
+            <input v-model="newTimeRange.start_time" @change="validateAndAddTimeRange" type="time"
+              class="mt-1 block w-32 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <span class="mx-2 text-gray-600">Bis</span>
+            <input v-model="newTimeRange.end_time" @change="validateAndAddTimeRange" type="time"
+              class="mt-1 block w-32 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          </div>
 
-    <!-- Validation Message -->
-    <p v-if="timeValidationError" class="text-sm text-red-500">{{ timeValidationError }}</p>
-  </div>
-</div>
+          <!-- Validation Message -->
+          <p v-if="timeValidationError" class="text-sm text-red-500">{{ timeValidationError }}</p>
+        </div>
+      </div>
 
 
 
@@ -103,10 +103,12 @@
 
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
-import { useNuxtApp } from '#app'
 import { format } from 'date-fns'
 import Dropdown from '@/components/layouts/Dropdown.vue'
 import { useReferenceData } from '@/composables/useReferenceData';
+import { useCourses } from '@/composables/useCourses';
+import { useCourseUtils } from '@/composables/useCourseUtils';
+import { useDates } from "@/composables/useDates";
 import 'vue-multiselect/dist/vue-multiselect.css'
 
 const emit = defineEmits(['goBack', 'config-saved']);
@@ -116,8 +118,10 @@ const props = defineProps({
   selectedCourseType: String // Receive the selected course type from Step 2
 })
 
-const { $supabase } = useNuxtApp()
 const { fetchTeachingForms } = useReferenceData();
+const { fetchAllDates } = useDates();
+const { fetchCourseTypes, fetchAllLocations, fetchTypes } = useCourseUtils();
+const { addCourses } = useCourses();
 
 // Reactive form data object
 const form = ref({
@@ -139,6 +143,8 @@ const course_types = ref([])
 const selectedTeachingForm = ref("")
 const teachingForms = ref([]);
 const timeValidationError = ref('');
+
+
 const newTimeRange = ref({ start_time: '', end_time: '' });
 const validateAndAddTimeRange = () => {
   const { start_time, end_time } = newTimeRange.value;
@@ -167,64 +173,22 @@ const removeTimeRange = (index) => {
   form.value.timeRanges.splice(index, 1);
 };
 
-const fetchTypes = async () => {
-  const { data, error } = await $supabase
-    .from('timeframes')
-    .select('*')
 
-  if (!error && data) {
-    typeOptions.value = data
-    if (!form.value.types.length && typeOptions.value.length) {
-      form.value.types.push(typeOptions.value[0].name)
-    }
-  } else {
-    console.error(error)
-  }
-}
 
-const fetchCourse_types = async () => {
-  const { data, error } = await $supabase
-    .from('course_types')
-    .select('*')
 
-  if (!error && data) {
-    course_types.value = data
-    if (!form.value.course_types.length && course_types.value.length) {
-      form.value.types.push(course_types.value[0].name)
-    }
-  } else {
-    console.error(error)
-  }
-}
+const loadDropdowns = async () => {
+  locationOptions.value = await fetchAllLocations()
+  form.value.location_ids.push({ value: locationOptions.value[0].id, label: locationOptions.value[0].name })
 
-const fetchLocations = async () => {
-  const { data, error } = await $supabase
-    .from('places')
-    .select('*')
+  course_types.value = await fetchCourseTypes();
 
-  if (!error && data) {
-    locationOptions.value = data
-    if (!form.value.location_ids.length && locationOptions.value.length) {
-      form.value.location_ids.push({ value: locationOptions.value[0].id, label: locationOptions.value[0].name })
-    }
-  } else {
-    console.error(error)
-  }
-}
+  typeOptions.value = await fetchTypes()
+  form.value.types.push(typeOptions.value[0].name)
 
-const fetchDates = async () => {
-  const { data, error } = await $supabase
-    .from('dates')
-    .select('*')
+  dateOptions.value = await fetchAllDates();
+  addDate();
 
-  if (!error && data) {
-    dateOptions.value = data
-    if (!form.value.dates_ids.length && dateOptions.value.length) {
-      form.value.dates_ids.push(dateOptions.value[0].id)
-    }
-  } else {
-    console.error(error)
-  }
+  teachingForms.value = await fetchTeachingForms();
 }
 
 const addType = () => {
@@ -257,7 +221,6 @@ const dateDropdownOptions = computed(() =>
 
 const submitForm = async () => {
   const { course_type, dates_ids, location_ids, name, timeRanges, titles, types } = form.value;
-  debugger
 
   // Create combinations for each unique entry
   const allCombinations = [];
@@ -285,18 +248,8 @@ const submitForm = async () => {
     });
   });
 
-  // Insert each combination into the 'all_termine' table
-  const { data, error } = await $supabase
-    .from('all_termine')
-    .insert(allCombinations)
-    .select();
-
-  if (error) {
-    console.error("Error inserting combinations:", error);
-  } else {
-    console.log("Inserted combinations:", data);
-    emit('goBack');
-  }
+  await addCourses(allCombinations) 
+  emit("goBack");
 };
 
 // Handle changes in the multi-select
@@ -331,12 +284,7 @@ const locationDropdownWithSelectAll = computed(() => [
 
 
 onMounted(async () => {
-  await fetchTypes()
-  await fetchLocations()
-  await fetchDates()
-  await fetchCourse_types()
-  teachingForms.value = await fetchTeachingForms();
-
+  await loadDropdowns();
 })
 </script>
 

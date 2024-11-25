@@ -9,12 +9,12 @@ export function useCourseUtils() {
       .select("*")
       .eq("id", locationId)
       .single();
-  
+
     if (error) {
       console.error("Error fetching location:", error);
       return null;
     }
-    
+
     return data;
   };
 
@@ -24,14 +24,27 @@ export function useCourseUtils() {
       .select("*")
       .eq("id", startTimeId)
       .single();
-  
+
     if (error) {
       console.error("Error fetching location:", error);
       return null;
     }
-    
+
     return data;
   };
+
+  const fetchAllLocations = async () => {
+    const { data, error } = await $supabase
+      .from("places")
+      .select("*")
+
+    if (error) {
+      console.error("Error fetching locations:", error);
+      return [];
+    }
+    return data;
+  };
+
 
   const fetchLocations = async (locationIds) => {
     const { data, error } = await $supabase
@@ -84,6 +97,16 @@ export function useCourseUtils() {
     return data;
   };
 
+  const fetchCourseTypes = async () => {
+    const { data, error } = await $supabase.from("course_types").select("*");
+
+    if (error) {
+      console.error("Error fetching course type:", error);
+      return null;
+    }
+    return data;
+  };
+
   const returnCourseCombinations = async (courseType, course) => {
     const locations = await fetchLocations(course.location_ids);
     const startTimes = await fetchStartTimes(course.start_time_ids);
@@ -120,7 +143,7 @@ export function useCourseUtils() {
 
   const calculateCombinations = async (selectedCourses) => {
     let combinationCount = 0;
-  
+
     for (const course of selectedCourses) {
       const courseType = await fetchCourseType(course.course_type);
       const combinations = await returnCourseCombinations(courseType, course);
@@ -131,57 +154,61 @@ export function useCourseUtils() {
         });
       });
     }
-  
+
     return combinationCount;
   };
 
   const fetchSelectedCoursesDetails = async (selectedCourseIds) => {
-
     try {
       // Step 1: Fetch selected courses by IDs
       const { data: courses, error: courseError } = await $supabase
-        .from('all_termine')
-        .select('*')
-        .in('id', selectedCourseIds);
-        
+        .from("all_termine")
+        .select("*")
+        .in("id", selectedCourseIds);
+
       if (courseError) throw courseError;
-  
+
       // Collect unique date and location IDs to fetch details only once
-      const dateIds = [...new Set(courses.map(course => course.date_id))];
-      const locationIds = [...new Set(courses.map(course => course.location_id))];
-  
+      const dateIds = [...new Set(courses.map((course) => course.date_id))];
+      const locationIds = [
+        ...new Set(courses.map((course) => course.location_id)),
+      ];
+
       // Step 2: Fetch date details
       const { data: dates, error: dateError } = await $supabase
-        .from('dates')
-        .select('*')
-        .in('id', dateIds);
-  
+        .from("dates")
+        .select("*")
+        .in("id", dateIds);
+
       if (dateError) throw dateError;
-  
+
       // Step 3: Fetch location details
       const { data: locations, error: locationError } = await $supabase
-        .from('places')
-        .select('*')
-        .in('id', locationIds);
-  
+        .from("places")
+        .select("*")
+        .in("id", locationIds);
+
       if (locationError) throw locationError;
-  
+
       // Step 4: Map dates and locations by their IDs for easy lookup
-      const dateMap = Object.fromEntries(dates.map(date => [date.id, date]));
-      const locationMap = Object.fromEntries(locations.map(location => [location.id, location]));
-  
+      const dateMap = Object.fromEntries(dates.map((date) => [date.id, date]));
+      const locationMap = Object.fromEntries(
+        locations.map((location) => [location.id, location])
+      );
+
       // Step 5: Combine course data with related date and location details
-      return groupCoursesByType(courses.map(course => ({
-        ...course,
-        date: dateMap[course.date_id],
-        location: locationMap[course.location_id]
-      })));
-  
+      return groupCoursesByType(
+        courses.map((course) => ({
+          ...course,
+          date: dateMap[course.date_id],
+          location: locationMap[course.location_id],
+        }))
+      );
     } catch (error) {
-      console.error('Error fetching course details:', error);
+      console.error("Error fetching course details:", error);
       return [];
     }
-  }
+  };
 
   const groupCoursesByType = (courses) => {
     // Reduce the courses array into an object, grouped by course_type
@@ -196,15 +223,30 @@ export function useCourseUtils() {
     }, {});
   };
 
-  return { 
-    fetchCourseType, 
-    returnCourseCombinations, 
-    fetchLocations, 
-    fetchStartTimes, 
-    fetchDates, 
+  const fetchTypes = async () => {
+    const { data, error } = await $supabase
+      .from('timeframes')
+      .select('*')
+  
+        if (error) {
+      console.error("Error fetching course type:", error);
+      return null;
+    }
+    return data;
+  }
+
+  return {
+    fetchCourseType,
+    returnCourseCombinations,
+    fetchLocations,
+    fetchStartTimes,
+    fetchDates,
     calculateCombinations,
     fetchSelectedCoursesDetails,
     fetchLocationById,
-    fetchStartTimeById
+    fetchStartTimeById,
+    fetchCourseTypes,
+    fetchAllLocations,
+    fetchTypes
   };
 }

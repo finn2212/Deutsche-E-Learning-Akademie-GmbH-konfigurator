@@ -8,8 +8,8 @@
     <td class="px-4 py-2 border-b text-left">{{ item.location_name || item.location_id }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.instruction_form }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.type }}</td>
-    <td class="px-4 py-2 border-b text-left">{{ item.date_label || item.date_id }}</td>
-    <td class="px-4 py-2 border-b text-left">{{ item.start_time_label || item.start_time_id }}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.start_time }}</td>
+    <td class="px-4 py-2 border-b text-left">{{ item.end_time || item.start_time_id }}</td>
     <td class="px-4 py-2 border-b text-left">{{ item.status }}</td>
     <td class="px-4 py-2 border-b text-left">
       <div class="flex space-x-2">
