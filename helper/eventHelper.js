@@ -1,15 +1,14 @@
 class EventHelper {
-    constructor(organizationSettings) {
-        this.organizationSettings = organizationSettings;
-      }
+  constructor(organizationSettings) {
+    this.organizationSettings = organizationSettings;
+  }
   addServiceDetailsForEvent(
     service,
     course,
     courseType,
     courseTypeId,
     index,
-    location,
-    
+    location
   ) {
     const serviceDetails = service.ele("SERVICE_DETAILS");
     serviceDetails.ele("TITLE").txt(course.title).up();
@@ -20,10 +19,17 @@ class EventHelper {
       .ele("START_DATE")
       .txt(course.date.start_date + "T00:00:00.000+02:00")
       .up();
-    serviceDate
-      .ele("END_DATE")
-      .txt(course.date.end_date + "T00:00:00.000+02:00")
-      .up();
+    if (course.type == "Teilzeit") {
+      serviceDate
+        .ele("END_DATE")
+        .txt(course.date.part_time_end_date + "T00:00:00.000+02:00")
+        .up();
+    } else {
+      serviceDate
+        .ele("END_DATE")
+        .txt(course.date.end_date + "T00:00:00.000+02:00")
+        .up();
+    }
 
     this.addServiceModule(
       serviceDetails,
@@ -31,8 +37,7 @@ class EventHelper {
       courseType,
       courseTypeId,
       1,
-      location,
-      
+      location
     );
 
     this.addServicePriceDetails(service, courseType, false);
@@ -44,8 +49,7 @@ class EventHelper {
     courseType,
     courseTypeId,
     index,
-    location,
-    
+    location
   ) {
     const serviceModule = serviceDetails.ele("SERVICE_MODULE");
     const education = serviceModule.ele("EDUCATION", {
@@ -165,14 +169,18 @@ class EventHelper {
 
   formatInstructionRemarks(course) {
     if (!course.start_time || !course.end_time) {
-      return 'Invalid time range'; // Handle missing time gracefully
+      return "Invalid time range"; // Handle missing time gracefully
     }
-  
+
     const [startHours, startMinutes] = course.start_time.split(":").map(Number);
     const [endHours, endMinutes] = course.end_time.split(":").map(Number);
-  
-    return `${String(startHours).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")} - ${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")} Uhr`;
-  }  
+
+    return `${String(startHours).padStart(2, "0")}:${String(
+      startMinutes
+    ).padStart(2, "0")} - ${String(endHours).padStart(2, "0")}:${String(
+      endMinutes
+    ).padStart(2, "0")} Uhr`;
+  }
 
   // Helper method to add service price details
   addServicePriceDetails(service, courseType, isWithoutPrice) {

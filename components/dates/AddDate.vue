@@ -13,6 +13,7 @@
             />
           </div>
   
+          <!-- Main End Date Section -->
           <div class="mb-4">
             <label for="end-date-mode" class="block text-sm font-medium text-gray-700">Enddatum-Modus</label>
             <select
@@ -52,7 +53,8 @@
             />
           </div>
   
-          <div class="mb-4">
+  
+          <div v-if="endDateMode === 'smart'" class="mb-4">
             <label for="part-time-percentage" class="block text-sm font-medium text-gray-700">Teilzeit Dauer (Prozent länger)</label>
             <select
               v-model="partTimePercentage"
@@ -68,11 +70,10 @@
           <div class="mb-4">
             <label for="part-time-end-date" class="block text-sm font-medium text-gray-700">Teilzeit-Enddatum</label>
             <input
+              v-model="partTimeEndDate"
               id="part-time-end-date"
-              type="text"
-              v-model="calculatedPartTimeEndDate"
-              readonly
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100 cursor-not-allowed"
+              type="date"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
   
@@ -99,7 +100,7 @@
   const endDateMode = ref("manual");
   const smartEndDateOption = ref("");
   const partTimePercentage = ref("20");
-  const calculatedPartTimeEndDate = ref("");
+  const partTimeEndDate = ref("");
   
   const calculateSmartEndDate = (startDate, option) => {
     const date = new Date(startDate);
@@ -146,12 +147,10 @@
   };
   
   const submitDate = () => {
-    const partTimeEndDate = calculatePartTimeEndDate(newEndDate.value, partTimePercentage.value);
-  
     emit("dateAdded", {
       start_date: newStartDate.value,
       end_date: newEndDate.value,
-      part_time_end_date: partTimeEndDate,
+      part_time_end_date: partTimeEndDate.value,
     });
   };
   
@@ -162,7 +161,9 @@
   });
   
   watch([newEndDate, partTimePercentage], () => {
-    calculatedPartTimeEndDate.value = calculatePartTimeEndDate(newEndDate.value, partTimePercentage.value);
+    if (endDateMode.value === "smart") {
+      partTimeEndDate.value = calculatePartTimeEndDate(newEndDate.value, partTimePercentage.value);
+    }
   });
   </script>
   
